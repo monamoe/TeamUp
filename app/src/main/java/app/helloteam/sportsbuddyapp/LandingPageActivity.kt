@@ -18,11 +18,20 @@ class LandingPageActivity : AppCompatActivity() {
         showuser.text=ParseUser.getCurrentUser().username
 
         val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
+        val mapBtn = findViewById<Button>(R.id.mapBtn)//switch to map layout
 
         logoutBtn.setOnClickListener {//logs user out when they click the logout button
             UserHandling.Logout()
             afterLogout()
         }
+
+
+        //switches view to map
+        mapBtn.setOnClickListener{
+            val intent = Intent(this, map::class.java)
+            startActivity(intent)
+        }
+
     }
 
     fun afterLogout() {//method to go back to login screen after logout
