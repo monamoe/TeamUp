@@ -18,10 +18,17 @@ class LandingPageActivity : AppCompatActivity() {
         showuser.text=ParseUser.getCurrentUser().username
 
         val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
+        val profileBtn = findViewById<Button>(R.id.ToProfileBtn) // gets profile button id
+
 
         logoutBtn.setOnClickListener {//logs user out when they click the logout button
             UserHandling.Logout()
             afterLogout()
+        }
+
+        profileBtn.setOnClickListener {
+            val intent = Intent(this, ProfilePage::class.java)
+            startActivity(intent)
         }
     }
 
