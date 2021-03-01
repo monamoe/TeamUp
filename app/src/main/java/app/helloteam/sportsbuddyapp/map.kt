@@ -3,22 +3,24 @@ package app.helloteam.sportsbuddyapp
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
@@ -159,49 +161,12 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         Log.i("LOG_TAG", "HAHA: going into the loop")
         //wait until the map is ready
-        while (isMapReady == 0) {
-            Thread.sleep(1_000)
-        }
+//        while (isMapReady == 0) {
+//            Thread.sleep(1_000)
+//            Log.i("LOG_TAG", "HAHA: im in the loop")
+//        }
         Log.i("LOG_TAG", "HAHA: Out of the loop")
 
-
-
-
-        // get user location
-        val userlocation = LatLng(userLocationLat, userLocationLon)
-
-        // initialize park markers (will probbaly be an array list)
-        // populate array list park markers
-        var parklocations = ArrayList<ParkLocationMarker>();
-
-        var park1 = ParkLocationMarker()
-        var park2= ParkLocationMarker()
-        park1.createParkLocationMarker(1, "Toronto", 43.6532, -79.3832)
-        park2.createParkLocationMarker(1, "Mississauga", 43.6532, -79.6441)
-        parklocations.add(park1)
-        parklocations.add(park2)
-
-        //adding markers to view
-//        for (i in 0..parklocations.size - 1)
-//        {
-//            mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(i).getLon(), parklocations.get(i).getLat())).title(parklocations.get(i).getName()))
-//        }
-
-
-        //find a way to customize the marker icon
-         mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(0).getLon(), parklocations.get(0).getLat())).title(parklocations.get(0).getName()))
-
-
-        val melbourne = mMap.addMarker(
-                MarkerOptions()
-                        .position(LatLng(-37.81319, 144.96298))
-                        .title("Melbourne")
-                        .snippet("Population: 4,137,400")
-        )
-
-
-        //adding user location marker temp
-        mMap.addMarker(MarkerOptions().position(userlocation).title(userLocationLon.toString() + ", " + userLocationLat.toString()))
 
         //for timing, refreshing user location, probs wont use this bcos its useless
         // and its confusing
@@ -249,14 +214,17 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     // when the map is ready
     override fun onMapReady(googleMap: GoogleMap) {
-
+        mMap = googleMap;
+        Log.i("LOG_TAG", "Inside onMapReady()")
 
         //getting user location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //this event only runs when the onMapReady funtion is finished running
             fusedLocationProviderClient!!.lastLocation.addOnSuccessListener {
                 //program has permission
                 location ->
+
                 if (location != null) {
                     //update user interface
                     userLocationLat = location.latitude
@@ -268,10 +236,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     // idk why we need this, yet
                     if (location.hasAccuracy()) {
                         // setting value to  variable = location.accuracy();
-                        //
                         // https://www.youtube.com/watch?v=DPKtC2HA9sE
                     }
                 }
+
+                updateUserMarker();
             }
         }
         //request permission
@@ -281,6 +250,64 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         isMapReady = 1;
         Log.i("LOG_TAG", "Map Ready")
+
+
+        // initialize park markers (will probbaly be an array list)
+        // populate array list park markers
+        var parklocations = ArrayList<ParkLocationMarker>();
+//        Log.i("LOG_TAG", "HAHA: created parklocations array list ")
+
+        var park1 = ParkLocationMarker()
+        var park2 = ParkLocationMarker()
+        park1.createParkLocationMarker(1, "Toronto", -79.3832, 43.6532)
+        park2.createParkLocationMarker(1, "Mississauga", -79.6441, 43.6532)
+        parklocations.add(park1)
+        parklocations.add(park2)
+        Log.i("LOG_TAG", "HAHA: populated arraylist")
+
+        //adding markers to view
+        for (i in 0..parklocations.size - 1) {
+            mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(i).getLon(), parklocations.get(i).getLat())).title(parklocations.get(i).getName()))
+        }
+
+
+        //find a way to customize the marker icon
+//        mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(0).getLon(), parklocations.get(0).getLat())).title(parklocations.get(0).getName()))
+        Log.i("LOG_TAG", "HAHA: adding markers to map")
+
+        val melbourne = mMap.addMarker(
+                MarkerOptions()
+                        .position(LatLng(-37.81319, 144.96298))
+                        .title("Some Park")
+                        .snippet("Information")
+        )
+
+
+        var i = 0
+        while (i < 5) {
+            i++
+            Thread.sleep(1_000)
+            Log.i("LOG_TAG", "HAHA: test")
+
+        }
+
+
+    }
+
+    private fun updateUserMarker() {
+        // get user location
+        val userlocation = LatLng(userLocationLat, userLocationLon)
+        Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
+        mMap.addMarker(MarkerOptions().position(userlocation).title(userLocationLon.toString() + ", " + userLocationLat.toString()))
+
+
+        // use map to move camera into position
+        val INIT = CameraPosition.Builder().target(userlocation).zoom(15.5f).bearing(300f) // orientation
+                .tilt(50f) // viewing angle
+                .build()
+
+
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(INIT))
     }
 
 
@@ -306,47 +333,43 @@ class ParkLocationMarker {
 //    val name: String = ""
 
     //constructor
-     fun createParkLocationMarker(inputId : Int, inputName: String, inputLat: Double, InputLon: Double)
-    {
+    fun createParkLocationMarker(inputId: Int, inputName: String, inputLat: Double, InputLon: Double) {
         id = inputId
         name = inputName
         lat = inputLat
         lon = InputLon
     }
 
-    //setters
-    fun setName(a: String)
-    {
-        name = a
-    }
-    fun setLat(a: Double)
-    {
-        lat = a
-    }
-    fun setLon(a: Double)
-    {
-        lon = a
-    }
+//    //setters
+//    fun setName(a: String)
+//    {
+//        name = a
+//    }
+//    fun setLat(a: Double)
+//    {
+//        lat = a
+//    }
+//    fun setLon(a: Double)
+//    {
+//        lon = a
+//    }
 
     //getters
-    fun getID(): Int
-    {
+    fun getID(): Int {
         return id
     }
-    fun getName(): String
-    {
+
+    fun getName(): String {
         return name
     }
-    fun getLat(): Double
-    {
+
+    fun getLat(): Double {
         return lat;
     }
-    fun getLon(): Double
-    {
+
+    fun getLon(): Double {
         return lon;
     }
-
-
 
 
 }
