@@ -27,6 +27,8 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBgAcWtCLKwb738bHdRxMmkK5V9MdbR8Qw</string>
     <string name="title_activity_maps">maps</string>
 
+    <string name="places_key">AIzaSyDehDwToTF9fqEXrV5mk2grN8bzlQ93cFE</string>
+
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

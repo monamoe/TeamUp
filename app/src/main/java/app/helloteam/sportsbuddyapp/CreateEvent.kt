@@ -5,9 +5,15 @@ import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import com.google.android.gms.common.api.Status
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.parse.ParseUser
 import java.util.*
 
@@ -19,14 +25,20 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     var yearPicked:Int=Calendar.getInstance().get(Calendar.YEAR)
     var monthPicked:Int=(Calendar.getInstance().get(Calendar.MONTH))+1
     var dayPicked:Int=Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    var address: String=""
 
     private val context:Context=this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+        val api: String = getString(R.string.places_key)
+        // Initialize the SDK
+        Places.initialize(applicationContext, api)
+
+        // Create a new PlacesClient instance
+        val placesClient = Places.createClient(this)
 
         val sportType= findViewById<RadioGroup>(R.id.SportType)
-        val address = findViewById<EditText>(R.id.AddressTxt)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
         var sportSelection : SportTypes =SportTypes.NONE
         sportType.setOnCheckedChangeListener { group, checkedId ->
@@ -62,10 +74,31 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             monthPicked=month
         }
 
+        val autocompleteFragment =
+                supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+                        as AutocompleteSupportFragment
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                // TODO: Get info about the selected place.
+                Log.i("TAG", "Place: ${place.name}, ${place.id}")
+                address= place.name.toString()
+            }
+
+            override fun onError(status: Status) {
+                // TODO: Handle the error.
+                Log.i("TAG", "An error occurred: $status")
+            }
+        })
+
         createBtn.setOnClickListener {
-            if (!address.text.toString().equals("")&& sportSelection!=SportTypes.NONE&&hour!=0){
+            if (!address.equals("")&& sportSelection!=SportTypes.NONE&&hour!=0){
                 var se = SportEvents(
-                    sportSelection, address.text.toString(), ParseUser.getCurrentUser().username,
+                    sportSelection, address, ParseUser.getCurrentUser().username,
                     hour, min, yearPicked, monthPicked, dayPicked
                 );
                 ParseCode.EventCreation(se)
