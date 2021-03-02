@@ -20,7 +20,7 @@ class LandingPageActivity : AppCompatActivity() {
         val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
         val profileBtn = findViewById<Button>(R.id.ToProfileBtn) // gets profile button id
         val mapBtn = findViewById<Button>(R.id.mapBtn)//switch to map layout
-
+        val createEventBtn = findViewById<Button>(R.id.CreateEventBtn)//create event layout
 
         logoutBtn.setOnClickListener {//logs user out when they click the logout button
             UserHandling.Logout()
@@ -39,6 +39,10 @@ class LandingPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        createEventBtn.setOnClickListener{
+            val intent = Intent(this, CreateEvent::class.java)
+            startActivity(intent)
+        }
 
     }
 

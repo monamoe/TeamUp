@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp">
-        <activity android:name=".ProfilePage"></activity>
+        <activity android:name=".CreateEvent"></activity>
+        <activity android:name=".ProfilePage" />
         <!--
                Set to true if your app is Standalone, that is, it does not require the handheld
                app to run.
