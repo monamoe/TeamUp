@@ -2,6 +2,7 @@ package app.helloteam.sportsbuddyapp
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.*
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -16,10 +17,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
@@ -161,10 +159,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         Log.i("LOG_TAG", "HAHA: going into the loop")
         //wait until the map is ready
-//        while (isMapReady == 0) {
-//            Thread.sleep(1_000)
-//            Log.i("LOG_TAG", "HAHA: im in the loop")
-//        }
+
         Log.i("LOG_TAG", "HAHA: Out of the loop")
 
 
@@ -275,35 +270,53 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 //        mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(0).getLon(), parklocations.get(0).getLat())).title(parklocations.get(0).getName()))
         Log.i("LOG_TAG", "HAHA: adding markers to map")
 
-        val melbourne = mMap.addMarker(
+        var iconBase = "https://maps.google.com/mapfiles/kml/shapes/";
+
+
+        //messing with canvas
+////        bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round)
+//
+//        val conf = Bitmap.Config.ARGB_8888
+//        val bmp = Bitmap.createBitmap(80, 80, conf)
+//        val canvas1 = Canvas(bmp)
+//
+//        // paint defines the text color, stroke width and size
+//        val color = Paint()
+//        color.setTextSize(35f)
+//        color.setColor(Color.BLACK)
+//
+//        // modify canvas
+//        canvas1.drawBitmapMesh(Bitmap.createBitmap())
+//        (BitmapFactory.decodeResource(getResources(),
+//                R.drawable.ic_launcher_background), 0,0, color);
+//        canvas1.drawText("User Name!", 30, 40, color);
+
+
+
+
+
+        mMap.addMarker(
                 MarkerOptions()
-                        .position(LatLng(-37.81319, 144.96298))
-                        .title("Some Park")
-                        .snippet("Information")
+                        .position(LatLng(43.591291, -79.677743))
+                        .title("Century City Park")
+                        .snippet("Park")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.soccer_ball))
+
         )
-
-
-        var i = 0
-        while (i < 5) {
-            i++
-            Thread.sleep(1_000)
-            Log.i("LOG_TAG", "HAHA: test")
-
-        }
-
-
     }
 
     private fun updateUserMarker() {
         // get user location
         val userlocation = LatLng(userLocationLat, userLocationLon)
         Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
-        mMap.addMarker(MarkerOptions().position(userlocation).title(userLocationLon.toString() + ", " + userLocationLat.toString()))
-
+        mMap.addMarker(MarkerOptions()
+                .position(userlocation)
+                .title(userLocationLon.toString() + ", " + userLocationLat.toString())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
 
         // use map to move camera into position
-        val INIT = CameraPosition.Builder().target(userlocation).zoom(15.5f).bearing(300f) // orientation
-                .tilt(50f) // viewing angle
+        val INIT = CameraPosition.Builder().target(userlocation).zoom(15.5f) // orientation
+                .tilt(70f) // viewing angle
                 .build()
 
 
