@@ -3,6 +3,8 @@ package app.helloteam.sportsbuddyapp
 import com.parse.ParseObject
 
 object ParseCode {
+
+
     fun EventCreation(se: SportEvents){
 
         val sportEvent = ParseObject("Event")
