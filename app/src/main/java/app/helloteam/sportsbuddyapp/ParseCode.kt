@@ -16,7 +16,8 @@ object ParseCode {
         sportEvent.put("year", se.year)
         sportEvent.put("month", se.month)
         sportEvent.put("day", se.day)
-
+        sportEvent.put("latitude", se.lat)
+        sportEvent.put("longitude", se.long)
         sportEvent.save()
 
     }
