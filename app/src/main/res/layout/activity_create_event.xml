@@ -17,7 +17,33 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/SportType"
-        app:layout_constraintVertical_bias="0.236" />
+        app:layout_constraintVertical_bias="0.075" />
+
+    <Button
+        android:id="@+id/TimeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Time"
+        app:layout_constraintBottom_toTopOf="@+id/CreateBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AddressTxt"
+        app:layout_constraintVertical_bias="0.906" />
+
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"
+        app:layout_constraintBottom_toTopOf="@+id/TimeBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AddressTxt"
+        app:layout_constraintVertical_bias="0.241" />
 
     <Button
         android:id="@+id/CreateBtn"
@@ -26,8 +52,10 @@
         android:text="Create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AddressTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/AddressTxt"
+        app:layout_constraintVertical_bias="0.884" />
 
     <RadioGroup
         android:id="@+id/SportType"
@@ -35,32 +63,32 @@
         android:layout_height="157dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.477"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.139">
+        app:layout_constraintVertical_bias="0.067">
 
         <RadioButton
             android:id="@+id/SoccerBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Soccer" />
-
-        <RadioButton
-            android:id="@+id/BasketballBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Basketball"
-            tools:layout_editor_absoluteX="134dp"
-            tools:layout_editor_absoluteY="128dp" />
+            android:text="Soccer"
+            tools:layout_editor_absoluteX="130dp"
+            tools:layout_editor_absoluteY="39dp" />
 
         <RadioButton
             android:id="@+id/HockeyBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ball Hockey"
-            tools:layout_editor_absoluteX="134dp"
-            tools:layout_editor_absoluteY="176dp" />
+            tools:layout_editor_absoluteX="130dp"
+            tools:layout_editor_absoluteY="135dp" />
+
+        <RadioButton
+            android:id="@+id/BasketballBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basketball" />
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

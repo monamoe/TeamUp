@@ -1,30 +1,26 @@
 package app.helloteam.sportsbuddyapp
 
-import android.app.Activity
-import android.app.Dialog
 import android.app.TimePickerDialog
-import android.content.Intent
+import android.content.Context
 import android.icu.util.Calendar
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.util.Log
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import com.google.android.gms.common.api.Status
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.parse.ParseUser
 import java.util.*
 
-class CreateEvent : AppCompatActivity() {
+
+class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private val AUTOCOMPLETE_REQUEST_CODE = 1
+    var hour:Int =0
+    var min:Int=0
+    var yearPicked:Int=Calendar.getInstance().get(Calendar.YEAR)
+    var monthPicked:Int=(Calendar.getInstance().get(Calendar.MONTH))+1
+    var dayPicked:Int=Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
+    private val context:Context=this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
@@ -45,15 +41,45 @@ class CreateEvent : AppCompatActivity() {
             }
         }
 
+        val timeBtn = findViewById<Button>(R.id.TimeBtn)
+        timeBtn.setOnClickListener {
+            TimePickerFragment().show(supportFragmentManager, "timePicker")
+        }
+        if (hour!=0){
+            timeBtn.setText("$hour:$min")
+        }
+
+        val datePicker = findViewById<DatePicker>(R.id.datePicker)
+        datePicker.setMinDate(System.currentTimeMillis() - 1000);
+        val today = Calendar.getInstance()
+        datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH),
+            today.get(Calendar.DAY_OF_MONTH)
+
+        ) { view, year, month, day ->
+            val month = month + 1
+            dayPicked=day
+            yearPicked=year
+            monthPicked=month
+        }
+
         createBtn.setOnClickListener {
-            if (!address.text.toString().equals("")&& sportSelection!=SportTypes.NONE){
-                var se = SportEvents(sportSelection, address.text.toString(), ParseUser.getCurrentUser().username);
+            if (!address.text.toString().equals("")&& sportSelection!=SportTypes.NONE&&hour!=0){
+                var se = SportEvents(
+                    sportSelection, address.text.toString(), ParseUser.getCurrentUser().username,
+                    hour, min, yearPicked, monthPicked, dayPicked
+                );
                 ParseCode.EventCreation(se)
             }else{
-               Toast.makeText(this,"Please enter all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
         }
 
     }
 
+    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
+        val timeBtn = findViewById<Button>(R.id.TimeBtn)
+        hour = hourOfDay
+        min=minute
+        timeBtn.setText("$hour:$min")
+    }
 }
