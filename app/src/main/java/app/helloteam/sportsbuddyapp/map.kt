@@ -34,7 +34,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         // this is used to convert the xml activity (custom_info_window.xml) into a view obect
         private val window: View = layoutInflater.inflate(R.layout.custom_info_window, null)
-        private lateinit var mContext: Context
 
         // To replace the default info window, override getInfoWindow(Marker) with your custom rendering and return null for getInfoContents(Marker)
         override fun getInfoWindow(p0: Marker): View {
@@ -43,7 +42,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
 
 
-        private fun render(marker: Marker, view: View) {
+        private fun render(marker: Marker, inputView: View) {
             //the image for the card. //not in use currently
 //            val badge = when (marker.title) {
 //                "Brisbane" -> R.drawable.badge_qld
@@ -57,10 +56,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
             //cant find this even tho it should
             // something to do with LayoutInflater
-            findViewById<TextView>(R.id.location).text = "BBBBBBBBBBBBBBBBBB"
+            inputView.findViewById<TextView>(R.id.location).text = "BBBBB"
 
 
         }
+
 
 
         override fun getInfoContents(p0: Marker): View {
