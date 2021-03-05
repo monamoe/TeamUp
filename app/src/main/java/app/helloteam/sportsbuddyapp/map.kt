@@ -25,10 +25,13 @@ import com.parse.ParseQuery
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
 
-// custom Info Windows Rendering
+    // park locations arraylist
+    var parklocations = ArrayList<ParkLocationMarker>();
+
+
+    // custom Info Windows Rendering
 // https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
 // https://github.com/googlemaps/android-samples/blob/main/ApiDemos/kotlin/app/src/gms/java/com/example/kotlindemos/MarkerDemoActivity.kt
-
     //    /** Demonstrates customizing the info window and/or its contents.  */
     internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
 
@@ -54,13 +57,28 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 //                else -> 0 // Passing 0 to setImageResource will clear the image view.
 //            }
 
-            //cant find this even tho it should
-            // something to do with LayoutInflater
-            inputView.findViewById<TextView>(R.id.location).text = "BBBBB"
+            // get the marker data out of the manager array list
+            lateinit var PLM: ParkLocationMarker
+            loop@ for (i in 0..parklocations.size - 1) {
+                if (parklocations.get(i).getID() == marker.title) {
+                    PLM = parklocations.get(i)
+                    break@loop
+                }
+            }
+
+            //updating ui components
+            //location
+            val locationUI: String? = PLM.getName();
+            Log.i("LOG_TAG", "HAHA: locationUI:" + locationUI)
+            val locationComp = inputView.findViewById<TextView>(R.id.location);
+            if (locationUI != null) {
+                locationComp.text = locationUI;
+            } else {
+                locationComp.text = "Null";
+            }
 
 
         }
-
 
 
         override fun getInfoContents(p0: Marker): View {
@@ -91,7 +109,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-
         // back button
         findViewById<Button>(R.id.backBtn).setOnClickListener {
             val intent = Intent(this, LandingPageActivity::class.java)
@@ -99,17 +116,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             startActivity(intent)
         }
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        Log.i("LOG_TAG", "HAHA: going into the loop")
-        //wait until the map is ready
-
-        Log.i("LOG_TAG", "HAHA: Out of the loop")
-
-
     }
 
     // requesting location permission from user
@@ -187,8 +196,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         // initialize park markers (will probbaly be an array list)
         // populate array list park markers
-        var parklocations = ArrayList<ParkLocationMarker>();
-//        Log.i("LOG_TAG", "HAHA: created parklocations array list ")
 
         //loop through events table and find unique locations to make the markers
         val query = ParseQuery.getQuery<ParseObject>("Events")
@@ -202,10 +209,13 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //create the ParkLocationMarker object and
         var park1 = ParkLocationMarker()
         var park2 = ParkLocationMarker()
+        var park3 = ParkLocationMarker()
         park1.createParkLocationMarker("1", "Toronto", 43.6532, -79.3832)
         park2.createParkLocationMarker("2", "Mississauga", 43.6532, -79.6441)
+        park3.createParkLocationMarker("FJW3H24JK234", "Century City Park", 43.591291, -79.677743)
         parklocations.add(park1)
         parklocations.add(park2)
+        parklocations.add(park3)
         Log.i("LOG_TAG", "HAHA: populated arraylist")
 
 
@@ -217,36 +227,28 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         for (i in 0..parklocations.size - 1) {
             mMap.addMarker(
                 MarkerOptions()
-                    .position(parklocations.get(i).getPosition())
+                    .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
+                    .title(parklocations.get(i).getID())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
         }
-
-
-        //find a way to customize the marker icon
-        Log.i("LOG_TAG", "HAHA: adding markers to map")
-        mMap.addMarker(
-            MarkerOptions()
-                .position(LatLng(43.591291, -79.677743))
-                .title("Century City Park")
-                .snippet("Park")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.soccer_ball))
-
-        )
     }
+
 
     private fun updateUserMarker() {
         // get user location
+        // set marker title and image to something cool
         val userlocation = LatLng(userLocationLat, userLocationLon)
         Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
         mMap.addMarker(
             MarkerOptions()
                 .position(userlocation)
-                .title(userLocationLon.toString() + ", " + userLocationLat.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
         )
 
-        // use map to move camera into position
-        val INIT = CameraPosition.Builder().target(userlocation).zoom(15.5f) // orientation
+        // move camera to user location
+        val INIT = CameraPosition.Builder().target(userlocation)
+            .zoom(15.5f)
             .tilt(70f) // viewing angle
             .build()
 
