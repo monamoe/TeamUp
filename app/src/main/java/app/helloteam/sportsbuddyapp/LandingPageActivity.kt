@@ -15,7 +15,7 @@ class LandingPageActivity : AppCompatActivity() {
 
         val showuser = findViewById<TextView>(R.id.ShowUsername)
 
-        showuser.text=ParseUser.getCurrentUser().username
+        showuser.text = ParseUser.getCurrentUser().username
 
         val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
         val profileBtn = findViewById<Button>(R.id.ToProfileBtn) // gets profile button id

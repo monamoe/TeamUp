@@ -98,6 +98,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             }
         })
 
+<<<<<<< HEAD
         createBtn.setOnClickListener {
             if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
 
