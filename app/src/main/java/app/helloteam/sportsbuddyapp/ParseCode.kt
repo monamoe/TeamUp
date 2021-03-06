@@ -5,11 +5,9 @@ import com.parse.ParseObject
 object ParseCode {
 
 
-    fun EventCreation(se: SportEvents){
-
+    fun EventCreation(se: SportEvents) {
         val sportEvent = ParseObject("Event")
         sportEvent.put("eventType", se.type.sport)
-        sportEvent.put("address", se.address)
         sportEvent.put("host", se.userName)
         sportEvent.put("hour", se.hour)
         sportEvent.put("minute", se.minute)
@@ -18,6 +16,10 @@ object ParseCode {
         sportEvent.put("day", se.day)
 
         sportEvent.save()
+
+    }
+
+    fun LocationCreation(ec: SportLocation) {
 
     }
 }
