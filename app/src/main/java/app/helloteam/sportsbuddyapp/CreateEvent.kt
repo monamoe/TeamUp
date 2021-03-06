@@ -15,7 +15,9 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import com.parse.*
+import com.parse.ParseObject
+import com.parse.ParseQuery
+import com.parse.ParseUser
 import java.io.IOException
 
 
@@ -28,20 +30,20 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-    private var locationid: String = ""
 
     // location attributes
+    private var locationPlaceId: String = "" // place id for the location
     private var locationname: String = "" // the name of the park, (not the address to the park)
     private var address: String = ""
     private var lat: Double = 0.0
     private var long: Double = 0.0
 
+    private val context: Context = this
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
-
-        val context: Context = this
 
 
         val api: String = getString(R.string.places_key)
@@ -101,17 +103,18 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 address = place.name.toString()
+                Log.i("LOG_TAG", "HAHA: address: " + address)
                 var latlong = getLocationFromAddress(this@CreateEvent, address)
                 if (latlong != null) {
                     long = latlong.longitude
                     lat = latlong.latitude
-                    Log.i("TAG", "Place: ${place.name}, ${place.id}, ${latlong.latitude}")
-
+                    locationPlaceId = place.id.toString()
                 }
+                Log.i("LOG_TAG", "HAHA: Location from address: ${lat}, ${place.id}, ${long}")
             }
 
             override fun onError(status: Status) {
-                Log.i("TAG", "An error occurred: $status")
+                Log.i("LOG_TAG", "An error occurred: $status")
             }
         })
 
@@ -119,29 +122,17 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             // enter required fields
             if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
 
-
-                Log.i("LOG_TAG", "HAHA: address:" + address)
-
                 //check if a record with that address already exists
-                Log.i("LOG_TAG", "HAHA: looking for matching locations")
                 val query = ParseQuery.getQuery<ParseObject>("Location")
-                query.whereEqualTo("Address", address)
+                query.whereEqualTo("locationPlaceId", locationPlaceId)
                 query.findInBackground { locationlist, e ->
-                    // if location doesnt exist, create location
                     if (e == null) {
+                        // if location doesnt exist, create location
                         if (locationlist.size == 0) {
-                            Log.i(
-                                "LOG_TAG",
-                                "HAHA: NO MATCHING LOCATIONS FOUND, creating new location"
-                            )
                             // create a new location
-                            var ec = SportLocation(address, address, lat, long)
-                            Log.i(
-                                "LOG_TAG",
-                                "HAHA: creating sport location object " + address + " " + lat.toString() + " " + long.toString()
-                            )
+                            Log.i("LOG_TAG", "HAHA: creating new location")
+                            var ec = SportLocation(locationPlaceId, address, address, lat, long)
                             ParseCode.LocationCreation(ec)
-                            Log.i("LOG_TAG", "HAHA: Added location to database")
                         }
                     } else {
                         Log.i(
@@ -149,17 +140,18 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                             "HAHA: There was an error with getting the locations : " + e.message
                         )
                     }
-                    // get location id
-                    Log.i("LOG_TAG", "HAHA: retriving locationid")
-                    locationid = locationlist.get(0).objectId;
                 }
+
+
+
+
 
 
 
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var se = SportEvents(
                     sportSelection, ParseUser.getCurrentUser().username,
-                    hour, min, yearPicked, monthPicked, dayPicked, ""
+                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId
                 );
                 ParseCode.EventCreation(se)
             } else {

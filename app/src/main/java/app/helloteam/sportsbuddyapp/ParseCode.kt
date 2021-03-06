@@ -5,9 +5,8 @@ import com.parse.ParseObject
 
 object ParseCode {
 
-
     fun EventCreation(se: SportEvents) {
-        val sportEvent = ParseObject("Event")
+        var sportEvent = ParseObject("Event")
         sportEvent.put("eventType", se.type.sport)
         sportEvent.put("host", se.userName)
         sportEvent.put("hour", se.hour)
@@ -15,19 +14,18 @@ object ParseCode {
         sportEvent.put("year", se.year)
         sportEvent.put("month", se.month)
         sportEvent.put("day", se.day)
+        sportEvent.put("sportPlaceID", se.eventPlaceID)
         sportEvent.save()
-
     }
 
     fun LocationCreation(ec: SportLocation) {
-        val sl = ParseObject("Location")
+        var sl = ParseObject("Location")
+        sl.put("locationPlaceId", ec.locationPlaceID)
         sl.put("Name", ec.name)
         sl.put("Address", ec.address)
         sl.put("latitude", ec.lat)
         sl.put("longitude", ec.long)
 
         sl.save();
-        Log.i("LOG_TAG", "HAHA: saved")
-
     }
 }

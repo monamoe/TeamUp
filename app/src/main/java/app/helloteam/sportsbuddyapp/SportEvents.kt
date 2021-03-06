@@ -8,6 +8,6 @@ class SportEvents constructor(
     val year: Int,
     val month: Int,
     val day: Int,
-    val locationId: String
+    val eventPlaceID: String
 ) {
 }
