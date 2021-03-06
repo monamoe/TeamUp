@@ -1,5 +1,6 @@
 package app.helloteam.sportsbuddyapp
 
+import android.util.Log
 import com.parse.ParseObject
 
 object ParseCode {
@@ -19,13 +20,14 @@ object ParseCode {
     }
 
     fun LocationCreation(ec: SportLocation) {
-        val SportLocation = ParseObject("Location")
-        SportLocation.put("Name", ec.name)
-        SportLocation.put("Address", ec.address)
-        SportLocation.put("latitude", ec.latitude)
-        SportLocation.put("longitude", ec.longitude)
-        SportLocation.save();
+        val sl = ParseObject("Location")
+        sl.put("Name", ec.name)
+        sl.put("Address", ec.address)
+        sl.put("latitude", ec.lat)
+        sl.put("longitude", ec.long)
 
+        sl.save();
+        Log.i("LOG_TAG", "HAHA: saved")
 
     }
 }

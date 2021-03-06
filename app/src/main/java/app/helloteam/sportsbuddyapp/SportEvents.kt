@@ -9,6 +9,5 @@ class SportEvents constructor(
     val month: Int,
     val day: Int,
     val locationId: String
-
 ) {
 }
