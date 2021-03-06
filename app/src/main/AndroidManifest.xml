@@ -24,14 +24,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".CreateEvent"></activity>
-        <activity android:name=".ProfilePage" />
-
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity android:name=".CreateEvent" />
+        <activity android:name=".ProfilePage" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LandingPageActivity" />
         <activity android:name=".MainActivity">
@@ -51,5 +50,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

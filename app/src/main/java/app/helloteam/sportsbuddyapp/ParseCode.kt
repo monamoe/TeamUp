@@ -14,13 +14,18 @@ object ParseCode {
         sportEvent.put("year", se.year)
         sportEvent.put("month", se.month)
         sportEvent.put("day", se.day)
-        sportEvent.put("latitude", se.lat)
-        sportEvent.put("longitude", se.long)
         sportEvent.save()
 
     }
 
     fun LocationCreation(ec: SportLocation) {
+        val SportLocation = ParseObject("Location")
+        SportLocation.put("Name", ec.name)
+        SportLocation.put("Address", ec.address)
+        SportLocation.put("latitude", ec.latitude)
+        SportLocation.put("longitude", ec.longitude)
+        SportLocation.save();
+
 
     }
 }

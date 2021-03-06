@@ -27,19 +27,18 @@ class LandingPageActivity : AppCompatActivity() {
             afterLogout()
         }
 
-
         profileBtn.setOnClickListener {
             val intent = Intent(this, ProfilePage::class.java)
             startActivity(intent)
         }
 
         //switches view to map
-        mapBtn.setOnClickListener{
+        mapBtn.setOnClickListener {
             val intent = Intent(this, map::class.java)
             startActivity(intent)
         }
 
-        createEventBtn.setOnClickListener{
+        createEventBtn.setOnClickListener {
             val intent = Intent(this, CreateEvent::class.java)
             startActivity(intent)
         }

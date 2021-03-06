@@ -1,7 +1,6 @@
 package app.helloteam.sportsbuddyapp
 
 class SportEvents constructor(
-<<<<<<< HEAD
     val type: SportTypes,
     val userName: String,
     val hour: Int,
@@ -12,6 +11,4 @@ class SportEvents constructor(
     val locationId: String
 
 ) {
-
-
 }

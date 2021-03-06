@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 
 
-class ParkLocationMarker  {
+class ParkLocationMarker {
 
 
     // ID of the location in the Locations Table
