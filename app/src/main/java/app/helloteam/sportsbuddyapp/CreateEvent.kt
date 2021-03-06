@@ -95,17 +95,17 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             }
         })
 
-        createBtn.setOnClickListener {
-            if (!address.equals("")&& sportSelection!=SportTypes.NONE&&hour!=0){
-                var se = SportEvents(
-                    sportSelection, address, ParseUser.getCurrentUser().username,
-                    hour, min, yearPicked, monthPicked, dayPicked
-                );
-                ParseCode.EventCreation(se)
-            }else{
-                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        createBtn.setOnClickListener {
+//            if (!address.equals("")&& sportSelection!=SportTypes.NONE&&hour!=0){
+//                var se = SportEvents(
+//                    sportSelection, address, ParseUser.getCurrentUser().username,
+//                    hour, min, yearPicked, monthPicked, dayPicked
+//                );
+//                ParseCode.EventCreation(se)
+//            }else{
+//                Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
+//            }
+//        }
 
     }
 

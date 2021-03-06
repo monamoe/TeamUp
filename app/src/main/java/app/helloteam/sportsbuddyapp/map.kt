@@ -1,59 +1,52 @@
 package app.helloteam.sportsbuddyapp
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.parse.ParseObject
+import com.parse.ParseQuery
 
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
 
-// custom Info Windows Rendering
+    // park locations arraylist
+    var parklocations = ArrayList<ParkLocationMarker>();
+
+
+    // custom Info Windows Rendering
 // https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
 // https://github.com/googlemaps/android-samples/blob/main/ApiDemos/kotlin/app/src/gms/java/com/example/kotlindemos/MarkerDemoActivity.kt
+    //    /** Demonstrates customizing the info window and/or its contents.  */
+    internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
 
-//    /** Demonstrates customizing the info window and/or its contents.  */
-//    internal inner class CustomInfoWindowAdapter : InfoWindowAdapter {
-//
-//        // These are both view groups containing an ImageView with id "badge" and two
-//        // TextViews with id "title" and "snippet".
-//        private val window: View = layoutInflater.inflate(R.layout.custom_info_window, null)
-//        private val contents: View = layoutInflater.inflate(R.layout.custom_info_contents, null)
-//
-//        override fun getInfoWindow(marker: Marker): View? {
-//            if (options.checkedRadioButtonId != R.id.custom_info_window) {
-//                // This means that getInfoContents will be called.
-//                return null
-//            }
-//            render(marker, window)
-//            return window
-//        }
-//
-//        override fun getInfoContents(marker: Marker): View? {
-//            if (options.checkedRadioButtonId != R.id.custom_info_contents) {
-//                // This means that the default info contents will be used.
-//                return null
-//            }
-//            render(marker, contents)
-//            return contents
-//        }
-//
-//        private fun render(marker: Marker, view: View) {
+        // this is used to convert the xml activity (custom_info_window.xml) into a view obect
+        private val window: View = layoutInflater.inflate(R.layout.custom_info_window, null)
+
+        // To replace the default info window, override getInfoWindow(Marker) with your custom rendering and return null for getInfoContents(Marker)
+        override fun getInfoWindow(p0: Marker): View {
+            render(p0, window)
+            return window
+        }
+
+
+        private fun render(marker: Marker, inputView: View) {
+            //the image for the card. //not in use currently
 //            val badge = when (marker.title) {
 //                "Brisbane" -> R.drawable.badge_qld
 //                "Adelaide" -> R.drawable.badge_sa
@@ -63,34 +56,35 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 //                in "Darwin Marker 1".."Darwin Marker 4" -> R.drawable.badge_nt
 //                else -> 0 // Passing 0 to setImageResource will clear the image view.
 //            }
-//
-//            view.findViewById<ImageView>(R.id.badge).setImageResource(badge)
-//
-//            // Set the title and snippet for the custom info window
-//            val title: String? = marker.title
-//            val titleUi = view.findViewById<TextView>(R.id.title)
-//
-//            if (title != null) {
-//                // Spannable string allows us to edit the formatting of the text.
-//                titleUi.text = SpannableString(title).apply {
-//                    setSpan(ForegroundColorSpan(Color.RED), 0, length, 0)
-//                }
-//            } else {
-//                titleUi.text = ""
-//            }
-//
-//            val snippet: String? = marker.snippet
-//            val snippetUi = view.findViewById<TextView>(R.id.snippet)
-//            if (snippet != null && snippet.length > 12) {
-//                snippetUi.text = SpannableString(snippet).apply {
-//                    setSpan(ForegroundColorSpan(Color.MAGENTA), 0, 10, 0)
-//                    setSpan(ForegroundColorSpan(Color.BLUE), 12, snippet.length, 0)
-//                }
-//            } else {
-//                snippetUi.text = ""
-//            }
-//        }
-//    }
+
+            // get the marker data out of the manager array list
+            lateinit var PLM: ParkLocationMarker
+            loop@ for (i in 0..parklocations.size - 1) {
+                if (parklocations.get(i).getID() == marker.title) {
+                    PLM = parklocations.get(i)
+                    break@loop
+                }
+            }
+
+            //updating ui components
+            //location
+            val locationUI: String? = PLM.getName();
+            Log.i("LOG_TAG", "HAHA: locationUI:" + locationUI)
+            val locationComp = inputView.findViewById<TextView>(R.id.location);
+            if (locationUI != null) {
+                locationComp.text = locationUI;
+            } else {
+                locationComp.text = "Null";
+            }
+
+
+        }
+
+
+        override fun getInfoContents(p0: Marker): View {
+            return null!!
+        }
+    }
 
 
     // is the map ready
@@ -102,38 +96,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     /** This is ok to be lateinit as it is initialised in onMapReady */
     private lateinit var mMap: GoogleMap
 
-    /**
-     * Keeps track of the last selected marker (though it may no longer be selected).  This is
-     * useful for refreshing the info window.
-     *
-     * Must be nullable as it is null when no marker has been selected
-     */
-    private var lastSelectedMarker: Marker? = null
-
-    private val markerRainbow = ArrayList<Marker>()
-
-    /** These can be lateinit as they are set in onCreate */
-    private lateinit var topText: TextView
-    private lateinit var rotationBar: SeekBar
-    private lateinit var flatBox: CheckBox
-    private lateinit var options: RadioGroup
-
-
     //for users location
-    // FusedLocationProviderClient - Main class for receiving location updates.
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    // LocationRequest - Requirements for the location updates, i.e., how often you
-    // should receive updates, the priority, etc.
-    private lateinit var locationRequest: LocationRequest
-
-    // LocationCallback - Called when FusedLocationProviderClient has a new Location.
-    private lateinit var locationCallback: LocationCallback
-
-    // Used only for local storage of the last known location. Usually, this would be saved to your
-    // database, but because this is a simplified sample without a full database, we only need the
-    // last location to create a Notification if the user navigates away from the app.
-    private var currentLocation: Location? = null
 
     //default user location values
     var userLocationLon = 0.1;
@@ -144,7 +109,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-
         // back button
         findViewById<Button>(R.id.backBtn).setOnClickListener {
             val intent = Intent(this, LandingPageActivity::class.java)
@@ -152,47 +116,17 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             startActivity(intent)
         }
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        Log.i("LOG_TAG", "HAHA: going into the loop")
-        //wait until the map is ready
-
-        Log.i("LOG_TAG", "HAHA: Out of the loop")
-
-
-        //for timing, refreshing user location, probs wont use this bcos its useless
-        // and its confusing
-//        locationRequest = LocationRequest().apply {
-//            // Sets the desired interval for active location updates. This interval is inexact. You
-//            // may not receive updates at all if no location sources are available, or you may
-//            // receive them less frequently than requested. You may also receive updates more
-//            // frequently than requested if other applications are requesting location at a more
-//            // frequent interval.
-//            //
-//            // IMPORTANT NOTE: Apps running on Android 8.0 and higher devices (regardless of
-//            // targetSdkVersion) may receive updates less frequently than this interval when the app
-//            // is no longer in the foreground.
-//            interval = TimeUnit.SECONDS.toMillis(60)
-//
-//            // Sets the fastest rate for active location updates. This interval is exact, and your
-//            // application will never receive updates more frequently than this value.
-//            fastestInterval = TimeUnit.SECONDS.toMillis(30)
-//
-//            // Sets the maximum time when batched location updates are delivered. Updates may be
-//            // delivered sooner than this interval.
-//            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
-//
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//        }
-
-
     }
 
     // requesting location permission from user
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             MY_PERMISSION_FINE_LOCATION ->
@@ -200,7 +134,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //permission granted
                 } else {
                     //permission denied
-                    Toast.makeText(applicationContext, "App requires location permission to be granted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "App requires location permission to be granted",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     finish()
                 }
         }
@@ -214,17 +152,24 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         //getting user location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             //this event only runs when the onMapReady funtion is finished running
             fusedLocationProviderClient!!.lastLocation.addOnSuccessListener {
                 //program has permission
-                location ->
+                    location ->
 
                 if (location != null) {
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-                    Log.i("LOG_TAG", "HAHA: Users Location Lat: " + userLocationLat.toString() + ", Lon: " + userLocationLon.toString())
+                    Log.i(
+                        "LOG_TAG",
+                        "HAHA: Users Location Lat: " + userLocationLat.toString() + ", Lon: " + userLocationLon.toString()
+                    )
 
 
                     //checking accuracy
@@ -240,149 +185,87 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
         //request permission
         else {
-            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), MY_PERMISSION_FINE_LOCATION)
+            requestPermissions(
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                MY_PERMISSION_FINE_LOCATION
+            )
         }
 
         isMapReady = 1;
         Log.i("LOG_TAG", "Map Ready")
 
-
         // initialize park markers (will probbaly be an array list)
         // populate array list park markers
-        var parklocations = ArrayList<ParkLocationMarker>();
-//        Log.i("LOG_TAG", "HAHA: created parklocations array list ")
 
+        //loop through events table and find unique locations to make the markers
+        val query = ParseQuery.getQuery<ParseObject>("Events")
+
+
+        //for every unique location, get the marker info
+        //id
+        //name
+        //lat
+        //lng
+        //create the ParkLocationMarker object and
         var park1 = ParkLocationMarker()
         var park2 = ParkLocationMarker()
-        park1.createParkLocationMarker(1, "Toronto", -79.3832, 43.6532)
-        park2.createParkLocationMarker(1, "Mississauga", -79.6441, 43.6532)
+        var park3 = ParkLocationMarker()
+        park1.createParkLocationMarker("1", "Toronto", 43.6532, -79.3832)
+        park2.createParkLocationMarker("2", "Mississauga", 43.6532, -79.6441)
+        park3.createParkLocationMarker("FJW3H24JK234", "Century City Park", 43.591291, -79.677743)
         parklocations.add(park1)
         parklocations.add(park2)
+        parklocations.add(park3)
         Log.i("LOG_TAG", "HAHA: populated arraylist")
 
-        //adding markers to view
+
+        var a = CustomInfoWindowAdapter()
+        mMap.setInfoWindowAdapter(a)
+
+
+        //loop through array list of unique locations and create markers
         for (i in 0..parklocations.size - 1) {
-            mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(i).getLon(), parklocations.get(i).getLat())).title(parklocations.get(i).getName()))
-        }
-
-
-        //find a way to customize the marker icon
-//        mMap.addMarker(MarkerOptions().position(LatLng(parklocations.get(0).getLon(), parklocations.get(0).getLat())).title(parklocations.get(0).getName()))
-        Log.i("LOG_TAG", "HAHA: adding markers to map")
-
-        var iconBase = "https://maps.google.com/mapfiles/kml/shapes/";
-
-
-        //messing with canvas
-////        bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round)
-//
-//        val conf = Bitmap.Config.ARGB_8888
-//        val bmp = Bitmap.createBitmap(80, 80, conf)
-//        val canvas1 = Canvas(bmp)
-//
-//        // paint defines the text color, stroke width and size
-//        val color = Paint()
-//        color.setTextSize(35f)
-//        color.setColor(Color.BLACK)
-//
-//        // modify canvas
-//        canvas1.drawBitmapMesh(Bitmap.createBitmap())
-//        (BitmapFactory.decodeResource(getResources(),
-//                R.drawable.ic_launcher_background), 0,0, color);
-//        canvas1.drawText("User Name!", 30, 40, color);
-
-
-
-
-
-        mMap.addMarker(
+            mMap.addMarker(
                 MarkerOptions()
-                        .position(LatLng(43.591291, -79.677743))
-                        .title("Century City Park")
-                        .snippet("Park")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.soccer_ball))
-
-        )
+                    .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
+                    .title(parklocations.get(i).getID())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+            )
+        }
     }
+
 
     private fun updateUserMarker() {
         // get user location
+        // set marker title and image to something cool
         val userlocation = LatLng(userLocationLat, userLocationLon)
         Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
-        mMap.addMarker(MarkerOptions()
+        mMap.addMarker(
+            MarkerOptions()
                 .position(userlocation)
-                .title(userLocationLon.toString() + ", " + userLocationLat.toString())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+        )
 
-        // use map to move camera into position
-        val INIT = CameraPosition.Builder().target(userlocation).zoom(15.5f) // orientation
-                .tilt(70f) // viewing angle
-                .build()
+        // move camera to user location
+        val INIT = CameraPosition.Builder().target(userlocation)
+            .zoom(15.5f)
+            .tilt(70f) // viewing angle
+            .build()
 
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(INIT))
     }
 
 
-    fun addInfoMarker() {
-
-    }
-
     //when an info window is clicked
     override fun onInfoWindowClick(p0: Marker?) {
-        //find out which event is clicked
+        //find out which marker is clicked
+
+
+        //set the in
 
         //redirect the page to the event being clicked
         TODO("Not yet implemented")
     }
 }
 
-
-class ParkLocationMarker {
-    private var id: Int = 0;
-    private var name: String = ""
-    private var lat: Double = 0.0
-    private var lon: Double = 0.0
-//    val name: String = ""
-
-    //constructor
-    fun createParkLocationMarker(inputId: Int, inputName: String, inputLat: Double, InputLon: Double) {
-        id = inputId
-        name = inputName
-        lat = inputLat
-        lon = InputLon
-    }
-
-//    //setters
-//    fun setName(a: String)
-//    {
-//        name = a
-//    }
-//    fun setLat(a: Double)
-//    {
-//        lat = a
-//    }
-//    fun setLon(a: Double)
-//    {
-//        lon = a
-//    }
-
-    //getters
-    fun getID(): Int {
-        return id
-    }
-
-    fun getName(): String {
-        return name
-    }
-
-    fun getLat(): Double {
-        return lat;
-    }
-
-    fun getLon(): Double {
-        return lon;
-    }
-
-
-}
