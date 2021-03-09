@@ -10,6 +10,8 @@ An app that helps you go outside and play! 🌞
 
 [Nathan-Hill-Sheridan](https://github.com/Nathan-Hill-Sheridan)
 
+[soussamu](https://github.com/soussamu)
+
 # Libraries & SDKs
 [Parse Platform](https://docs.parseplatform.org/android/guide/)
 
