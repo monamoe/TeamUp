@@ -12,7 +12,9 @@ An app that helps you go outside and play! 🌞
 
 # Libraries & SDKs
 [Parse Platform](https://docs.parseplatform.org/android/guide/)
+
 [Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
+
 [Places SDK for Android](https://developers.google.com/maps/documentation/places/android-sdk/overview)
 
 
