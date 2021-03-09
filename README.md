@@ -4,7 +4,9 @@ An app that helps you go outside and play! 🌞
 
 # Contributors
 [monamoe](https://github.com/monamoe)
+
 [rileylgray](https://github.com/rileylgray)
+
 [Nathan-Hill-Sheridan](https://github.com/Nathan-Hill-Sheridan)
 
 # Libraries & SDKs
