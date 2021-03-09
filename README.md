@@ -1,0 +1,16 @@
+# HelloTeam / SportsBuddy 
+Activity organization platform for small scale event sceduling! 
+An app that helps you go outside and play! 🌞
+
+# Contributors
+https://github.com/monamoe
+https://github.com/rileylgray
+https://github.com/Nathan-Hill-Sheridan
+
+# Libraries & SDKs
+[Parse Platform](https://docs.parseplatform.org/android/guide/)
+[Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
+[Places SDK for Android](https://developers.google.com/maps/documentation/places/android-sdk/overview)
+
+
+
