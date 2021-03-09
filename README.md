@@ -1,5 +1,6 @@
 # HelloTeam / SportsBuddy 
 Activity organization platform for small scale event sceduling! 
+
 An app that helps you go outside and play! 🌞
 
 # Contributors
