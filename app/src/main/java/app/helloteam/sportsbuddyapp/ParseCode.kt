@@ -2,6 +2,9 @@ package app.helloteam.sportsbuddyapp
 
 import android.util.Log
 import com.parse.ParseObject
+import com.parse.ParseQuery
+import java.util.*
+
 
 object ParseCode {
 
@@ -15,6 +18,7 @@ object ParseCode {
         sportEvent.put("month", se.month)
         sportEvent.put("day", se.day)
         sportEvent.put("sportPlaceID", se.eventPlaceID)
+        sportEvent.put("date", se.date)
         sportEvent.save()
     }
 
@@ -27,5 +31,21 @@ object ParseCode {
         sl.put("longitude", ec.long)
 
         sl.save();
+    }
+
+    fun EventDeletion(today:Date){
+      /*  val query = ParseQuery.getQuery<ParseObject>("Event")
+        query.whereLessThan("date", today)
+        query.findInBackground { eventList, e ->
+            if (e == null&& eventList.size>0) {
+                Log.d("Event", "Deleted: " + eventList.size + " events")
+                for (event in eventList){
+                    event.deleteInBackground()
+                    event.save()
+                }
+            } else {
+                Log.d("Event", "Error: " + e)
+            }
+        }*/
     }
 }
