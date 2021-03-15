@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity()   {
             val passwordTxt = findViewById<TextView>(R.id.PasswordText).text.toString()
 
             if(userNameTxt.equals("")|| passwordTxt.equals("")){
-                Toast.makeText(this, "Please eneter required fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
             }else{
           if(UserHandling.Login(userNameTxt,passwordTxt, this)) { // send data to login method in userhandling object class
               //if login is successful

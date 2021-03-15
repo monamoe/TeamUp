@@ -10,12 +10,12 @@ import java.lang.reflect.InvocationTargetException
 object UserHandling {
 
 
-    fun Login( userNameTxt: String,  passwordTxt: String, context:Context): Boolean {
-        var success= false
+    fun Login(userNameTxt: String, passwordTxt: String, context: Context): Boolean {
+        var success = false
         try {
             ParseUser.logIn(userNameTxt, passwordTxt)
-            success=true
-        }catch (ex: Exception){
+            success = true
+        } catch (ex: Exception) {
             Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
 
         }
@@ -24,26 +24,25 @@ object UserHandling {
     }
 
 
-    fun SignUp( userNameTxt: String,  passwordTxt: String, email: String, context:Context): Boolean {
-        var success= false;
-        try{
-        val user = ParseUser()
-        user.username = userNameTxt
-        user.setPassword(passwordTxt)
-        user.email=email
-        user.signUp()
-        success=true
-    }catch (ex: Exception){
-        Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
+    fun SignUp(userNameTxt: String, passwordTxt: String, email: String, context: Context): Boolean {
+        var success = false;
+        try {
+            val user = ParseUser()
+            user.username = userNameTxt
+            user.setPassword(passwordTxt)
+            user.email = email
+            user.signUp()
+            success = true
+        } catch (ex: Exception) {
+            Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
 
-    }
+        }
         return success
     }
 
-    fun Logout(){//logs out user
+    fun Logout() {//logs out user
         ParseUser.logOut()
     }
-
 
 
 }
