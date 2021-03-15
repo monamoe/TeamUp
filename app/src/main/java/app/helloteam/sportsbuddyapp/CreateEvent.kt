@@ -48,7 +48,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         setContentView(R.layout.activity_create_event)
 
 
-        val api: String = getString(R.string.places_key)
+        val api: String = getString(R.string.google_key)
         // Initialize the SDK
         Places.initialize(applicationContext, api)
 
