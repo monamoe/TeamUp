@@ -12,4 +12,7 @@
 /captures
 .externalNativeBuild
 .cxx
+# Local configuration file
 local.properties
+# Api key
+app/src/main/res/values/secrets.xml

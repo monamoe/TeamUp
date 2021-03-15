@@ -19,6 +19,8 @@ import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
@@ -38,7 +40,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var address: String = ""
     private var lat: Double = 0.0
     private var long: Double = 0.0
-
+    private lateinit var date: Date
     private val context: Context = this
 
 
@@ -47,7 +49,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         setContentView(R.layout.activity_create_event)
 
 
-        val api: String = getString(R.string.places_key)
+        val api: String = getString(R.string.google_key)
         // Initialize the SDK
         Places.initialize(applicationContext, api)
 
@@ -91,6 +93,10 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             yearPicked = year
             monthPicked = month
         }
+        val format = SimpleDateFormat("yyyy-MM-dd")
+
+        val dateString: String = format.format(Date())
+        date = format.parse("$yearPicked-$monthPicked-$dayPicked")
 
         //address
         val autocompleteFragment =
@@ -152,7 +158,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var se = SportEvents(
                     sportSelection, ParseUser.getCurrentUser().username,
-                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId
+                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
                 );
                 ParseCode.EventCreation(se)
             } else {
