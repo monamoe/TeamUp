@@ -1,5 +1,6 @@
 package app.helloteam.sportsbuddyapp
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -7,6 +8,7 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.parse.ParseUser
 import java.text.DateFormat
@@ -66,12 +68,26 @@ class LandingPageActivity : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
     R.id.action_profile -> {
-        Toast.makeText(this, "You selected Profile", Toast.LENGTH_LONG).show()
+        val intent = Intent(this, ProfilePage::class.java)
+        startActivity(intent)
         true
     }
         R.id.action_logout  -> {
-            UserHandling.Logout()
-            afterLogout()
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder.setMessage("Do you want to log out?")
+                .setCancelable(false)
+                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
+                    UserHandling.Logout()
+                    afterLogout()
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+                })
+            val alert = dialogBuilder.create()
+            alert.setTitle("Logout")
+            alert.show()
+
+
             true
         }
         R.id.action_map -> {
