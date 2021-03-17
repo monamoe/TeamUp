@@ -1,3 +1,12 @@
+/*
+Author: monamoe
+Created:  Feb 22nd 2021
+Manages map component of SportBuddy app
+uses ParkLocationMarker.kt for creating markers
+uses SportLocation to retrive marker locations
+ */
+
+
 package app.helloteam.sportsbuddyapp
 
 import android.content.Intent
@@ -206,15 +215,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             parklocations.add(park1)
         }
 
-
-        //for every unique location, get the marker info
-        //id
-        //name
-        //lat
-        //lng
-        //create the ParkLocationMarker object and
-        var a = CustomInfoWindowAdapter()
-        mMap.setInfoWindowAdapter(a)
+        //create the ParkLocationMarker object and set info window for markers
+        mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
 
 
         //loop through array list of unique locations and create markers
@@ -228,13 +230,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
         }
-        Log.i("LOG_TAG", "HAHA: ending marker loop")
     }
 
 
     private fun updateUserMarker() {
         // get user location
-        // set marker title and image to something cool
         val userlocation = LatLng(userLocationLat, userLocationLon)
         Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
         mMap.addMarker(
@@ -244,13 +244,14 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         )
 
         // move camera to user location
-        val INIT = CameraPosition.Builder().target(userlocation)
-            .zoom(15.5f)
-            .tilt(70f) // viewing angle
-            .build()
-
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(INIT))
+        mMap.animateCamera(
+            CameraUpdateFactory.newCameraPosition(
+                CameraPosition.Builder().target(userlocation)
+                    .zoom(15.5f)
+                    .tilt(70f) // viewing angle
+                    .build()
+            )
+        )
     }
 
 
