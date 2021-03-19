@@ -1,6 +1,5 @@
 package app.helloteam.sportsbuddyapp
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -46,16 +45,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
         private fun render(marker: Marker, inputView: View) {
-            //the image for the card. //not in use currently
-//            val badge = when (marker.title) {
-//                "Brisbane" -> R.drawable.badge_qld
-//                "Adelaide" -> R.drawable.badge_sa
-//                "Sydney" -> R.drawable.badge_nsw
-//                "Melbourne" -> R.drawable.badge_victoria
-//                "Perth" -> R.drawable.badge_wa
-//                in "Darwin Marker 1".."Darwin Marker 4" -> R.drawable.badge_nt
-//                else -> 0 // Passing 0 to setImageResource will clear the image view.
-//            }
+
 
             // get the marker data out of the manager array list
             lateinit var PLM: ParkLocationMarker
@@ -76,10 +66,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             } else {
                 locationComp.text = "Null";
             }
-
-
         }
-
 
         override fun getInfoContents(p0: Marker): View {
             return null!!
@@ -192,13 +179,32 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
 
         isMapReady = 1;
-        Log.i("LOG_TAG", "Map Ready")
+        Log.i("LOG_TAG", "HAHA: Map Ready")
 
-        // initialize park markers (will probbaly be an array list)
-        // populate array list park markers
 
-        //loop through events table and find unique locations to make the markers
-        val query = ParseQuery.getQuery<ParseObject>("Events")
+        //get marker locations
+        val query = ParseQuery.getQuery<ParseObject>("Location")
+        val locationlist = query.find()
+        Log.i("LOG_TAG", "HAHA: ran query")
+
+
+        for (location in locationlist) {
+            Log.i("LOG_TAG", "HAHA: inside query")
+            Log.i(
+                "LOG_TAG", "HAHA: location list size is : " + parklocations.size.toString()
+            )
+
+            var park1 = ParkLocationMarker()
+
+            park1.createParkLocationMarker(
+                location.getString("locationPlaceId"),
+                location.getString("Name")!!,
+                location.getDouble("latitude"),
+                location.getDouble("longitude")
+            )
+
+            parklocations.add(park1)
+        }
 
 
         //for every unique location, get the marker info
@@ -207,24 +213,14 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //lat
         //lng
         //create the ParkLocationMarker object and
-        var park1 = ParkLocationMarker()
-        var park2 = ParkLocationMarker()
-        var park3 = ParkLocationMarker()
-        park1.createParkLocationMarker("1", "Toronto", 43.6532, -79.3832)
-        park2.createParkLocationMarker("2", "Mississauga", 43.6532, -79.6441)
-        park3.createParkLocationMarker("FJW3H24JK234", "Century City Park", 43.591291, -79.677743)
-        parklocations.add(park1)
-        parklocations.add(park2)
-        parklocations.add(park3)
-        Log.i("LOG_TAG", "HAHA: populated arraylist")
-
-
         var a = CustomInfoWindowAdapter()
         mMap.setInfoWindowAdapter(a)
 
 
         //loop through array list of unique locations and create markers
+        Log.i("LOG_TAG", "HAHA: starting marker loop")
         for (i in 0..parklocations.size - 1) {
+            Log.i("LOG_TAG", "HAHA: adding a marker to the map" + i)
             mMap.addMarker(
                 MarkerOptions()
                     .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
@@ -232,6 +228,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
         }
+        Log.i("LOG_TAG", "HAHA: ending marker loop")
     }
 
 
