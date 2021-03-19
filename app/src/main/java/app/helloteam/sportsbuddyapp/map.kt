@@ -1,13 +1,28 @@
+/*
+Author: monamoe
+Created:  Feb 22nd 2021
+Manages map component of SportBuddy app
+uses ParkLocationMarker.kt for creating markers
+uses SportLocation to retrive marker locations
+ */
+
+
 package app.helloteam.sportsbuddyapp
 
+
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -208,15 +223,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             parklocations.add(park1)
         }
 
-
-        //for every unique location, get the marker info
-        //id
-        //name
-        //lat
-        //lng
-        //create the ParkLocationMarker object and
-        var a = CustomInfoWindowAdapter()
-        mMap.setInfoWindowAdapter(a)
+        //create the ParkLocationMarker object and set info window for markers
+        mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
 
 
         //loop through array list of unique locations and create markers
@@ -230,13 +238,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
         }
-        Log.i("LOG_TAG", "HAHA: ending marker loop")
     }
 
 
     private fun updateUserMarker() {
         // get user location
-        // set marker title and image to something cool
         val userlocation = LatLng(userLocationLat, userLocationLon)
         Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
         mMap.addMarker(
@@ -246,13 +252,14 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         )
 
         // move camera to user location
-        val INIT = CameraPosition.Builder().target(userlocation)
-            .zoom(15.5f)
-            .tilt(70f) // viewing angle
-            .build()
-
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(INIT))
+        mMap.animateCamera(
+            CameraUpdateFactory.newCameraPosition(
+                CameraPosition.Builder().target(userlocation)
+                    .zoom(15.5f)
+                    .tilt(70f) // viewing angle
+                    .build()
+            )
+        )
     }
 
 
@@ -266,5 +273,58 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //redirect the page to the event being clicked
         TODO("Not yet implemented")
     }
+
+    fun afterLogout() {//method to go back to login screen after logout
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_map, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_profile -> {
+            val intent = Intent(this, ProfilePage::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_logout  -> {
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder.setMessage("Do you want to log out?")
+                .setCancelable(false)
+                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
+                    UserHandling.Logout()
+                    afterLogout()
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+                })
+            val alert = dialogBuilder.create()
+            alert.setTitle("Logout")
+            alert.show()
+
+
+            true
+        }
+
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
 
