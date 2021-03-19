@@ -196,12 +196,14 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
             var park1 = ParkLocationMarker()
 
-            park1.createParkLocationMarker(
-                location.getString("locationPlaceId"),
-                location.getString("Name")!!,
-                location.getDouble("latitude"),
-                location.getDouble("longitude")
-            )
+            location.getString("locationPlaceId")?.let {
+                park1.createParkLocationMarker(
+                    it,
+                    location.getString("Name")!!,
+                    location.getDouble("latitude"),
+                    location.getDouble("longitude")
+                )
+            }
 
             parklocations.add(park1)
         }
