@@ -48,7 +48,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         setContentView(R.layout.activity_create_event)
 
 
-        val api: String = getString(R.string.places_key)
+        val api: String = getString(R.string.google_key)
         // Initialize the SDK
         Places.initialize(applicationContext, api)
 
@@ -95,7 +95,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         val format = SimpleDateFormat("yyyy-MM-dd")
 
         val dateString: String = format.format(Date())
-         date = format.parse("$yearPicked-$monthPicked-$dayPicked")
+        date = format.parse("$yearPicked-$monthPicked-$dayPicked")
 
         //address
         val autocompleteFragment =
@@ -159,7 +159,8 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var se = SportEvents(
                     sportSelection, ParseUser.getCurrentUser().username,
-                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date);
+                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
+                );
                 ParseCode.EventCreation(se)
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
