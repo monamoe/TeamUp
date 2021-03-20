@@ -40,7 +40,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     // park locations arraylist
-    var parklocations = ArrayList<ParkLocationMarker>();
+    var parklocations = ArrayList<ParkLocationMarker>()
 
 
     // custom Info Windows Rendering
@@ -263,34 +263,43 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     //when an info window is clicked
     override fun onInfoWindowClick(p0: Marker?) {
+
+        //get the latlng position
+        val markerPosition: LatLng? = p0?.getPosition()
+
+
+
+        Toast.makeText(
+            this, "Info window clicked " + markerPosition.toString(),
+            Toast.LENGTH_SHORT
+        ).show()
         //find out which marker is clicked
 
 
-        //set the in
+        //set the intent
 
         //redirect the page to the event being clicked
-        TODO("Not yet implemented")
     }
 
+    // navigation purposes
     fun afterLogout() {//method to go back to login screen after logout
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
-
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_map, menu)
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_profile -> {
             val intent = Intent(this, ProfilePage::class.java)
             startActivity(intent)
             true
         }
-        R.id.action_logout  -> {
+        R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)
@@ -313,15 +322,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             super.onOptionsItemSelected(item)
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 }
