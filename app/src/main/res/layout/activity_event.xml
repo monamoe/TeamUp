@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".event">
+
+    <TextView
+        android:id="@+id/eventTitle"
+        android:layout_width="98dp"
+        android:layout_height="33dp"
+        android:text="Title"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="59dp" />
+
+    <TextView
+        android:id="@+id/information"
+        android:layout_width="344dp"
+        android:layout_height="130dp"
+        android:text="info..."
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="213dp" />
+
+    <TextView
+        android:id="@+id/space"
+        android:layout_width="98dp"
+        android:layout_height="33dp"
+        android:text="Space: "
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="143dp" />
+
+    <TextView
+        android:id="@+id/endtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="endTime"
+        tools:layout_editor_absoluteX="203dp"
+        tools:layout_editor_absoluteY="92dp" />
+
+    <TextView
+        android:id="@+id/hostbio"
+        android:layout_width="342dp"
+        android:layout_height="96dp"
+        android:text="host info"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="415dp" />
+
+    <TextView
+        android:id="@+id/activity"
+        android:layout_width="98dp"
+        android:layout_height="33dp"
+        android:text="activity"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="100dp" />
+
+    <TextView
+        android:id="@+id/startTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="startTime"
+        tools:layout_editor_absoluteX="203dp"
+        tools:layout_editor_absoluteY="59dp" />
+
+    <TextView
+        android:id="@+id/hostname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Host: "
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="376dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Information"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="183dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attend"
+        tools:layout_editor_absoluteX="160dp"
+        tools:layout_editor_absoluteY="627dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
