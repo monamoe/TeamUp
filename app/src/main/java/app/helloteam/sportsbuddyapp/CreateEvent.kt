@@ -137,8 +137,10 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                         if (locationlist.size == 0) {
                             // create a new location
                             Log.i("LOG_TAG", "HAHA: creating new location")
-                            var ec = SportLocation(locationPlaceId, address, address, lat, long)
+                            var ec = SportLocation(locationPlaceId, address, address, lat, long, 1)
                             ParseCode.LocationCreation(ec)
+                        }else{
+                            locationlist[0].put("amount", locationlist[0].getInt("amount")+1)
                         }
                     } else {
                         Log.i(

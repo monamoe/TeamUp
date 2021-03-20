@@ -4,6 +4,7 @@ import android.util.Log
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 object ParseCode {
@@ -34,18 +35,36 @@ object ParseCode {
     }
 
     fun EventDeletion(today:Date){
-      /*  val query = ParseQuery.getQuery<ParseObject>("Event")
+        var deletedEvents= ArrayList<String>()
+      val query = ParseQuery.getQuery<ParseObject>("Event")
         query.whereLessThan("date", today)
         query.findInBackground { eventList, e ->
             if (e == null&& eventList.size>0) {
                 Log.d("Event", "Deleted: " + eventList.size + " events")
                 for (event in eventList){
+                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
+                     innerQuery.whereEqualTo("locationPlaceId", event.get("sportPlaceID"))
+                    innerQuery.limit = 1
+                    val matches= innerQuery.find()
+                    for(match in matches){
+                        if(match.getInt("amount")==1) {
+                            match.deleteInBackground()
+                            match.save()
+                        }else{
+                            match.put("amount", match.getInt("amount")-1)
+                        }
+                    }
                     event.deleteInBackground()
                     event.save()
+
                 }
             } else {
                 Log.d("Event", "Error: " + e)
             }
-        }*/
+        }
+        val query2 = ParseQuery.getQuery<ParseObject>("Location")
+        for (event in deletedEvents){
+            query2.whereEqualTo("locationPlaceId", event.toString())
+        }
     }
 }

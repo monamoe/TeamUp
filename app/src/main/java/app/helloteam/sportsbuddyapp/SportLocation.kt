@@ -5,6 +5,7 @@ class SportLocation constructor(
     val address: String,
     val name: String,
     val lat: Double,
-    val long: Double
+    val long: Double,
+    val amount: Int
 ) {
 }
