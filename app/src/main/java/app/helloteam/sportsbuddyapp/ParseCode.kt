@@ -30,7 +30,7 @@ object ParseCode {
         sl.put("Address", ec.address)
         sl.put("latitude", ec.lat)
         sl.put("longitude", ec.long)
-
+        sl.put("amount", ec.amount)
         sl.save();
     }
 

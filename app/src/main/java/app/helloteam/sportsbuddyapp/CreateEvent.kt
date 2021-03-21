@@ -139,8 +139,22 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                             Log.i("LOG_TAG", "HAHA: creating new location")
                             var ec = SportLocation(locationPlaceId, address, address, lat, long, 1)
                             ParseCode.LocationCreation(ec)
+                            Log.i(
+                                "LOG_TAG",
+                                "HAHA: IN IF"
+                            )
                         }else{
-                            locationlist[0].put("amount", locationlist[0].getInt("amount")+1)
+                            Log.i(
+                                "LOG_TAG",
+                                "HAHA: IN IF"
+                            )
+                            for(locations in locationlist) {
+                                Log.i(
+                                    "LOG_TAG",
+                                    "In FOR"
+                                )
+                                locations.put("amount", locations.getInt("amount") + 1)
+                            }
                         }
                     } else {
                         Log.i(
@@ -149,12 +163,6 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                         )
                     }
                 }
-
-
-
-
-
-
 
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var se = SportEvents(
