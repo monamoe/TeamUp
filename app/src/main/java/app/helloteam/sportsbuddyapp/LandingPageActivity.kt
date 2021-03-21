@@ -23,7 +23,7 @@ class LandingPageActivity : AppCompatActivity() {
         val date = Date()
         Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
 
-        ParseCode.EventDeletion(date)
+      //  ParseCode.EventDeletion(date) //method to delete expired events and locations
 
         val showuser = findViewById<TextView>(R.id.ShowUsername)
 

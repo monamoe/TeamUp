@@ -37,26 +37,27 @@ object ParseCode {
     fun EventDeletion(today:Date){
         var deletedEvents= ArrayList<String>()
       val query = ParseQuery.getQuery<ParseObject>("Event")
-        query.whereLessThan("date", today)
+        query.whereLessThan("date", today)//get all events where today's date is after their date
+        Log.i("LOG_TAG","HAHA today's date:" +today)
         query.findInBackground { eventList, e ->
             if (e == null&& eventList.size>0) {
-                Log.d("Event", "Deleted: " + eventList.size + " events")
-                for (event in eventList){
+                Log.d("Event", "Deleted: " + eventList.size + " events")//print how many events will be deleted
+                for (event in eventList){//loop through the expired events
+                    Log.i("LOG_TAG","HAHA Events's date:" +event.getDate("date"))
                     val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
-                     innerQuery.whereEqualTo("locationPlaceId", event.get("sportPlaceID"))
-                    innerQuery.limit = 1
+                     innerQuery.whereEqualTo("locationPlaceId", event.get("sportPlaceID"))//get the event locations
+                    innerQuery.limit = 1//should only find one location
                     val matches= innerQuery.find()
                     for(match in matches){
                         if(match.getInt("amount")==1) {
                             match.deleteInBackground()
-                            match.save()
                         }else{
                             match.put("amount", match.getInt("amount")-1)
                         }
+                        match.save()
                     }
                     event.deleteInBackground()
                     event.save()
-
                 }
             } else {
                 Log.d("Event", "Error: " + e)
