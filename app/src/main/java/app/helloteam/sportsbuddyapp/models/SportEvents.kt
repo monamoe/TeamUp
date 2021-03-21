@@ -1,6 +1,4 @@
-package app.helloteam.sportsbuddyapp
-
-import java.sql.Date
+package app.helloteam.sportsbuddyapp.models
 
 class SportEvents constructor(
     val type: SportTypes,

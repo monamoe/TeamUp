@@ -10,7 +10,6 @@ uses SportLocation to retrive marker locations
 package app.helloteam.sportsbuddyapp
 
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -89,9 +88,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     }
 
 
-    // is the map ready
-    private var isMapReady = 0;
-
     //permission integer
     private val MY_PERMISSION_FINE_LOCATION: Int = 44
 
@@ -168,11 +164,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-                    Log.i(
-                        "LOG_TAG",
-                        "HAHA: Users Location Lat: " + userLocationLat.toString() + ", Lon: " + userLocationLon.toString()
-                    )
-
 
                     //checking accuracy
                     // idk why we need this, yet
@@ -182,6 +173,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     }
                 }
 
+                //render the marker on the users location.
                 updateUserMarker();
             }
         }
@@ -193,10 +185,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             )
         }
 
-        isMapReady = 1;
-        Log.i("LOG_TAG", "HAHA: Map Ready")
-
-
         //get marker locations
         val query = ParseQuery.getQuery<ParseObject>("Location")
         val locationlist = query.find()
@@ -204,11 +192,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
         for (location in locationlist) {
-            Log.i("LOG_TAG", "HAHA: inside query")
-            Log.i(
-                "LOG_TAG", "HAHA: location list size is : " + parklocations.size.toString()
-            )
-
             var park1 = ParkLocationMarker()
 
             park1.createParkLocationMarker(
@@ -217,7 +200,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 location.getDouble("latitude"),
                 location.getDouble("longitude")
             )
-
             parklocations.add(park1)
         }
 
@@ -226,9 +208,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
         //loop through array list of unique locations and create markers
-        Log.i("LOG_TAG", "HAHA: starting marker loop")
         for (i in 0..parklocations.size - 1) {
-            Log.i("LOG_TAG", "HAHA: adding a marker to the map" + i)
             mMap.addMarker(
                 MarkerOptions()
                     .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
@@ -242,7 +222,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     private fun updateUserMarker() {
         // get user location
         val userlocation = LatLng(userLocationLat, userLocationLon)
-        Log.i("LOG_TAG", "HAHA: recieved user location lat and lon")
         mMap.addMarker(
             MarkerOptions()
                 .position(userlocation)
@@ -263,22 +242,26 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     //when an info window is clicked
     override fun onInfoWindowClick(p0: Marker?) {
-
-        //get the latlng position
+        //get the latlng position from the marker
         val markerPosition: LatLng? = p0?.getPosition()
-
-
 
         Toast.makeText(
             this, "Info window clicked " + markerPosition.toString(),
             Toast.LENGTH_SHORT
         ).show()
-        //find out which marker is clicked
 
+        //find which latlng that belongs to
+        for (i in 0..parklocations.size - 1) {
+            if (markerPosition?.equals(parklocations.get(i).getLatLng())!!) {
+                Log.i("LOG_TAG", "HAHA: CLICK INFO WINDOW: " + parklocations.get(i).getName())
+                val intent = Intent(this, event::class.java)
+                intent.putExtra("ID", parklocations.get(i).getID())
+                startActivity(intent)
+                break
+            }
 
-        //set the intent
+        }
 
-        //redirect the page to the event being clicked
     }
 
     // navigation purposes

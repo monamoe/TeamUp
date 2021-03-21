@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.models
 
 class SportLocation constructor(
     val locationPlaceID: String,

@@ -10,79 +10,100 @@
         android:id="@+id/eventTitle"
         android:layout_width="98dp"
         android:layout_height="33dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
         android:text="Title"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="59dp" />
-
-    <TextView
-        android:id="@+id/information"
-        android:layout_width="344dp"
-        android:layout_height="130dp"
-        android:text="info..."
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="213dp" />
-
-    <TextView
-        android:id="@+id/space"
-        android:layout_width="98dp"
-        android:layout_height="33dp"
-        android:text="Space: "
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="143dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/endtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="152dp"
         android:text="endTime"
-        tools:layout_editor_absoluteX="203dp"
-        tools:layout_editor_absoluteY="92dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startTime" />
 
     <TextView
         android:id="@+id/hostbio"
         android:layout_width="342dp"
         android:layout_height="96dp"
+        android:layout_marginTop="28dp"
         android:text="host info"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="415dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hostname" />
 
     <TextView
         android:id="@+id/activity"
         android:layout_width="98dp"
         android:layout_height="33dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="32dp"
         android:text="activity"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="100dp" />
-
-    <TextView
-        android:id="@+id/startTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="startTime"
-        tools:layout_editor_absoluteX="203dp"
-        tools:layout_editor_absoluteY="59dp" />
-
-    <TextView
-        android:id="@+id/hostname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Host: "
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="376dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eventTitle" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="24dp"
         android:text="Information"
-        tools:layout_editor_absoluteX="38dp"
-        tools:layout_editor_absoluteY="183dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/space" />
 
-    <Button
-        android:id="@+id/button"
+    <TextView
+        android:id="@+id/space"
+        android:layout_width="98dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="28dp"
+        android:text="Space: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity" />
+
+    <TextView
+        android:id="@+id/information"
+        android:layout_width="344dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="4dp"
+        android:text="info..."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/startTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="16dp"
+        android:text="startTime"
+        app:layout_constraintStart_toEndOf="@+id/eventTitle"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/hostname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Host: "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.096"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/information" />
+
+    <Button
+        android:id="@+id/attendBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
         android:text="Attend"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="627dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hostbio" />
 </androidx.constraintlayout.widget.ConstraintLayout>
