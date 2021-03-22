@@ -3,6 +3,7 @@ package app.helloteam.sportsbuddyapp
 import android.util.Log
 import com.parse.ParseObject
 import com.parse.ParseQuery
+import com.parse.ParseUser
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -34,16 +35,16 @@ object ParseCode {
         sl.save();
     }
 
-    fun EventDeletion(today:Date){
+    fun EventDeletion(today: Date){
         var deletedEvents= ArrayList<String>()
       val query = ParseQuery.getQuery<ParseObject>("Event")
         query.whereLessThan("date", today)//get all events where today's date is after their date
-        Log.i("LOG_TAG","HAHA today's date:" +today)
+        Log.i("LOG_TAG", "HAHA today's date:" + today)
         query.findInBackground { eventList, e ->
             if (e == null&& eventList.size>0) {
                 Log.d("Event", "Deleted: " + eventList.size + " events")//print how many events will be deleted
                 for (event in eventList){//loop through the expired events
-                    Log.i("LOG_TAG","HAHA Events's date:" +event.getDate("date"))
+                    Log.i("LOG_TAG", "HAHA Events's date:" + event.getDate("date"))
                     val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
                      innerQuery.whereEqualTo("locationPlaceId", event.get("sportPlaceID"))//get the event locations
                     innerQuery.limit = 1//should only find one location
@@ -52,7 +53,7 @@ object ParseCode {
                         if(match.getInt("amount")==1) {
                             match.deleteInBackground()
                         }else{
-                            match.put("amount", match.getInt("amount")-1)
+                            match.put("amount", match.getInt("amount") - 1)
                         }
                         match.save()
                     }
@@ -67,5 +68,23 @@ object ParseCode {
         for (event in deletedEvents){
             query2.whereEqualTo("locationPlaceId", event.toString())
         }
+    }
+
+    fun UpdateProfile(givenUser: User){
+        val query = ParseUser.getQuery()
+        query.whereEqualTo("username", givenUser.userName)
+        query.findInBackground { users, e ->
+            if (e == null) {
+                for(user in users){
+                    user.put("aboutMe", givenUser.aboutMe)
+                    user.put("favouriteSport", givenUser.favSport)
+                    Log.i("LOG_TAG", "HAHA saving profile")
+                    user.saveInBackground()
+                }
+            }else{
+                Log.i("LOG_TAG", "HAHA profile error" + e.message)
+            }
+        }
+
     }
 }

@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
+import com.parse.ParseObject
 import com.parse.ParseUser
 
 class ProfilePage : AppCompatActivity() {
@@ -19,10 +22,25 @@ class ProfilePage : AppCompatActivity() {
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        binding.userNameEdit.text= ParseUser.getCurrentUser().username
+        ParseUser.getCurrentUser().fetch()
+        binding.userNameEdit.text= ParseUser.getCurrentUser().username.toString()
         binding.dateText.text=ParseUser.getCurrentUser().createdAt.toString()
+        if (ParseUser.getCurrentUser().getString("aboutMe")!=null) {
+            binding.aboutMeText.text = ParseUser.getCurrentUser().getString("aboutMe").toString()
+        }
+        if (ParseUser.getCurrentUser().getString("favouriteSport")!=null) {
+            binding.favSportText.text = ParseUser.getCurrentUser().getString("favouriteSport").toString()
+        }
+
 
     }
+    fun editProfile(view: View) {
+        finish()
+        ParseUser.getCurrentUser().fetch()
+        val intent = Intent(this, EditProfilePage::class.java)
+        startActivity(intent)
+    }
+
     fun afterLogout() {//method to go back to login screen after logout
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
@@ -66,7 +84,6 @@ class ProfilePage : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
-
 
 
 
