@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SportsBuddyApp</string>
+    <string name="app_name">SportsBuddy</string>
     <string name="title_activity_profile_page">profile_page</string>
     <string name="title_activity_maps">maps</string>
 
