@@ -4,52 +4,124 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     tools:context=".ProfilePage">
 
-    <TextView
-        android:id="@+id/userName"
-        android:layout_width="158dp"
-        android:layout_height="23dp"
-        android:text="Name"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.225"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.474" />
+        app:layout_constraintVertical_bias="0.0">
 
-    <ImageView
-        android:id="@+id/profilepic"
-        android:layout_width="131dp"
-        android:layout_height="134dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="132dp"
-        android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-    <TextView
-        android:id="@+id/dateJoined"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date Joined"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.168"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.56" />
+            <ImageView
+                android:id="@+id/profilepic"
+                android:layout_width="131dp"
+                android:layout_height="134dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="136dp"
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="144dp"
+                android:src="@drawable/logo" />
 
-    <TextView
-        android:id="@+id/favSport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Favourite Sport"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.179"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.665" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="User Name: " />
+
+                <TextView
+                    android:id="@+id/userNameEdit"
+                    android:layout_width="235dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/dateJoined"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="Joined:" />
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="TextView" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp">
+
+                <TextView
+                    android:id="@+id/favSport"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="Favourite Sport:" />
+
+                <TextView
+                    android:id="@+id/favSportText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="None Selected" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:paddingEnd="10dp">
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="About Me:" />
+
+                <TextView
+                    android:id="@+id/aboutMeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="196dp"
+                    android:layout_weight="1"
+                    android:text="Max 200 Words" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
