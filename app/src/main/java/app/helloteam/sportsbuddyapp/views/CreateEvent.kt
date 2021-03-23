@@ -36,6 +36,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var hour: Int = 0
     private var min: Int = 0
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
+    
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
