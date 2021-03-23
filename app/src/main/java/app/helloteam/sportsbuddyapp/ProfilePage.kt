@@ -1,17 +1,45 @@
 package app.helloteam.sportsbuddyapp
 
+
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import app.helloteam.sportsbuddyapp.databinding.ActivityMainBinding
+
+private val PICK_IMG = 100
+var imageUri: Uri? = null
 
 class ProfilePage : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile_page)
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
+
+
+    val btnLoadPic =findViewById<Button>(R.id.btnLoadPicture)
+
+        btnLoadPic.setOnClickListener {
+            openGallery()
+        }
+
+
+
+
+
+
+
+
     }
     fun afterLogout() {//method to go back to login screen after logout
         val intent = Intent(this, MainActivity::class.java)
@@ -29,7 +57,7 @@ class ProfilePage : AppCompatActivity() {
             startActivity(intent)
             true
         }
-        R.id.action_logout  -> {
+        R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)
@@ -56,6 +84,38 @@ class ProfilePage : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
+
+
+   /* protected fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data.data
+            binding.profilepic.setImageURI(imageUri)
+        }
+    } */
+
+
+
+
+
+
+
+
+
+
+    fun openGallery() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_IMG)
+    }
+
+
+
+
+
+
+
+
+
 
 
 
