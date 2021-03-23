@@ -10,12 +10,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import app.helloteam.sportsbuddyapp.*
-import app.helloteam.sportsbuddyapp.data.SportTypes
-import app.helloteam.sportsbuddyapp.data.TimePickerFragment
+import app.helloteam.sportsbuddyapp.models.ParseCode
 import app.helloteam.sportsbuddyapp.models.SportEvents
 import app.helloteam.sportsbuddyapp.models.SportLocation
-import app.helloteam.sportsbuddyapp.parse.ParseCode
+import app.helloteam.sportsbuddyapp.models.SportTypes
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -120,6 +118,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 address = place.name.toString()
                 Log.i("LOG_TAG", "HAHA: address: " + address)
                 var latlong = getLocationFromAddress(this@CreateEvent, address)
+
                 if (latlong != null) {
                     long = latlong.longitude
                     lat = latlong.latitude
@@ -146,7 +145,14 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                         if (locationlist.size == 0) {
                             // create a new location
                             Log.i("LOG_TAG", "HAHA: creating new location")
-                            var ec = SportLocation(locationPlaceId, address, address, lat, long, 1)
+                            var ec =
+                                SportLocation(
+                                    locationPlaceId,
+                                    address,
+                                    address,
+                                    lat,
+                                    long
+                                )
                             ParseCode.LocationCreation(ec)
                             Log.i("LOG_TAG","HAHA: IN IF" )
                         }else{
@@ -166,7 +172,6 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     }
                 }
 
-                Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var se = SportEvents(
                     sportSelection, ParseUser.getCurrentUser().username,
                     hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
@@ -204,6 +209,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             Log.i("LOG_TAG","HAHA In LAT LONG METHOD NOT NULL")
 
             val location = address[0]
+            Log.i("LOG_TAG", "HAHA: address: " + address.toString())
             place = LatLng(location.latitude, location.longitude)
         } catch (ex: IOException) {
             Log.i("LOG_TAG","HAHA In LAT LONG METHOD ERROR "+ ex.toString())
