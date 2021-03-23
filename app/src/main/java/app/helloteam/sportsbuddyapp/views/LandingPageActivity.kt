@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -10,9 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import app.helloteam.sportsbuddyapp.*
+import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.parse.ParseUser
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 class LandingPageActivity : AppCompatActivity() {
@@ -72,7 +72,7 @@ class LandingPageActivity : AppCompatActivity() {
         startActivity(intent)
         true
     }
-        R.id.action_logout  -> {
+        R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)

@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.data
 
 enum class SportTypes(val sport: String) {
     NONE(""), SOCCER("Soccer"), BASKETBALL("Basketball"),

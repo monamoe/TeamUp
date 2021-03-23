@@ -1,6 +1,9 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.parse
 
 import android.util.Log
+import app.helloteam.sportsbuddyapp.models.SportEvents
+import app.helloteam.sportsbuddyapp.models.SportLocation
+import app.helloteam.sportsbuddyapp.models.User
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser

@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.data.SportTypes
+import app.helloteam.sportsbuddyapp.models.User
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
+import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.parse.ParseUser
 
 class EditProfilePage : AppCompatActivity() {

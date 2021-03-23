@@ -1,7 +1,8 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.icu.util.Calendar
 import android.location.Address
 import android.location.Geocoder
@@ -9,6 +10,12 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import app.helloteam.sportsbuddyapp.*
+import app.helloteam.sportsbuddyapp.data.SportTypes
+import app.helloteam.sportsbuddyapp.data.TimePickerFragment
+import app.helloteam.sportsbuddyapp.models.SportEvents
+import app.helloteam.sportsbuddyapp.models.SportLocation
+import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -165,6 +172,8 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
                 );
                 ParseCode.EventCreation(se)
+                val intent = Intent(this, LandingPageActivity::class.java)
+                startActivity(intent)
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }

@@ -16,7 +16,7 @@
         android:required="true" />
 
     <application
-        android:name=".ParseSetup"
+        android:name=".parse.ParseSetup"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
@@ -24,18 +24,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".EditProfilePage"></activity>
+        <activity android:name=".views.EditProfilePage"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
 
-        <activity android:name=".event" />
-        <activity android:name=".CreateEvent" />
-        <activity android:name=".ProfilePage" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".LandingPageActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".views.event" />
+        <activity android:name=".views.CreateEvent" />
+        <activity android:name=".views.ProfilePage" />
+        <activity android:name=".views.SignUpActivity" />
+        <activity android:name=".views.LandingPageActivity" />
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".map"
+            android:name=".views.map"
             android:label="@string/title_activity_maps">
 
         </activity>

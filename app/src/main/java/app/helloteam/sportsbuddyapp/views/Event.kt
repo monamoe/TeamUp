@@ -1,7 +1,8 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import app.helloteam.sportsbuddyapp.R
 
 class event : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
