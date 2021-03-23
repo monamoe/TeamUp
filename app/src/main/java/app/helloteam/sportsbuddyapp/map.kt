@@ -79,11 +79,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             } else {
                 locationComp.text = "Null"
             }
-
-            val btn = inputView.findViewById<Button>(R.id.btn)
-            btn.setOnClickListener {
-                Log.i("LOG_TAG", "HAHA: BUTTON CLICK EVENT")
-            }
         }
 
         override fun getInfoContents(p0: Marker): View {
