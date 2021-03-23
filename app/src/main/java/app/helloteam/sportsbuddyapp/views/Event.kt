@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> 20c5e593566334a78bd294c9792d092619a93910
 /*
 Author: monamoe
 Created : 03-20-2021
@@ -20,6 +17,8 @@ import android.widget.TextView
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.ParseCode
+
+
 
 
 

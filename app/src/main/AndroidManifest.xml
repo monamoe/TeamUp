@@ -25,11 +25,8 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity android:name=".eventslist"></activity>
-<<<<<<< HEAD
         <activity android:name=".views.EditProfilePage" />
-=======
-        <activity android:name=".views.EditProfilePage"></activity>
->>>>>>> 20c5e593566334a78bd294c9792d092619a93910
+
 
 
         <meta-data
