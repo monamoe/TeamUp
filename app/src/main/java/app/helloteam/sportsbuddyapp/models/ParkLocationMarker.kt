@@ -2,7 +2,7 @@
 // custom marker class
 // doing it this way so i can save the info window information into this class (title snippet image etc)
 
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.models
 
 
 import android.os.IBinder
@@ -16,7 +16,7 @@ class ParkLocationMarker {
 
 
     // ID of the location in the Locations Table
-    private var id: String = ""
+    private var id: String? = ""
 
     // Name of the location (park name)
     private var name: String = ""
@@ -30,7 +30,7 @@ class ParkLocationMarker {
 
     //constructor
     fun createParkLocationMarker(
-        inputId: String,
+        inputId: String?,
         inputName: String,
         inputLat: Double,
         inputLon: Double
@@ -43,7 +43,7 @@ class ParkLocationMarker {
 
 
     //getters
-    fun getID(): String {
+    fun getID(): String? {
         return id
     }
 
@@ -57,6 +57,10 @@ class ParkLocationMarker {
 
     fun getLon(): Double {
         return lon;
+    }
+
+    fun getLatLng(): LatLng {
+        return LatLng(this.getLat(), this.getLon())
     }
 
 }

@@ -1,14 +1,11 @@
 <resources>
-    <string name="app_name">SportsBuddyApp</string>
+    <string name="app_name">SportsBuddy</string>
     <string name="title_activity_profile_page">profile_page</string>
     <string name="title_activity_maps">maps</string>
-
 
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
     <string name="hello_world">Hello Square World!</string>
-
-
 </resources>
