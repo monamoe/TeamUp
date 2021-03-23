@@ -1,9 +1,7 @@
 package app.helloteam.sportsbuddyapp.parse
 
 import android.util.Log
-import app.helloteam.sportsbuddyapp.models.SportEvents
-import app.helloteam.sportsbuddyapp.models.SportLocation
-import app.helloteam.sportsbuddyapp.models.User
+import app.helloteam.sportsbuddyapp.models.*
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
@@ -36,6 +34,27 @@ object ParseCode {
         sl.put("longitude", ec.long)
         sl.put("amount", ec.amount)
         sl.save();
+    }
+
+    fun AddSport(spt: SportType){
+        var sp = ParseObject("Sport")
+        sp.put("SportID", spt.SportID)
+        sp.put("SportName", spt.SportName)
+        sp.put("Equipment", spt.Equipment)
+        sp.put("MinPlayers", spt.MinPlayers)
+        sp.put("MaxPlayers", spt.MaxPlayers)
+        sp.put("IdealLocation", spt.IdealLocation)
+        sp.put("IsTeamSport", spt.IsTeamSport)
+        sp.save();
+    }
+
+    fun CreateTeam(ct: Team){
+        var t = ParseObject("Team")
+        t.put("TeamID", ct.TeamID)
+        t.put("TeamLeader", ct.TeamLeader)
+        t.put("HomeLocationId", ct.HomeLocationId)
+        t.put("PrefferedSportId", ct.PrefferedSportId)
+        t.save();
     }
 
     fun EventDeletion(today: Date) {
