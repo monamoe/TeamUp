@@ -33,8 +33,9 @@ object ParseCode {
         sl.save()
     }
 
+    // Event Attend Table ( keeps track of which event the user is attending)
+    // Records Many to Many relationship between Event and Users table
     fun EventAttend(userId: Int, eventId: Int) {
-        //idk wtf the name of this table is sam please fix this
         var a = ParseObject("Location")
         a.put("userID", userId)
         a.put("eventID", eventId)

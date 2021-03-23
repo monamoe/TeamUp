@@ -115,6 +115,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 address = place.name.toString()
                 Log.i("LOG_TAG", "HAHA: address: " + address)
                 var latlong = getLocationFromAddress(this@CreateEvent, address)
+
                 if (latlong != null) {
                     long = latlong.longitude
                     lat = latlong.latitude
@@ -190,6 +191,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 return null
             }
             val location = address[0]
+            Log.i("LOG_TAG", "HAHA: address: " + address.toString())
             place = LatLng(location.latitude, location.longitude)
         } catch (ex: IOException) {
             ex.printStackTrace()

@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import app.helloteam.sportsbuddyapp.R.id.backBtn
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -43,8 +44,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     // custom Info Windows Rendering
-// https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
-// https://github.com/googlemaps/android-samples/blob/main/ApiDemos/kotlin/app/src/gms/java/com/example/kotlindemos/MarkerDemoActivity.kt
+    // https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
+    // https://github.com/googlemaps/android-samples/blob/main/ApiDemos/kotlin/app/src/gms/java/com/example/kotlindemos/MarkerDemoActivity.kt
     //    /** Demonstrates customizing the info window and/or its contents.  */
     internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
 
@@ -58,9 +59,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
 
 
+        // render info window for marker
         private fun render(marker: Marker, inputView: View) {
-
-
             // get the marker data out of the manager array list
             lateinit var PLM: ParkLocationMarker
             loop@ for (i in 0..parklocations.size - 1) {
@@ -70,15 +70,19 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 }
             }
 
-            //updating ui components
-            //location
-            val locationUI: String? = PLM.getName();
+            //updating ui components on the info window
+            val locationUI: String? = PLM.getName()
             Log.i("LOG_TAG", "HAHA: locationUI:" + locationUI)
-            val locationComp = inputView.findViewById<TextView>(R.id.location);
+            val locationComp = inputView.findViewById<TextView>(R.id.location)
             if (locationUI != null) {
                 locationComp.text = locationUI;
             } else {
-                locationComp.text = "Null";
+                locationComp.text = "Null"
+            }
+
+            val btn = inputView.findViewById<Button>(R.id.btn)
+            btn.setOnClickListener {
+                Log.i("LOG_TAG", "HAHA: BUTTON CLICK EVENT")
             }
         }
 
@@ -99,8 +103,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     //default user location values
-    var userLocationLon = 0.1;
-    var userLocationLat = 0.1;
+    var userLocationLon = 0.1
+    var userLocationLat = 0.1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,9 +112,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         setContentView(R.layout.activity_map)
 
         // back button
-        findViewById<Button>(R.id.backBtn).setOnClickListener {
+        findViewById<Button>(backBtn).setOnClickListener {
             val intent = Intent(this, LandingPageActivity::class.java)
-            // add data to intents using .putExtra("name", "value");
+            // add data to intents using .putExtra("name", "value")
             startActivity(intent)
         }
 
@@ -145,7 +149,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     // when the map is ready
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap;
+        mMap = googleMap
         Log.i("LOG_TAG", "Inside onMapReady()")
 
         //getting user location
@@ -168,13 +172,13 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //checking accuracy
                     // idk why we need this, yet
                     if (location.hasAccuracy()) {
-                        // setting value to  variable = location.accuracy();
+                        // setting value to  variable = location.accuracy()
                         // https://www.youtube.com/watch?v=DPKtC2HA9sE
                     }
                 }
 
                 //render the marker on the users location.
-                updateUserMarker();
+                updateUserMarker()
             }
         }
         //request permission
@@ -206,6 +210,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //create the ParkLocationMarker object and set info window for markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
 
+        // info window on click listener
+        mMap.setOnInfoWindowClickListener(this)
+
 
         //loop through array list of unique locations and create markers
         for (i in 0..parklocations.size - 1) {
@@ -216,6 +223,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
         }
+
+
     }
 
 
@@ -239,30 +248,29 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         )
     }
 
-
-    //when an info window is clicked
+    // info window event handler ( redirects to the view events page )
+    // redirects to eventlist.kt
     override fun onInfoWindowClick(p0: Marker?) {
         //get the latlng position from the marker
-        val markerPosition: LatLng? = p0?.getPosition()
+        val markerPosition = p0?.position
 
-        Toast.makeText(
-            this, "Info window clicked " + markerPosition.toString(),
-            Toast.LENGTH_SHORT
-        ).show()
-
-        //find which latlng that belongs to
-        for (i in 0..parklocations.size - 1) {
-            if (markerPosition?.equals(parklocations.get(i).getLatLng())!!) {
-                Log.i("LOG_TAG", "HAHA: CLICK INFO WINDOW: " + parklocations.get(i).getName())
-                val intent = Intent(this, event::class.java)
-                intent.putExtra("ID", parklocations.get(i).getID())
-                startActivity(intent)
-                break
+        // check if the user clicks their own marker?
+        if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
+            var locationId = ""
+            //find which latlng that belongs to
+            for (i in 0..parklocations.size - 1) {
+                if (markerPosition?.equals(parklocations.get(i).getLatLng())!!) {
+                    Log.i("LOG_TAG", "HAHA: CLICK INFO WINDOW: " + parklocations.get(i).getID())
+                    locationId = parklocations.get(i).getID().toString()
+                    break
+                }
             }
-
+            val intent = Intent(this, eventslist::class.java)
+            intent.putExtra("locationID", locationId)
+            startActivity(intent)
         }
-
     }
+
 
     // navigation purposes
     fun afterLogout() {//method to go back to login screen after logout
@@ -296,16 +304,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             val alert = dialogBuilder.create()
             alert.setTitle("Logout")
             alert.show()
-
-
             true
         }
-
         else -> {
             super.onOptionsItemSelected(item)
         }
     }
-
-
 }
 
