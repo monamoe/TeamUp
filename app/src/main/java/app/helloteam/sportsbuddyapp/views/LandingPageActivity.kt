@@ -10,8 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import app.helloteam.sportsbuddyapp.*
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+import app.helloteam.sportsbuddyapp.models.ParseCode
 import com.parse.ParseUser
 import java.util.*
 

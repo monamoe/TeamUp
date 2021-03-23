@@ -59,4 +59,8 @@ class ParkLocationMarker {
         return lon;
     }
 
+    fun getLatLng(): LatLng {
+        return LatLng(this.getLat(), this.getLon())
+    }
+
 }

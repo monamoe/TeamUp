@@ -38,7 +38,6 @@ class ParseSetup : Application() {
        })*/
 
 
-
 /* PULL From SERVER
  val query2 = ParseQuery.getQuery<ParseObject>("Score")
 
