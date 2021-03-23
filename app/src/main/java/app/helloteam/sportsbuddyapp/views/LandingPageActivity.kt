@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -22,7 +22,7 @@ class LandingPageActivity : AppCompatActivity() {
         val date = Date()
         Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
 
-        ParseCode.EventDeletion(date)
+      //  ParseCode.EventDeletion(date) //method to delete expired events and locations
 
         val showuser = findViewById<TextView>(R.id.ShowUsername)
 
@@ -71,7 +71,7 @@ class LandingPageActivity : AppCompatActivity() {
         startActivity(intent)
         true
     }
-        R.id.action_logout  -> {
+        R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)

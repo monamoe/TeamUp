@@ -1,4 +1,5 @@
 package app.helloteam.sportsbuddyapp.models
+import app.helloteam.sportsbuddyapp.data.SportTypes
 
 class SportEvents constructor(
     val type: SportTypes,

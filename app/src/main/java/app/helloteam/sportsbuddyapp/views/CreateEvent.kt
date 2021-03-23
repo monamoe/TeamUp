@@ -1,7 +1,8 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.icu.util.Calendar
 import android.location.Address
 import android.location.Geocoder
@@ -43,7 +44,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var address: String = ""
     private var lat: Double = 0.0
     private var long: Double = 0.0
-    private lateinit var date: Date
+    private var date: Date = Date()
     private val context: Context = this
 
 
@@ -95,11 +96,13 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             dayPicked = day
             yearPicked = year
             monthPicked = month
-        }
-        val format = SimpleDateFormat("yyyy-MM-dd")
 
-        val dateString: String = format.format(Date())
-        date = format.parse("$yearPicked-$monthPicked-$dayPicked")
+            val format = SimpleDateFormat("yyyy-MM-dd")
+
+            val dateString: String = format.format(Date())
+            date = format.parse("$yearPicked-$monthPicked-$dayPicked")
+            Log.i("LOG_TAG","HAHA Event date:" +date)
+        }
 
         //address
         val autocompleteFragment =
@@ -151,6 +154,15 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                                     long
                                 )
                             ParseCode.LocationCreation(ec)
+                            Log.i("LOG_TAG","HAHA: IN IF" )
+                        }else{
+                            Log.i("LOG_TAG","HAHA: IN ELSE")
+                            for(locations in locationlist) {
+                                Log.i("LOG_TAG","HAHA In FOR")
+                                locations.put("amount", locations.getInt("amount")+1)
+                                Log.i("LOG_TAG","HAHA "+ locations.getInt("amount"))
+                                locations.save()
+                            }
                         }
                     } else {
                         Log.i(
@@ -165,6 +177,8 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
                 );
                 ParseCode.EventCreation(se)
+                val intent = Intent(this, LandingPageActivity::class.java)
+                startActivity(intent)
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
@@ -181,6 +195,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     }
 
     fun getLocationFromAddress(context: Context?, strAddress: String?): LatLng? {
+        Log.i("LOG_TAG","HAHA In LAT LONG METHOD ")
         val coder = Geocoder(context)
         val address: List<Address>?
         var place: LatLng? = null
@@ -188,12 +203,17 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             // May throw an IOException
             address = coder.getFromLocationName(strAddress, 5)
             if (address == null) {
+                Log.i("LOG_TAG","HAHA In LAT LONG METHOD NUll ")
                 return null
             }
+            Log.i("LOG_TAG","HAHA In LAT LONG METHOD NOT NULL")
+
             val location = address[0]
             Log.i("LOG_TAG", "HAHA: address: " + address.toString())
             place = LatLng(location.latitude, location.longitude)
         } catch (ex: IOException) {
+            Log.i("LOG_TAG","HAHA In LAT LONG METHOD ERROR "+ ex.toString())
+
             ex.printStackTrace()
         }
         return place

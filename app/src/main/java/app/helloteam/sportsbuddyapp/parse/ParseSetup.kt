@@ -1,11 +1,8 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.parse
 
 import android.app.Application
-import android.widget.Toast
 import com.parse.Parse
 import com.parse.ParseACL
-import com.parse.ParseObject
-import com.parse.ParseUser
 
 class ParseSetup : Application() {
     override fun onCreate() {

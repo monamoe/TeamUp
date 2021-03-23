@@ -1,19 +1,20 @@
+
 /*
 Author: monamoe
 Created : 03-20-2021
-shows inforamtion on the selected event, gives user option to attend the event
+shows information on the selected event, gives user option to attend the event
 uses activity_event.xml
  */
 
 
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
+
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import app.helloteam.sportsbuddyapp.models.ParseCode
+import app.helloteam.sportsbuddyapp.R
+
+
 
 class event : AppCompatActivity() {
 

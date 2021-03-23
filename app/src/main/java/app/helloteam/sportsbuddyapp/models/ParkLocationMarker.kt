@@ -2,7 +2,7 @@
 // custom marker class
 // doing it this way so i can save the info window information into this class (title snippet image etc)
 
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.models
 
 
 import android.os.IBinder

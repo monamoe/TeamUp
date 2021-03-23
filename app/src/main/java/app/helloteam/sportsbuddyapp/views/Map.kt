@@ -7,7 +7,7 @@ uses SportLocation to retrive marker locations
  */
 
 
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.views
 
 
 import android.content.DialogInterface
