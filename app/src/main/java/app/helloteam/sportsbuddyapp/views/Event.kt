@@ -1,4 +1,3 @@
-
 /*
 Author: monamoe
 Created : 03-20-2021
@@ -17,10 +16,6 @@ import android.widget.TextView
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.ParseCode
-
-
-
-
 
 
 class event : AppCompatActivity() {

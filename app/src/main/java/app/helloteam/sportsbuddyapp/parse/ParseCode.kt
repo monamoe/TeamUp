@@ -104,6 +104,4 @@ object ParseCode {
         a.put("eventID", eventId)
         a.save()
     }
-
-
 }

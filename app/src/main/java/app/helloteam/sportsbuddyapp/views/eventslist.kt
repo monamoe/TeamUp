@@ -9,6 +9,7 @@ package app.helloteam.sportsbuddyapp.views
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.inflate
@@ -35,23 +36,36 @@ class eventslist : AppCompatActivity() {
 
         // Get location ID
         val locationID: String = intent.getStringExtra("locationID").toString()
+        Log.i(
+            "LOG_TAG",
+            "HAHA: recieved locationID of : " + locationID
+        )
 
         // events array list
         eventList = ArrayList<EventDisplayer>()
 
         // populate array list with events that match the location ID of the marker selected
         val query = ParseQuery.getQuery<ParseObject>("Event")
-        query.whereEqualTo("sportPlaceID", locationID);
-        val eventlist = query.find()
-        for (event in eventlist) {
-            var e1 = EventDisplayer(
-                event.getString("objectId").toString(),
-                "Event Name"
+        val eventquery = query.find()
+        for (event in eventquery) {
+            val sportId = event.getString("sportPlaceID").toString()
+            Log.i(
+                "LOG_TAG",
+                "HAHA: Comparing sport ids::: " + locationID + " - " + sportId
             )
-            eventList.add(e1);
+            if (sportId.equals(locationID)) {
+                Log.i("LOG_TAG", "HAHA: MATCH!)")
+                var e1 = EventDisplayer(
+                    event.getString("objectId").toString(),
+                    "Event Name"
+                )
+                eventList.add(e1);
+            }
         }
+        Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
 
-        var adapter: EventListAdapter = EventListAdapter(this)
+        // list view adapter
+        listview.adapter = EventListAdapter(this)
     }
 
 
@@ -62,7 +76,7 @@ class eventslist : AppCompatActivity() {
 
         // overrides
         override fun getCount(): Int {
-            return 400;
+            return eventList.size;
         }
 
         override fun getItem(position: Int): Any {
@@ -77,13 +91,15 @@ class eventslist : AppCompatActivity() {
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
 
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.activity_eventslist, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false);
+
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
             val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
+            Log.i("LOG_TAG", "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position)
             eventTitle.text = eventList.get(position).name
             return rowMain;
         }
