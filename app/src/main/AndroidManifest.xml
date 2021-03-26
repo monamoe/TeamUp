@@ -33,6 +33,7 @@
         <activity android:name=".views.event" />
         <activity android:name=".views.CreateEvent" />
         <activity android:name=".views.ProfilePage" />
+        <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.SignUpActivity" />
         <activity android:name=".views.LandingPageActivity" />
         <activity android:name=".views.MainActivity">
