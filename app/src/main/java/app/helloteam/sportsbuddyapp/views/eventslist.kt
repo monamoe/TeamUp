@@ -7,6 +7,7 @@ Manages List of events
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.inflate
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
@@ -34,6 +36,11 @@ class eventslist : AppCompatActivity() {
 
         val listview = findViewById<ListView>(R.id.listview)
 
+        Log.i(
+            "LOG_TAG",
+            "-----------------------------------------------------------\n-----------------------------------------------------------\n"
+        )
+
         // Get location ID
         val locationID: String = intent.getStringExtra("locationID").toString()
         Log.i(
@@ -42,30 +49,42 @@ class eventslist : AppCompatActivity() {
         )
 
         // events array list
-        eventList = ArrayList<EventDisplayer>()
+        eventList = ArrayList()
 
         // populate array list with events that match the location ID of the marker selected
         val query = ParseQuery.getQuery<ParseObject>("Event")
         val eventquery = query.find()
         for (event in eventquery) {
             val sportId = event.getString("sportPlaceID").toString()
-            Log.i(
-                "LOG_TAG",
-                "HAHA: Comparing sport ids::: " + locationID + " - " + sportId
-            )
             if (sportId.equals(locationID)) {
-                Log.i("LOG_TAG", "HAHA: MATCH!)")
+                Log.i(
+                    "LOG_TAG", "HAHA: MATCH!)" +
+                            event.objectId
+                )
                 var e1 = EventDisplayer(
-                    event.getString("objectId").toString(),
+                    event.objectId,
                     "Event Name"
                 )
                 eventList.add(e1);
             }
         }
+
         Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
 
         // list view adapter
         listview.adapter = EventListAdapter(this)
+
+        listview.setOnItemClickListener { parent, view, position, id ->
+            Log.i("LOG_TAG", "HAHA: position" + position)
+            Log.i(
+                "LOG_TAG",
+                "HAHA: printing the position info " + eventList.get(position).toString()
+            )
+            val eventID = eventList.get(position).getID()
+            val intent = Intent(this, event::class.java)
+            intent.putExtra("eventID", eventID)
+            startActivity(intent)
+        }
     }
 
 
@@ -89,17 +108,18 @@ class eventslist : AppCompatActivity() {
 
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
-
             val lI = LayoutInflater.from(mContext)
             val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false);
-
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
             val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
-            Log.i("LOG_TAG", "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position)
+            Log.i(
+                "LOG_TAG",
+                "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position
+            )
             eventTitle.text = eventList.get(position).name
             return rowMain;
         }
@@ -119,6 +139,9 @@ class eventslist : AppCompatActivity() {
             this.name = name
         }
 
+        fun getID(): String {
+            return this.id
+        }
 
         // main constuctor
         constructor(id: String, name: String, time: String, host: String) {
@@ -139,3 +162,5 @@ class eventslist : AppCompatActivity() {
         }
     }
 }
+
+

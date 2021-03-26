@@ -30,7 +30,6 @@
             android:value="@string/google_key" />
 
         <activity android:name=".views.eventslist" />
-        <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.event" />
         <activity android:name=".views.CreateEvent" />
         <activity android:name=".views.ProfilePage" />

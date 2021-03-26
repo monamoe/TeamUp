@@ -96,10 +96,9 @@ object ParseCode {
         }
     }
 
-    // Event Attend Table ( keeps track of which event the user is attending)
-    // Records Many to Many relationship between Event and Users table
-    fun EventAttend(userId: Int, eventId: Int) {
-        var a = ParseObject("Location")
+    // Event Attend Table ( keeps track of which event the user is attending) - Records Many to Many relationship between Event and Users table
+    fun EventAttend(userId: String, eventId: String) {
+        var a = ParseObject("AttendeeList")
         a.put("userID", userId)
         a.put("eventID", eventId)
         a.save()

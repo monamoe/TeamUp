@@ -57,6 +57,8 @@ class SignUpActivity : AppCompatActivity() {
 
         backBtn.setOnClickListener {//allows user to go back to login page from signup
             val intent = Intent(this, MainActivity::class.java)
+
+
             startActivity(intent)
         }
     }
