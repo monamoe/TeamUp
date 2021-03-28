@@ -1,13 +1,8 @@
-/*
-Author: monamoe
-Created:  March 21 2020
-Manages List of events
- */
-
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
+import android.location.Address
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,56 +18,52 @@ import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import app.helloteam.sportsbuddyapp.R
 import com.parse.ParseObject
 import com.parse.ParseQuery
+import com.parse.ParseUser
+
+lateinit private var eventList: ArrayList<ViewPlayerEvents.EventDisplayer>
 
 
-lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
-
-class eventslist : AppCompatActivity() {
-
-
+class ViewPlayerEvents : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_eventslist)
+        setContentView(R.layout.activity_view_player_events)
 
         val listview = findViewById<ListView>(R.id.listview)
 
-        Log.i(
-            "LOG_TAG",
-            "-----------------------------------------------------------\n-----------------------------------------------------------\n"
-        )
-
-        // Get location ID
-        val locationID: String = intent.getStringExtra("locationID").toString()
-        Log.i(
-            "LOG_TAG",
-            "HAHA: recieved locationID of : " + locationID
-        )
 
         // events array list
         eventList = ArrayList()
 
         // populate array list with events that match the location ID of the marker selected
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-        val eventquery = query.find()
-        for (event in eventquery) {
-            val sportId = event.getString("sportPlaceID").toString()
-            if (sportId.equals(locationID)) {
-                Log.i(
-                    "LOG_TAG", "HAHA: MATCH!)" +
-                            event.objectId
-                )
+        val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")
+        attendQuery.whereEqualTo("userID", ParseUser.getCurrentUser().objectId)
+        val attednees = attendQuery.find()
+        Log.i(
+            "LOG_TAG",
+            "HAHA: events attending : " + attednees.size
+        )
+        for(a in attednees) {
+
+
+            val query = ParseQuery.getQuery<ParseObject>("Event")
+            query.whereEqualTo("objectId", a.getString("eventID"))
+            val eventquery = query.find()
+
+            for (event in eventquery) {
                 val queryL = ParseQuery.getQuery<ParseObject>("Location")
                 queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
                 queryL.setLimit(1)
                 val lQuery = queryL.find()
-                var e1 = EventDisplayer(
-                    event.objectId,
-                    event.getString("eventType")!!,
-                    lQuery.get(0).getString("Address")!!,
-                    event.getDate("date").toString(),
-                    "Hosted by: "+event.getString("host")!!
-                )
-                eventList.add(e1);
+
+                    var e1 = EventDisplayer(
+                        event.objectId,
+                        event.getString("eventType")!!,
+                        lQuery.get(0).getString("Address")!!,
+                        event.getDate("date").toString(),
+                        "Hosted by: "+event.getString("host")!!
+                    )
+                    eventList.add(e1);
+
             }
         }
 
@@ -125,9 +116,9 @@ class eventslist : AppCompatActivity() {
 
             Log.i(
                 "LOG_TAG",
-                "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position +" and "+ eventList.get(0).name
+                "HAHA: Displaying data for position from event " + eventList.size.toString() + " " + position+" "+
+                        eventList[position].name
             )
-            eventTitle.setText(eventList.get(position).name)
             eventTitle.text=(eventList.get(position).name)
             eventAddress.text=(eventList.get(position).address)
             eventTime.text=(eventList.get(position).time)
@@ -151,7 +142,7 @@ class eventslist : AppCompatActivity() {
         }
 
         // main constuctor
-        constructor(id: String, name: String, address: String, time: String, host: String) {
+        constructor(id: String, name: String, address: String,time: String, host: String) {
             this.id = id
             this.name = name
             this.address=address

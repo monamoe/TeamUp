@@ -46,14 +46,11 @@ object ParseCode {
                 )//print how many events will be deleted
                 for (event in eventList) {//loop through the expired events
                     Log.i("LOG_TAG", "HAHA Events's date:" + event.getDate("date"))
-                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
-                    innerQuery.whereEqualTo(
-                        "locationPlaceId",
-                        event.get("sportPlaceID")
-                    )//get the event locations
+                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")//location query
+                    innerQuery.whereEqualTo("locationPlaceId",event.get("sportPlaceID"))//get the event locations
                     innerQuery.limit = 1//should only find one location
                     val matches = innerQuery.find()
-                    for (match in matches) {
+                    for (match in matches) {//deleting locations
                         if (match.getInt("amount") == 1) {
                             match.deleteInBackground()
                         } else {
@@ -61,6 +58,15 @@ object ParseCode {
                         }
                         match.save()
                     }
+
+                    val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")//delete attendies in expired events
+                    attendQuery.whereEqualTo("eventID", event.objectId)
+                    val attednees = attendQuery.find()
+                    for (member in attednees){
+                        member.deleteInBackground()
+                        member.save()
+                    }
+
                     event.deleteInBackground()
                     event.save()
                 }
