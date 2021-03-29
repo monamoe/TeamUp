@@ -104,4 +104,11 @@ object ParseCode {
         a.put("eventID", eventId)
         a.save()
     }
+    fun EventLeave(objectId: String) {
+        val a = ParseQuery.getQuery<ParseObject>("AttendeeList")
+         a.whereEqualTo("objectId", objectId)
+         var l= a.find()
+        l[0].deleteInBackground()
+        l[0].saveInBackground()
+    }
 }

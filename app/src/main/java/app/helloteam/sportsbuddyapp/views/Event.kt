@@ -27,7 +27,7 @@ class event : AppCompatActivity() {
 
     var userId: String = "0000000"
     var eventID: String = "0000000"
-
+    var attending: Boolean= false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
@@ -50,33 +50,64 @@ class event : AppCompatActivity() {
         val information = findViewById<TextView>(R.id.information)
         val hostname = findViewById<TextView>(R.id.hostname)
         val hostbio = findViewById<TextView>(R.id.hostbio)
+        attendBtn.text = "Attend"
 
         // populate array list with events that match the location ID of the marker selected
         // this query needs to be redone
         val query = ParseQuery.getQuery<ParseObject>("Event")
+        query.whereEqualTo("objectId", eventID)
         val eventquery = query.find()
         for (event in eventquery) {
-            if (event.getString("objectId").toString().equals(eventID)) {
-                startTime.setText(event.getString("").toString())
-                eventTitle.setText("THIS EVENT DOESNT HAVE A TITLE")
+            val locationQuery = ParseQuery.getQuery<ParseObject>("Location")
+            locationQuery.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
+            val location=locationQuery.find()
+            val queryU = ParseUser.getQuery()
+            queryU.whereEqualTo("username", event.getString("host"))
+            val host= queryU.find()
+                startTime.setText(event.getDate("date").toString())
+                eventTitle.setText(event.getString("eventType").toString())
                 hostname.setText(event.getString("host").toString())
-                hostbio.setText("this even is hosted by someone prolly nammed riley who hates cows")
+                 space.setText(location[0].getString("Address").toString())
+                hostbio.setText(host[0].getString("aboutMe").toString())
+            }
+        val currentUser = ParseUser.getCurrentUser()
+        if (currentUser != null) {
+            userId = currentUser.objectId
+        }
+        var objectID:String=""
+        val queryA = ParseQuery.getQuery<ParseObject>("AttendeeList")
+        queryA.whereEqualTo("userID", userId)
+        val attendees = queryA.find()
+        for(a in attendees){
+            if(a.getString("eventID")==eventID){
+                attending=true
+                objectID=a.objectId
+                attendBtn.text = "Leave"
             }
         }
 
 
+
         //
         attendBtn.setOnClickListener {
-            val currentUser = ParseUser.getCurrentUser()
-            if (currentUser != null) {
-                userId = currentUser.objectId
-            }
 
-            ParseCode.EventAttend(userId, eventID)
-            Toast.makeText(this, "Successfully registered for this event", Toast.LENGTH_SHORT)
-                .show()
-            val intent = Intent(this, map::class.java)
-            startActivity(intent)
+            if(attending){
+                ParseCode.EventLeave(objectID)
+                Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
+                    .show()
+                val intent = Intent(this, map::class.java)
+                startActivity(intent)
+            }else {
+                Log.i(
+                    "LOG_TAG",
+                    "no matches : " + eventID
+                )
+                ParseCode.EventAttend(userId, eventID)
+                Toast.makeText(this, "Successfully registered for this event", Toast.LENGTH_SHORT)
+                    .show()
+                val intent = Intent(this, map::class.java)
+                startActivity(intent)
+            }
         }
 
     }
