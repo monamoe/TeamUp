@@ -35,6 +35,13 @@ android {
     }
 }
 
+
+
+
+
+
+
+
 dependencies {
     implementation "com.github.parse-community.Parse-SDK-Android:parse:1.25.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

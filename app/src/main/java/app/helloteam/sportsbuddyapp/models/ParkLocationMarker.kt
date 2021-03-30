@@ -5,11 +5,7 @@
 package app.helloteam.sportsbuddyapp.models
 
 
-import android.os.IBinder
-import com.google.android.gms.dynamic.IObjectWrapper
-import com.google.android.gms.internal.maps.zzt
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 
 
 class ParkLocationMarker {

@@ -15,11 +15,6 @@ object ParseCode {
         var sportEvent = ParseObject("Event")
         sportEvent.put("eventType", se.type.sport)
         sportEvent.put("host", se.userName)
-        sportEvent.put("hour", se.hour)
-        sportEvent.put("minute", se.minute)
-        sportEvent.put("year", se.year)
-        sportEvent.put("month", se.month)
-        sportEvent.put("day", se.day)
         sportEvent.put("sportPlaceID", se.eventPlaceID)
         sportEvent.put("date", se.date)
         sportEvent.save()
@@ -70,14 +65,11 @@ object ParseCode {
                 )//print how many events will be deleted
                 for (event in eventList) {//loop through the expired events
                     Log.i("LOG_TAG", "HAHA Events's date:" + event.getDate("date"))
-                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
-                    innerQuery.whereEqualTo(
-                        "locationPlaceId",
-                        event.get("sportPlaceID")
-                    )//get the event locations
+                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")//location query
+                    innerQuery.whereEqualTo("locationPlaceId",event.get("sportPlaceID"))//get the event locations
                     innerQuery.limit = 1//should only find one location
                     val matches = innerQuery.find()
-                    for (match in matches) {
+                    for (match in matches) {//deleting locations
                         if (match.getInt("amount") == 1) {
                             match.deleteInBackground()
                         } else {
@@ -85,6 +77,15 @@ object ParseCode {
                         }
                         match.save()
                     }
+
+                    val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")//delete attendies in expired events
+                    attendQuery.whereEqualTo("eventID", event.objectId)
+                    val attednees = attendQuery.find()
+                    for (member in attednees){
+                        member.deleteInBackground()
+                        member.save()
+                    }
+
                     event.deleteInBackground()
                     event.save()
                 }
@@ -115,14 +116,18 @@ object ParseCode {
         }
     }
 
-    // Event Attend Table ( keeps track of which event the user is attending)
-    // Records Many to Many relationship between Event and Users table
-    fun EventAttend(userId: Int, eventId: Int) {
-        var a = ParseObject("Location")
+    // Event Attend Table ( keeps track of which event the user is attending) - Records Many to Many relationship between Event and Users table
+    fun EventAttend(userId: String, eventId: String) {
+        var a = ParseObject("AttendeeList")
         a.put("userID", userId)
         a.put("eventID", eventId)
         a.save()
     }
-
-
+    fun EventLeave(objectId: String) {
+        val a = ParseQuery.getQuery<ParseObject>("AttendeeList")
+         a.whereEqualTo("objectId", objectId)
+         var l= a.find()
+        l[0].deleteInBackground()
+        l[0].saveInBackground()
+    }
 }

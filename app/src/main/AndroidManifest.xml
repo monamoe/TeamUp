@@ -24,17 +24,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".eventslist"></activity>
-        <activity android:name=".views.EditProfilePage" />
-
-
+        <activity android:name=".views.ViewPlayerEvents"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
+
+        <activity android:name=".views.eventslist" />
         <activity android:name=".views.event" />
         <activity android:name=".views.CreateEvent" />
         <activity android:name=".views.ProfilePage" />
+        <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.SignUpActivity" />
         <activity android:name=".views.LandingPageActivity" />
         <activity android:name=".views.MainActivity">

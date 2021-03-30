@@ -10,6 +10,7 @@ uses SportLocation to retrive marker locations
 package app.helloteam.sportsbuddyapp.views
 
 
+import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -154,7 +155,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         if (ActivityCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             //this event only runs when the onMapReady funtion is finished running
@@ -174,7 +175,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                         // https://www.youtube.com/watch?v=DPKtC2HA9sE
                     }
                 }
-
                 //render the marker on the users location.
                 updateUserMarker()
             }
@@ -182,25 +182,27 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //request permission
         else {
             requestPermissions(
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSION_FINE_LOCATION
             )
         }
 
-        //get marker locations
+        //get marker locations from Location tables
         val query = ParseQuery.getQuery<ParseObject>("Location")
         val locationlist = query.find()
-        Log.i("LOG_TAG", "HAHA: ran query")
-
-
+        Log.i("LOG_TAG", "HAHA populating array list")
         for (location in locationlist) {
             var park1 = ParkLocationMarker()
-
             park1.createParkLocationMarker(
                 location.getString("locationPlaceId"),
                 location.getString("Name")!!,
                 location.getDouble("latitude"),
                 location.getDouble("longitude")
+            )
+            Log.i(
+                "LOG_TAG",
+                "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
+                    .toString() + " " + park1.getLon().toString()
             )
             parklocations.add(park1)
         }
@@ -211,8 +213,11 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         // info window on click listener
         mMap.setOnInfoWindowClickListener(this)
 
-
-        //loop through array list of unique locations and create markers
+        Log.i(
+            "LOG_TAG",
+            "HAHA DISPLAYING MARKERS"
+        )
+        //display the markers
         for (i in 0..parklocations.size - 1) {
             mMap.addMarker(
                 MarkerOptions()
@@ -220,9 +225,13 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .title(parklocations.get(i).getID())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
             )
+            Log.i(
+                "LOG_TAG",
+                "HAHA adding location1 :" + parklocations.get(i)
+                    .getID() + ", " + parklocations.get(i).getLat()
+                    .toString() + ", " + parklocations.get(i).getLon().toString()
+            )
         }
-
-
     }
 
 
@@ -246,23 +255,25 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         )
     }
 
-    // info window event handler ( redirects to the view events page )
-    // redirects to eventlist.kt
+    // info window event handler ( redirects to the view eventslist.kt )
     override fun onInfoWindowClick(p0: Marker?) {
         //get the latlng position from the marker
         val markerPosition = p0?.position
 
-        // check if the user clicks their own marker?
+        // if the user clicks their own marker
         if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
             var locationId = ""
             //find which latlng that belongs to
             for (i in 0..parklocations.size - 1) {
                 if (markerPosition?.equals(parklocations.get(i).getLatLng())!!) {
-                    Log.i("LOG_TAG", "HAHA: CLICK INFO WINDOW: " + parklocations.get(i).getID())
                     locationId = parklocations.get(i).getID().toString()
                     break
                 }
             }
+            Log.i(
+                "LOG_TAG",
+                "HAHA: redirecting to info window with id of: " + locationId
+            )
             val intent = Intent(this, eventslist::class.java)
             intent.putExtra("locationID", locationId)
             startActivity(intent)
