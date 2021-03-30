@@ -56,6 +56,7 @@ object ParseCode {
         t.save();
     }
 
+    //Function for deleting events
     fun EventDeletion(today: Date) {
         var deletedEvents = ArrayList<String>()
         val query = ParseQuery.getQuery<ParseObject>("Event")
@@ -103,6 +104,7 @@ object ParseCode {
         }
     }
 
+    //Function to update a user's profile
     fun UpdateProfile(givenUser: User) {
         val query = ParseUser.getQuery()
         query.whereEqualTo("username", givenUser.userName)
