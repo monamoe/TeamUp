@@ -95,7 +95,7 @@ class ProfilePage : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            profilepic.setImageURI(imageUri)
+            binding.profilepic.setImageURI(imageUri)
         }
     }
 
