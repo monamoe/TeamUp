@@ -10,14 +10,24 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 
-private val PICK_IMG = 100
-var imageUri: Uri? = null
+
+
 
 class ProfilePage : AppCompatActivity() {
+    lateinit var profilepic: ImageView
+    lateinit var button: Button
+    private val pickImage = 100
+    private var imageUri: Uri? = null
 
     private lateinit var binding: ActivityMainBinding
 
@@ -28,9 +38,11 @@ class ProfilePage : AppCompatActivity() {
 
 
     val btnLoadPic =findViewById<Button>(R.id.btnLoadPicture)
+        val profilepic = findViewById<ImageView>(R.id.profilepic)
 
         btnLoadPic.setOnClickListener {
-            openGallery()
+            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery, pickImage)
         }
 
 
@@ -86,13 +98,14 @@ class ProfilePage : AppCompatActivity() {
     }
 
 
-   /* protected fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
-            imageUri = data.data
-            binding.profilepic.setImageURI(imageUri)
+        if (resultCode == RESULT_OK && requestCode == pickImage) {
+
+                imageUri = data?.data
+            profilepic.setImageURI(imageUri)
         }
-    } */
+    }
 
 
 
@@ -103,11 +116,11 @@ class ProfilePage : AppCompatActivity() {
 
 
 
-    fun openGallery() {
+   /* fun openGallery() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, PICK_IMG)
     }
-
+    */
 
 
 
