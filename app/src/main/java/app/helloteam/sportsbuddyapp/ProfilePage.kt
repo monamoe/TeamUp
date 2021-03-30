@@ -13,14 +13,7 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import app.helloteam.sportsbuddyapp.databinding.ActivityMainBinding
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
-
-
+import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
 
 
 class ProfilePage : AppCompatActivity() {
@@ -29,18 +22,18 @@ class ProfilePage : AppCompatActivity() {
     private val pickImage = 100
     private var imageUri: Uri? = null
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityProfilePageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
 
     val btnLoadPic =findViewById<Button>(R.id.btnLoadPicture)
         val profilepic = findViewById<ImageView>(R.id.profilepic)
 
-        btnLoadPic.setOnClickListener {
+        binding.btnLoadPicture.setOnClickListener {
             val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
             startActivityForResult(gallery, pickImage)
         }
@@ -101,8 +94,7 @@ class ProfilePage : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
-
-                imageUri = data?.data
+            imageUri = data?.data
             profilepic.setImageURI(imageUri)
         }
     }
