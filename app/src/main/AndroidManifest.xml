@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".views.ViewPlayerEvents"></activity>
+        <activity android:name=".views.HostEvents"></activity>
+        <activity android:name=".views.ViewPlayerEvents" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

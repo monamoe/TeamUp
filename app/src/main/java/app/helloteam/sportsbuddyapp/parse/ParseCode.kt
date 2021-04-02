@@ -93,10 +93,6 @@ object ParseCode {
                 Log.d("Event", "Error: " + e)
             }
         }
-        val query2 = ParseQuery.getQuery<ParseObject>("Location")
-        for (event in deletedEvents) {
-            query2.whereEqualTo("locationPlaceId", event.toString())
-        }
     }
 
     fun UpdateProfile(givenUser: User) {
@@ -130,4 +126,37 @@ object ParseCode {
         l[0].deleteInBackground()
         l[0].saveInBackground()
     }
-}
+
+    fun CancelEvent(eventId: String){
+        Log.i("LOG_TAG", "HAHA profile error" + eventId)
+        val query = ParseQuery.getQuery<ParseObject>("Event")
+        query.whereEqualTo("objectId", eventId)//get events based on objectId
+        query.findInBackground { eventList, e ->
+            Log.i("LOG_TAG", "HAHA profile error" + eventList.size)
+            val innerQuery = ParseQuery.getQuery<ParseObject>("Location")//location query
+                    innerQuery.whereEqualTo("locationPlaceId",eventList.get(0).get("sportPlaceID"))//get the event locations
+                    innerQuery.limit = 1//should only find one location
+                    val matches = innerQuery.find()
+                    for (match in matches) {//deleting locations
+                        if (match.getInt("amount") == 1) {
+                            match.deleteInBackground()
+                        } else {
+                            match.put("amount", match.getInt("amount") - 1)
+                        }
+                        match.save()
+                    }
+
+                    val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")//delete attendies in expired events
+                    attendQuery.whereEqualTo("eventID", eventList.get(0).objectId)
+                    val attednees = attendQuery.find()
+                    for (member in attednees){
+                        member.deleteInBackground()
+                        member.save()
+                    }
+
+                    eventList.get(0).deleteInBackground()
+                    eventList.get(0).save()
+
+            }
+        }
+    }

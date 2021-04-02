@@ -54,16 +54,16 @@ class ViewPlayerEvents : AppCompatActivity() {
                 queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
                 queryL.setLimit(1)
                 val lQuery = queryL.find()
-
+                if(event.getString("host") != ParseUser.getCurrentUser().username) {
                     var e1 = EventDisplayer(
                         event.objectId,
                         event.getString("eventType")!!,
                         lQuery.get(0).getString("Address")!!,
                         event.getDate("date").toString(),
-                        "Hosted by: "+event.getString("host")!!
+                        "Hosted by: " + event.getString("host")!!
                     )
                     eventList.add(e1);
-
+                }
             }
         }
 

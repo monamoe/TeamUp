@@ -70,6 +70,11 @@ class LandingPageActivity : AppCompatActivity() {
             startActivity(intent)
             true
         }
+        R.id.action_hosted -> {
+            val intent = Intent(this, HostEvents::class.java)
+            startActivity(intent)
+            true
+        }
         R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
