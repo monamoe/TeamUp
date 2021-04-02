@@ -11,6 +11,7 @@ import kotlin.collections.ArrayList
 
 object ParseCode {
 
+    //function to create events
     fun EventCreation(se: SportEvents) {
         var sportEvent = ParseObject("Event")
         sportEvent.put("eventType", se.type.sport)
@@ -20,6 +21,7 @@ object ParseCode {
         sportEvent.save()
     }
 
+    //function to create locations
     fun LocationCreation(ec: SportLocation) {
         var sl = ParseObject("Location")
         sl.put("locationPlaceId", ec.locationPlaceID)
@@ -31,6 +33,7 @@ object ParseCode {
         sl.save();
     }
 
+    //Function to add sports to the db
     fun AddSport(spt: SportType){
         var sp = ParseObject("Sport")
         sp.put("SportID", spt.SportID)
@@ -43,6 +46,7 @@ object ParseCode {
         sp.save();
     }
 
+    //function to create a team
     fun CreateTeam(ct: Team){
         var t = ParseObject("Team")
         t.put("TeamID", ct.TeamID)
@@ -52,6 +56,7 @@ object ParseCode {
         t.save();
     }
 
+    //Function for deleting events
     fun EventDeletion(today: Date) {
         var deletedEvents = ArrayList<String>()
         val query = ParseQuery.getQuery<ParseObject>("Event")
@@ -95,6 +100,7 @@ object ParseCode {
         }
     }
 
+    //Function to update a user's profile
     fun UpdateProfile(givenUser: User) {
         val query = ParseUser.getQuery()
         query.whereEqualTo("username", givenUser.userName)
