@@ -1,9 +1,11 @@
-package app.helloteam.sportsbuddyapp.parse
+package app.helloteam.sportsbuddyapp
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.parse.ParseUser
 import java.lang.Exception
+import java.lang.reflect.InvocationTargetException
 
 object UserHandling {
 

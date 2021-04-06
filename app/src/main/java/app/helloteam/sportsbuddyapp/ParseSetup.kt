@@ -1,8 +1,11 @@
-package app.helloteam.sportsbuddyapp.parse
+package app.helloteam.sportsbuddyapp
 
 import android.app.Application
+import android.widget.Toast
 import com.parse.Parse
 import com.parse.ParseACL
+import com.parse.ParseObject
+import com.parse.ParseUser
 
 class ParseSetup : Application() {
     override fun onCreate() {
@@ -36,6 +39,7 @@ class ParseSetup : Application() {
                }
            }
        })*/
+
 
 
 /* PULL From SERVER

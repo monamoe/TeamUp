@@ -1,11 +1,10 @@
-package app.helloteam.sportsbuddyapp.views
+package app.helloteam.sportsbuddyapp
 
 
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.Menu
@@ -15,15 +14,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import androidx.appcompat.app.AlertDialog
-import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.parse.UserHandling
-import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
-import com.parse.ParseUser
 
 
 class ProfilePage : AppCompatActivity() {
@@ -34,13 +24,11 @@ class ProfilePage : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfilePageBinding
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
 
     val btnLoadPic =findViewById<Button>(R.id.btnLoadPicture)
         val profilepic = findViewById<ImageView>(R.id.profilepic)
@@ -55,25 +43,9 @@ class ProfilePage : AppCompatActivity() {
 
 
 
-        ParseUser.getCurrentUser().fetch()
-        binding.userNameEdit.text= ParseUser.getCurrentUser().username.toString()
-        binding.dateText.text=ParseUser.getCurrentUser().createdAt.toString()
-        if (ParseUser.getCurrentUser().getString("aboutMe")!=null) {
-            binding.aboutMeText.text = ParseUser.getCurrentUser().getString("aboutMe").toString()
-        }
-        if (ParseUser.getCurrentUser().getString("favouriteSport")!=null) {
-            binding.favSportText.text = ParseUser.getCurrentUser().getString("favouriteSport").toString()
-        }
 
 
     }
-    fun editProfile(view: View) {
-        finish()
-        ParseUser.getCurrentUser().fetch()
-        val intent = Intent(this, EditProfilePage::class.java)
-        startActivity(intent)
-    }
-
     fun afterLogout() {//method to go back to login screen after logout
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
@@ -141,6 +113,7 @@ class ProfilePage : AppCompatActivity() {
         startActivityForResult(gallery, PICK_IMG)
     }
     */
+
 
 
 
