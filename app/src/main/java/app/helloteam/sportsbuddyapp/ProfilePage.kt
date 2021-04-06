@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
 import android.view.View
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+//import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.parse.ParseUser
 
 
