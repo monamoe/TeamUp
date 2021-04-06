@@ -1,11 +1,10 @@
-package app.helloteam.sportsbuddyapp.models
+package app.helloteam.sportsbuddyapp
 
 class SportLocation constructor(
     val locationPlaceID: String,
     val address: String,
     val name: String,
     val lat: Double,
-    val long: Double,
-    val amount: Int
+    val long: Double
 ) {
 }
