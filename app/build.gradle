@@ -30,16 +30,11 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    
+    buildFeatures{
+        viewBinding true
+    }
 
 }
-
-
-
-
-
-
-
 
 dependencies {
     implementation "com.github.parse-community.Parse-SDK-Android:parse:1.25.0"

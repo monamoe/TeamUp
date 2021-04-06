@@ -2,10 +2,14 @@
 // custom marker class
 // doing it this way so i can save the info window information into this class (title snippet image etc)
 
-package app.helloteam.sportsbuddyapp.models
+package app.helloteam.sportsbuddyapp
 
 
+import android.os.IBinder
+import com.google.android.gms.dynamic.IObjectWrapper
+import com.google.android.gms.internal.maps.zzt
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 
 
 class ParkLocationMarker {
@@ -53,10 +57,6 @@ class ParkLocationMarker {
 
     fun getLon(): Double {
         return lon;
-    }
-
-    fun getLatLng(): LatLng {
-        return LatLng(this.getLat(), this.getLon())
     }
 
 }
