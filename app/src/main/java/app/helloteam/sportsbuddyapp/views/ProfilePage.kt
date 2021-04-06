@@ -2,25 +2,40 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.UserHandling
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
 import com.parse.ParseUser
 
+
+
 class ProfilePage : AppCompatActivity() {
+
+
 
     private lateinit var binding: ActivityProfilePageBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+
+
+
+
+
+
+
+
 
         ParseUser.getCurrentUser().fetch()
         binding.userNameEdit.text= ParseUser.getCurrentUser().username.toString()

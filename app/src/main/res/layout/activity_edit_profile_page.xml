@@ -169,6 +169,12 @@
                 android:onClick="onSave"
                 android:text="Save"
                 android:textAlignment="center" />
+
+            <Button
+                android:id="@+id/btnLoadPicture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit Profile Picture" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
