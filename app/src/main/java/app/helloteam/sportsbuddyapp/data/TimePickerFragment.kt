@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp
+package app.helloteam.sportsbuddyapp.data
 
 import android.app.Dialog
 import android.app.TimePickerDialog
