@@ -11,20 +11,17 @@ import kotlin.collections.ArrayList
 
 object ParseCode {
 
+    //function to create events
     fun EventCreation(se: SportEvents) {
         var sportEvent = ParseObject("Event")
         sportEvent.put("eventType", se.type.sport)
         sportEvent.put("host", se.userName)
-        sportEvent.put("hour", se.hour)
-        sportEvent.put("minute", se.minute)
-        sportEvent.put("year", se.year)
-        sportEvent.put("month", se.month)
-        sportEvent.put("day", se.day)
         sportEvent.put("sportPlaceID", se.eventPlaceID)
         sportEvent.put("date", se.date)
         sportEvent.save()
     }
 
+    //function to create locations
     fun LocationCreation(ec: SportLocation) {
         var sl = ParseObject("Location")
         sl.put("locationPlaceId", ec.locationPlaceID)
@@ -36,6 +33,7 @@ object ParseCode {
         sl.save();
     }
 
+    //Function to add sports to the db
     fun AddSport(spt: SportType){
         var sp = ParseObject("Sport")
         sp.put("SportID", spt.SportID)
@@ -48,6 +46,7 @@ object ParseCode {
         sp.save();
     }
 
+    //function to create a team
     fun CreateTeam(ct: Team){
         var t = ParseObject("Team")
         t.put("TeamID", ct.TeamID)
@@ -57,6 +56,7 @@ object ParseCode {
         t.save();
     }
 
+    //Function for deleting events
     fun EventDeletion(today: Date) {
         var deletedEvents = ArrayList<String>()
         val query = ParseQuery.getQuery<ParseObject>("Event")
@@ -70,14 +70,11 @@ object ParseCode {
                 )//print how many events will be deleted
                 for (event in eventList) {//loop through the expired events
                     Log.i("LOG_TAG", "HAHA Events's date:" + event.getDate("date"))
-                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")
-                    innerQuery.whereEqualTo(
-                        "locationPlaceId",
-                        event.get("sportPlaceID")
-                    )//get the event locations
+                    val innerQuery = ParseQuery.getQuery<ParseObject>("Location")//location query
+                    innerQuery.whereEqualTo("locationPlaceId",event.get("sportPlaceID"))//get the event locations
                     innerQuery.limit = 1//should only find one location
                     val matches = innerQuery.find()
-                    for (match in matches) {
+                    for (match in matches) {//deleting locations
                         if (match.getInt("amount") == 1) {
                             match.deleteInBackground()
                         } else {
@@ -85,6 +82,15 @@ object ParseCode {
                         }
                         match.save()
                     }
+
+                    val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")//delete attendies in expired events
+                    attendQuery.whereEqualTo("eventID", event.objectId)
+                    val attednees = attendQuery.find()
+                    for (member in attednees){
+                        member.deleteInBackground()
+                        member.save()
+                    }
+
                     event.deleteInBackground()
                     event.save()
                 }
@@ -92,12 +98,9 @@ object ParseCode {
                 Log.d("Event", "Error: " + e)
             }
         }
-        val query2 = ParseQuery.getQuery<ParseObject>("Location")
-        for (event in deletedEvents) {
-            query2.whereEqualTo("locationPlaceId", event.toString())
-        }
     }
 
+    //Function to update a user's profile
     fun UpdateProfile(givenUser: User) {
         val query = ParseUser.getQuery()
         query.whereEqualTo("username", givenUser.userName)
@@ -115,14 +118,51 @@ object ParseCode {
         }
     }
 
-    // Event Attend Table ( keeps track of which event the user is attending)
-    // Records Many to Many relationship between Event and Users table
-    fun EventAttend(userId: Int, eventId: Int) {
-        var a = ParseObject("Location")
+    // Event Attend Table ( keeps track of which event the user is attending) - Records Many to Many relationship between Event and Users table
+    fun EventAttend(userId: String, eventId: String) {
+        var a = ParseObject("AttendeeList")
         a.put("userID", userId)
         a.put("eventID", eventId)
         a.save()
     }
+    fun EventLeave(objectId: String) {
+        val a = ParseQuery.getQuery<ParseObject>("AttendeeList")
+         a.whereEqualTo("objectId", objectId)
+         var l= a.find()
+        l[0].deleteInBackground()
+        l[0].saveInBackground()
+    }
 
+    fun CancelEvent(eventId: String){
+        Log.i("LOG_TAG", "HAHA profile error" + eventId)
+        val query = ParseQuery.getQuery<ParseObject>("Event")
+        query.whereEqualTo("objectId", eventId)//get events based on objectId
+        query.findInBackground { eventList, e ->
+            Log.i("LOG_TAG", "HAHA profile error" + eventList.size)
+            val innerQuery = ParseQuery.getQuery<ParseObject>("Location")//location query
+                    innerQuery.whereEqualTo("locationPlaceId",eventList.get(0).get("sportPlaceID"))//get the event locations
+                    innerQuery.limit = 1//should only find one location
+                    val matches = innerQuery.find()
+                    for (match in matches) {//deleting locations
+                        if (match.getInt("amount") == 1) {
+                            match.deleteInBackground()
+                        } else {
+                            match.put("amount", match.getInt("amount") - 1)
+                        }
+                        match.save()
+                    }
 
-}
+                    val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")//delete attendies in expired events
+                    attendQuery.whereEqualTo("eventID", eventList.get(0).objectId)
+                    val attednees = attendQuery.find()
+                    for (member in attednees){
+                        member.deleteInBackground()
+                        member.save()
+                    }
+
+                    eventList.get(0).deleteInBackground()
+                    eventList.get(0).save()
+
+            }
+        }
+    }

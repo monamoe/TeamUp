@@ -27,6 +27,8 @@ import com.parse.ParseQuery
 import com.parse.ParseUser
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.Month
 import java.util.*
 
 class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
@@ -46,7 +48,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var address: String = ""
     private var lat: Double = 0.0
     private var long: Double = 0.0
-    private var date: Date = Date()
+
     private val context: Context = this
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         val api: String = getString(R.string.google_key)
         // Initialize the SDK
         Places.initialize(applicationContext, api)
+
         // Create a new PlacesClient instance
         val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
@@ -76,7 +79,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
         timeBtn.setOnClickListener {
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
-        if (hour != 0) {
+        if (hour != 0||min!=0) {
             timeBtn.setText("$hour:$min")
         }
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
@@ -90,10 +93,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             dayPicked = day
             yearPicked = year
             monthPicked = month
-            val format = SimpleDateFormat("yyyy-MM-dd")
-            val dateString: String = format.format(Date())
-            date = format.parse("$yearPicked-$monthPicked-$dayPicked")
-            Log.i("LOG_TAG", "HAHA Event date:" + date)
+
         }
         //address
         val autocompleteFragment =
@@ -151,10 +151,10 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     }
                 }
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
+                var date: Date = Date(yearPicked-1900,monthPicked,dayPicked,hour,min)
+                Log.i("LOG_TAG", "HAHA Event date:" + date)
                 var se = SportEvents(
-                    sportSelection, ParseUser.getCurrentUser().username,
-                    hour, min, yearPicked, monthPicked, dayPicked, locationPlaceId, date
-                );
+                    sportSelection, ParseUser.getCurrentUser().username, locationPlaceId, date);
                 ParseCode.EventCreation(se)
                 val intent = Intent(this, LandingPageActivity::class.java)
                 startActivity(intent)
