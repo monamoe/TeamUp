@@ -15,14 +15,9 @@ import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.UserHandling
-import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
 import com.parse.ParseUser
 
 
