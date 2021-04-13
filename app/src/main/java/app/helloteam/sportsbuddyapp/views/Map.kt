@@ -72,6 +72,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     PLM = parklocations.get(i)
                     break@loop
                 }
+
             }
 
             //updating ui components on the info window

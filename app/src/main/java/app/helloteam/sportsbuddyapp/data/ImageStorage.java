@@ -23,7 +23,7 @@ public class ImageStorage {
         File file = new File(folder.getAbsoluteFile(), filename + ".jpg") ;
 
         if (file.exists())
-            return stored ;
+            file.delete();
 
         try {
             FileOutputStream out = new FileOutputStream(file);

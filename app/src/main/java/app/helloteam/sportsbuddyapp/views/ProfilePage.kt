@@ -2,40 +2,42 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
+import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.parse.ParseUser
-
+import java.io.File
 
 
 class ProfilePage : AppCompatActivity() {
 
 
-
+    private val pickImage = 100
+    private var imageUri: Uri? = null
     private lateinit var binding: ActivityProfilePageBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-
-
-
-
-
-
-
+        if(ImageStorage.checkifImageExists(this, "${ParseUser.getCurrentUser().username}ProfilePic")){
+            val file = (ImageStorage.getImage(this,"${ParseUser.getCurrentUser().username}ProfilePic.jpg"))
+            var mSaveBit: File = file
+            val filePath = mSaveBit.path
+            val bitmap = BitmapFactory.decodeFile(filePath)
+            binding.profilepic.setImageBitmap(bitmap)
+        }
 
         ParseUser.getCurrentUser().fetch()
         binding.userNameEdit.text= ParseUser.getCurrentUser().username.toString()
@@ -69,6 +71,16 @@ class ProfilePage : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_profile -> {
             val intent = Intent(this, ProfilePage::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_events -> {
+            val intent = Intent(this, ViewPlayerEvents::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_hosted -> {
+            val intent = Intent(this, HostEvents::class.java)
             startActivity(intent)
             true
         }

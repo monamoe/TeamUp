@@ -20,6 +20,7 @@ import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.models.User
 import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.parse.ParseUser
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
@@ -45,7 +46,17 @@ class EditProfilePage : AppCompatActivity() {
         val profilepic = findViewById<ImageView>(R.id.profilepic)
 
 
+        if(ImageStorage.checkifImageExists(this, "${ParseUser.getCurrentUser().username}ProfilePic")){
+            val file = (ImageStorage.getImage(
+                this,
+                "${ParseUser.getCurrentUser().username}ProfilePic.jpg"
+            ))
+            var mSaveBit: File = file
+            val filePath = mSaveBit.path
+            val bitmap = BitmapFactory.decodeFile(filePath)
+            binding.profilepic.setImageBitmap(bitmap)
 
+        }
         ParseUser.getCurrentUser().fetch()
 
         binding.userNameEdit.text= ParseUser.getCurrentUser().username
@@ -55,6 +66,7 @@ class EditProfilePage : AppCompatActivity() {
         binding.btnLoadPicture.setOnClickListener {
             val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
             startActivityForResult(gallery, pickImage)
+
         }
 
 
