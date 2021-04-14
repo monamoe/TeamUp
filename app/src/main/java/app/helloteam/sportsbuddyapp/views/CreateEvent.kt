@@ -35,7 +35,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
     // sports attributes
-    private var hour: Int = 0
+    private var hour: Int = 0//time attributes 
     private var min: Int = 0
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
     
