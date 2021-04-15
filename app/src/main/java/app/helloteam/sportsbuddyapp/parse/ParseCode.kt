@@ -18,6 +18,7 @@ object ParseCode {
         sportEvent.put("host", se.userName)
         sportEvent.put("sportPlaceID", se.eventPlaceID)
         sportEvent.put("date", se.date)
+        sportEvent.put("endDate", se.endDate)
         sportEvent.save()
     }
 

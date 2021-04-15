@@ -37,6 +37,9 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     // sports attributes
     private var hour: Int = 0//time attributes 
     private var min: Int = 0
+    private var endHour: Int = 0
+    private var endMin: Int = 0
+    private var endTimeBool: Boolean = false
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
     
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
@@ -74,9 +77,11 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 sportSelection = SportTypes.BallHockey
             }
         }
-        //time
+
+        //set the start time
         val timeBtn = findViewById<Button>(R.id.TimeBtn)
         timeBtn.setOnClickListener {
+            endTimeBool = false
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
         if (hour != 0||min!=0) {
@@ -95,6 +100,17 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             monthPicked = month
 
         }
+
+        //set the end time
+        val endTimeBtn = findViewById<Button>(R.id.endTimeBtn)
+        endTimeBtn.setOnClickListener {
+            endTimeBool = true
+            TimePickerFragment().show(supportFragmentManager, "timePicker")
+        }
+        if (endHour != 0||endMin!=0) {
+            endTimeBtn.setText("$endHour:$endMin")
+        }
+
         //address
         val autocompleteFragment =
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
@@ -152,9 +168,12 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 }
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
                 var date: Date = Date(yearPicked-1900,monthPicked,dayPicked,hour,min)
+                var endDate: Date = Date(yearPicked-1900, monthPicked, dayPicked, endHour, endMin)
                 Log.i("LOG_TAG", "HAHA Event date:" + date)
+                Log.i("LOG_TAG", "HAHA Event end date:" + endDate)
+
                 var se = SportEvents(
-                    sportSelection, ParseUser.getCurrentUser().username, locationPlaceId, date);
+                    sportSelection, ParseUser.getCurrentUser().username, locationPlaceId, date, endDate);
                 ParseCode.EventCreation(se)
                 val intent = Intent(this, LandingPageActivity::class.java)
                 startActivity(intent)
@@ -165,11 +184,22 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        val timeBtn = findViewById<Button>(R.id.TimeBtn)
-        hour = hourOfDay
-        min = minute
-        timeBtn.setText("$hour:$min")
+        if(!endTimeBool) {
+            val timeBtn = findViewById<Button>(R.id.TimeBtn)
+            hour = hourOfDay
+            min = minute
+            timeBtn.setText("$hour:$min")
+        }
+
+        else{
+            val timeBtn = findViewById<Button>(R.id.endTimeBtn)
+            endHour = hourOfDay
+            endMin = minute
+            timeBtn.setText("$endHour:$endMin")
+        }
     }
+
+
 
     fun getLocationFromAddress(context: Context?, strAddress: String?): LatLng? {
         Log.i("LOG_TAG", "HAHA In LAT LONG METHOD ")

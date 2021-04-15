@@ -7,5 +7,6 @@ class SportEvents constructor(
     val userName: String,
     val eventPlaceID: String,
     val date: java.util.Date,
+    val endDate: java.util.Date //for end time
 ) {
 }

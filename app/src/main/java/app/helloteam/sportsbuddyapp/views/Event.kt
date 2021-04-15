@@ -69,7 +69,8 @@ class event : AppCompatActivity() {
                 attendBtn.text = "Cancel"
             }
             val host= queryU.find()
-                startTime.setText(event.getDate("date").toString())
+                startTime.setText("Start Time: \n" + event.getDate("date").toString())
+                endtime.setText("End Time: \n" + event.getDate("endDate").toString())
                 eventTitle.setText(event.getString("eventType").toString())
                 hostname.setText(event.getString("host").toString())
                  space.setText(location[0].getString("Address").toString())
