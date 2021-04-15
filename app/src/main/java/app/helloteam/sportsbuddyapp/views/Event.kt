@@ -46,7 +46,7 @@ class event : AppCompatActivity() {
         val eventTitle = findViewById<TextView>(R.id.eventTitle)
         val startTime = findViewById<TextView>(R.id.startTime)
         val endtime = findViewById<TextView>(R.id.endtime)
-        val activity = findViewById<TextView>(R.id.activity)
+        //val activity = findViewById<TextView>(R.id.activity)
         val space = findViewById<TextView>(R.id.space)
         val information = findViewById<TextView>(R.id.information)
         val hostname = findViewById<TextView>(R.id.hostname)
@@ -73,7 +73,7 @@ class event : AppCompatActivity() {
                 endtime.setText("End Time: \n" + event.getDate("endDate").toString())
                 eventTitle.setText(event.getString("eventType").toString())
                 hostname.setText(event.getString("host").toString())
-                 space.setText(location[0].getString("Address").toString())
+                 space.setText("Space: "+location[0].getString("Address").toString())
                 hostbio.setText(host[0].getString("aboutMe").toString())
             }
         val currentUser = ParseUser.getCurrentUser()
