@@ -24,6 +24,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import kotlin.jvm.Throws
 
 
 class EditProfilePage : AppCompatActivity() {
