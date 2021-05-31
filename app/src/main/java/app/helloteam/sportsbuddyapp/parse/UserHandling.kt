@@ -1,45 +1,59 @@
 package app.helloteam.sportsbuddyapp.parse
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import com.parse.ParseUser
 import java.lang.Exception
 
 object UserHandling {
 
-
-    fun Login(userNameTxt: String, passwordTxt: String, context: Context): Boolean {
+    fun Login(emailTxt: String, passwordTxt: String, context: Context): Boolean {
         var success = false
-        try {
-            ParseUser.logIn(userNameTxt, passwordTxt)
-            success = true
-        } catch (ex: Exception) {
-            Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
 
-        }
-
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(emailTxt, passwordTxt)
+            .addOnCompleteListener({
+                if (it.isSuccessful) {
+                    success = true
+                    Log.i(
+                        "LOG_TAG",
+                        "HAHA LOGIN SUCCESSFUL: " + it.result.user?.uid
+                    )
+                }
+            }).addOnFailureListener {
+                Log.i(
+                    "LOG_TAG",
+                    "HAHA login failed " + it.message
+                )
+            }
         return success
     }
 
-
     fun SignUp(userNameTxt: String, passwordTxt: String, email: String, context: Context): Boolean {
-        var success = false;
-        try {
-            val user = ParseUser()
-            user.username = userNameTxt
-            user.setPassword(passwordTxt)
-            user.email = email
-            user.signUp()
-            success = true
-        } catch (ex: Exception) {
-            Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
+        var success = false
 
-        }
-        return success
+        //Firebase Auth to create user with username and password
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, passwordTxt)
+            .addOnCompleteListener({
+                if (it.isSuccessful) {
+                    success = true
+                    Log.i(
+                        "LOG_TAG",
+                        "HAHA Created Firebase user profile with uid of: " + it.result.user?.uid
+                    )
+                }
+            }).addOnFailureListener {
+                Log.i(
+                    "LOG_TAG",
+                    "HAHA Failed to create firebase user profile " + it.message
+                )
+            }
+        return success;
     }
 
     fun Logout() {//logs out user
-        ParseUser.logOut()
+//        ParseUser.logOut()
     }
 
 

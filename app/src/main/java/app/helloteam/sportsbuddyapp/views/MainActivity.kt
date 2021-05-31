@@ -35,14 +35,14 @@ MainActivity : AppCompatActivity() {
         val loginBtn = findViewById<Button>(R.id.LoginButton)
         loginBtn.setOnClickListener {
 
-            val userNameTxt = findViewById<TextView>(R.id.userNameText).text.toString()
+            val emailTxt = findViewById<TextView>(R.id.userNameText).text.toString()
             val passwordTxt = findViewById<TextView>(R.id.PasswordText).text.toString()
 
-            if (userNameTxt.equals("") || passwordTxt.equals("")) {
+            if (emailTxt.equals("") || passwordTxt.equals("")) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
             } else {
                 if (UserHandling.Login(
-                        userNameTxt,
+                        emailTxt,
                         passwordTxt,
                         this
                     )

@@ -16,6 +16,7 @@ class SignUpActivity : AppCompatActivity() {
 
         val signupbtn = findViewById<Button>(R.id.signupBtn)//get sign in button id
 
+
         signupbtn.setOnClickListener {// when user clicks sign up button
 
             //gets data from all text fields by id
@@ -33,6 +34,7 @@ class SignUpActivity : AppCompatActivity() {
 
                 if (passwordTxt.equals(passwordConfirmTxt)) {//checks if passwords match
 
+                    //calling signup
                     if (UserHandling.SignUp(
                             userNameTxt,
                             passwordTxt,
