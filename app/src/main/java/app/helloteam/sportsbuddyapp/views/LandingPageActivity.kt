@@ -12,18 +12,35 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
 import app.helloteam.sportsbuddyapp.parse.UserHandling
-import com.parse.ParseUser
+import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class LandingPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
+
         val date = Date()
         Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
+
         //  ParseCode.EventDeletion(date) //method to delete expired events and locations
+
+        // is the user logged in
+        val uid = FirebaseAuth.getInstance().uid
+        if(uid == null)
+        {
+            val intent = Intent(this, RegisterActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
+        //Line of code to sign out (idk where the log out button is in sportbuddy so im leaving it here
+//        FirebaseAuth.getInstance().signOut()
+
+
         val showuser = findViewById<TextView>(R.id.ShowUsername)
-        showuser.text = ParseUser.getCurrentUser().username
+        showuser.text = "SOME USER"
+
         // val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
         //  val profileBtn = findViewById<Button>(R.id.ToProfileBtn) // gets profile button id
         //  val mapBtn = findViewById<Button>(R.id.mapBtn)//switch to map layout
@@ -43,13 +60,13 @@ class LandingPageActivity : AppCompatActivity() {
              }
              */
         createEventBtn.setOnClickListener {
-            val intent = Intent(this, CreateEvent::class.java)
+            val intent = Intent(this, CreateEventActivity::class.java)
             startActivity(intent)
         }
     }
 
     fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
 

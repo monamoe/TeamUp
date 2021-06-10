@@ -22,16 +22,17 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.Month
 import java.util.*
 
-class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
+class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
     // sports attributes
@@ -41,7 +42,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private var endMin: Int = 0
     private var endTimeBool: Boolean = false
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
-    
+
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
@@ -84,7 +85,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             endTimeBool = false
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
-        if (hour != 0||min!=0) {
+        if (hour != 0 || min != 0) {
             timeBtn.setText("$hour:$min")
         }
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
@@ -107,7 +108,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             endTimeBool = true
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
-        if (endHour != 0||endMin!=0) {
+        if (endHour != 0 || endMin != 0) {
             endTimeBtn.setText("$endHour:$endMin")
         }
 
@@ -122,7 +123,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             override fun onPlaceSelected(place: Place) {
                 address = place.name.toString()
                 Log.i("LOG_TAG", "HAHA: address: " + address)
-                var latlong = getLocationFromAddress(this@CreateEvent, address)
+                var latlong = getLocationFromAddress(this@CreateEventActivity, address)
                 if (latlong != null) {
                     long = latlong.longitude
                     lat = latlong.latitude
@@ -135,6 +136,8 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                 Log.i("LOG_TAG", "An error occurred: $status")
             }
         })
+
+
         createBtn.setOnClickListener {
             // enter required fields
             if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
@@ -145,12 +148,12 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     if (e == null) {
                         // if location doesnt exist, create location
                         if (locationlist.size == 0) {
-                            // create a new location
+                            // if the location doesn't exist, create it
                             Log.i("LOG_TAG", "HAHA: creating new location")
                             var ec = SportLocation(locationPlaceId, address, address, lat, long, 1)
                             ParseCode.LocationCreation(ec)
-                            Log.i("LOG_TAG", "HAHA: IN IF")
                         } else {
+                            // finding the uid for the location this belongs in
                             Log.i("LOG_TAG", "HAHA: IN ELSE")
                             for (locations in locationlist) {
                                 Log.i("LOG_TAG", "HAHA In FOR")
@@ -167,16 +170,79 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
                     }
                 }
                 Log.i("LOG_TAG", "HAHA: Creating event record in database")
-                var date: Date = Date(yearPicked-1900,monthPicked,dayPicked,hour,min)
-                var endDate: Date = Date(yearPicked-1900, monthPicked, dayPicked, endHour, endMin)
-                Log.i("LOG_TAG", "HAHA Event date:" + date)
-                Log.i("LOG_TAG", "HAHA Event end date:" + endDate)
+                var date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
+                var endDate: Date = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
+                Log.i("LOG_TAG", "HAHA Event start and end dates: $date : $endDate")
 
-                var se = SportEvents(
-                    sportSelection, ParseUser.getCurrentUser().username, locationPlaceId, date, endDate);
-                ParseCode.EventCreation(se)
-                val intent = Intent(this, LandingPageActivity::class.java)
-                startActivity(intent)
+                //pushing to firestore database required the use of a hashmap,
+                //this needs to be moved into the models folder?
+                val db = Firebase.firestore
+
+                // uid for the locations is sum of the strong values of lat and long
+                // if the location collection doesnt exist, create it
+                val eventHashMap = hashMapOf(
+                    "type" to sportSelection,
+                    "userName" to FirebaseAuth.getInstance().uid,
+                    "eventPlaceID" to locationPlaceId,
+                    "date" to date,
+                    "endDate" to endDate
+                )
+                val LocationsHashMap = hashMapOf(
+                    "Location Name" to address,
+                    "Lat" to lat,
+                    "Lon" to long
+                )
+
+                db.collection("Location").document("$lat$long").collection("Events").document().set(
+                    eventHashMap, SetOptions.merge()
+                )
+
+
+
+
+                db.collection("Location").document("$lat$long")
+                    .set(LocationsHashMap, SetOptions.merge())
+                    .addOnSuccessListener {
+                        Log.d("CreatingEvent", "Created $lat$long document")
+                        val intent = Intent(this, LandingPageActivity::class.java)
+                        startActivity(intent)
+                    }
+                    .addOnFailureListener { e -> Log.w("a", "Error writing document", e) }
+
+//                // Update one field, creating the document if it does not already exist.
+//                val data = hashMapOf(
+//                    "capital" to 2,
+//                    "something else" to 3
+//                )
+//
+//                //document has its own id iwth .document()
+//                db.collection("cities").document()
+//                    .set(data, SetOptions.merge())a
+
+//                val EventsHashMap = hashMapOf(
+//                    "type" to sportSelection,
+//                    "userName" to FirebaseAuth.getInstance().uid,
+//                    "eventPlaceID" to locationPlaceId,
+//                    "date" to date,
+//                    "endDate" to endDate
+//                )
+
+//                db.collection("Events").document("LA")
+//                    .set(EventsHashMap)
+//                    .addOnSuccessListener {
+//                        Log.d("CreatingEvent", "DocumentSnapshot successfully written!")
+//                        val intent = Intent(this, LandingPageActivity::class.java)
+//                        startActivity(intent)
+//                    }
+//                    .addOnFailureListener { e ->
+//                        Log.w(
+//                            "CreatingEvent",
+//                            "Error writing document",
+//                            e
+//                        )
+//                    }
+
+
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
@@ -184,14 +250,12 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     }
 
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        if(!endTimeBool) {
+        if (!endTimeBool) {
             val timeBtn = findViewById<Button>(R.id.TimeBtn)
             hour = hourOfDay
             min = minute
             timeBtn.setText("$hour:$min")
-        }
-
-        else{
+        } else {
             val timeBtn = findViewById<Button>(R.id.endTimeBtn)
             endHour = hourOfDay
             endMin = minute
@@ -200,9 +264,7 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     }
 
 
-
     fun getLocationFromAddress(context: Context?, strAddress: String?): LatLng? {
-        Log.i("LOG_TAG", "HAHA In LAT LONG METHOD ")
         val coder = Geocoder(context)
         val address: List<Address>?
         var place: LatLng? = null
@@ -210,14 +272,11 @@ class CreateEvent : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
             // May throw an IOException
             address = coder.getFromLocationName(strAddress, 5)
             if (address == null) {
-                Log.i("LOG_TAG", "HAHA In LAT LONG METHOD NUll ")
                 return null
             }
-            Log.i("LOG_TAG", "HAHA In LAT LONG METHOD NOT NULL")
             val location = address[0]
             place = LatLng(location.latitude, location.longitude)
         } catch (ex: IOException) {
-            Log.i("LOG_TAG", "HAHA In LAT LONG METHOD ERROR " + ex.toString())
             ex.printStackTrace()
         }
         return place

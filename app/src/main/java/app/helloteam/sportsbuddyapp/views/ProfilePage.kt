@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -59,7 +58,7 @@ class ProfilePage : AppCompatActivity() {
     }
 
     fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

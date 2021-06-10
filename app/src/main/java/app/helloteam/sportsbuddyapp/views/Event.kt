@@ -27,8 +27,8 @@ class event : AppCompatActivity() {
 
     var userId: String = "0000000"
     var eventID: String = "0000000"
-    var attending: Boolean= false
-    var hosting: Boolean=false
+    var attending: Boolean = false
+    var hosting: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
@@ -61,27 +61,27 @@ class event : AppCompatActivity() {
         for (event in eventquery) {
             val locationQuery = ParseQuery.getQuery<ParseObject>("Location")
             locationQuery.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-            val location=locationQuery.find()
+            val location = locationQuery.find()
             val queryU = ParseUser.getQuery()
             queryU.whereEqualTo("username", event.getString("host"))
-            if(event.getString("host")==ParseUser.getCurrentUser().username){
-                hosting=true
+            if (event.getString("host") == ParseUser.getCurrentUser().username) {
+                hosting = true
                 attendBtn.text = "Cancel"
             }
-            val host= queryU.find()
-                startTime.setText("Start Time: \n" + event.getDate("date").toString())
-                endtime.setText("End Time: \n" + event.getDate("endDate").toString())
-                eventTitle.setText(event.getString("eventType").toString())
-                hostname.setText(event.getString("host").toString())
-                 space.setText("Space: "+location[0].getString("Address").toString())
-                hostbio.setText(host[0].getString("aboutMe").toString())
-            }
+            val host = queryU.find()
+            startTime.setText("Start Time: \n" + event.getDate("date").toString())
+            endtime.setText("End Time: \n" + event.getDate("endDate").toString())
+            eventTitle.setText(event.getString("eventType").toString())
+            hostname.setText(event.getString("host").toString())
+            space.setText("Space: " + location[0].getString("Address").toString())
+            hostbio.setText(host[0].getString("aboutMe").toString())
+        }
         val currentUser = ParseUser.getCurrentUser()
         if (currentUser != null) {
             userId = currentUser.objectId
         }
-            var objectID: String = ""
-        if(!hosting) {
+        var objectID: String = ""
+        if (!hosting) {
             val queryA = ParseQuery.getQuery<ParseObject>("AttendeeList")
             queryA.whereEqualTo("userID", userId)
             val attendees = queryA.find()
@@ -97,21 +97,25 @@ class event : AppCompatActivity() {
 
         //
         attendBtn.setOnClickListener {
-if (!hosting) {
-    if (attending) {
-        ParseCode.EventLeave(objectID)
-        Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
-            .show()
-    } else {
-        ParseCode.EventAttend(userId, eventID)
-        Toast.makeText(this, "Successfully registered for this event", Toast.LENGTH_SHORT)
-            .show()
-    }
-}else{
-    ParseCode.CancelEvent(eventID)
-    Toast.makeText(this, "Successfully cancelled event", Toast.LENGTH_SHORT)
-        .show()
-}
+            if (!hosting) {
+                if (attending) {
+                    ParseCode.EventLeave(objectID)
+                    Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    ParseCode.EventAttend(userId, eventID)
+                    Toast.makeText(
+                        this,
+                        "Successfully registered for this event",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            } else {
+                ParseCode.CancelEvent(eventID)
+                Toast.makeText(this, "Successfully cancelled event", Toast.LENGTH_SHORT)
+                    .show()
+            }
             val intent = Intent(this, LandingPageActivity::class.java)
             startActivity(intent)
         }

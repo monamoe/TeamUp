@@ -33,12 +33,12 @@
 
         <activity android:name=".views.eventslist" />
         <activity android:name=".views.event" />
-        <activity android:name=".views.CreateEvent" />
+        <activity android:name=".views.CreateEventActivity" />
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
-        <activity android:name=".views.SignUpActivity" />
+        <activity android:name=".views.RegisterActivity" />
         <activity android:name=".views.LandingPageActivity" />
-        <activity android:name=".views.MainActivity">
+        <activity android:name=".views.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
