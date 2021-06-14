@@ -36,6 +36,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.firebase.firestore.ktx.*
+import com.google.firebase.ktx.Firebase
 import com.parse.ParseObject
 import com.parse.ParseQuery
 
@@ -114,7 +116,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         // back button
         findViewById<Button>(backBtn).setOnClickListener {
             val intent = Intent(this, LandingPageActivity::class.java)
-            // add data to intents using .putExtra("name", "value")
             startActivity(intent)
         }
 
@@ -188,25 +189,30 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             )
         }
 
-        //get marker locations from Location tables
-        val query = ParseQuery.getQuery<ParseObject>("Location")
-        val locationlist = query.find()
-        Log.i("LOG_TAG", "HAHA populating array list")
-        for (location in locationlist) {
-            var park1 = ParkLocationMarker()
-            park1.createParkLocationMarker(
-                location.getString("locationPlaceId"),
-                location.getString("Name")!!,
-                location.getDouble("latitude"),
-                location.getDouble("longitude")
-            )
-            Log.i(
-                "LOG_TAG",
-                "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
-                    .toString() + " " + park1.getLon().toString()
-            )
-            parklocations.add(park1)
-        }
+        // FIREBASE MIGRATION //
+        val db = Firebase.firestore
+
+        //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
+        db.collection("Location")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (location in documents) {
+                    var park1 = ParkLocationMarker()
+
+                    Log.i("LOG_TAG", "---------------------\nTHIS IS THE DATA WE GOT $location.data")
+//                    park1.createParkLocationMarker(location.id, location.data.LocationName, location.Lat, location.Lon)
+//                    Log.i(
+//                        "LOG_TAG",
+//                        "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
+//                            .toString() + " " + park1.getLon().toString()
+//                    )
+//                    parklocations.add(park1)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("LOG_TAG", "Error getting documents: ", exception)
+            }
+
 
         //create the ParkLocationMarker object and set info window for markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
