@@ -38,29 +38,8 @@ class LandingPageActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.ShowUsername).text = "SOME USER"
 
-        val logoutBtn = findViewById<Button>(R.id.LogoutBtn)//gets logout button id
-        val profileBtn = findViewById<Button>(R.id.ToProfileBtn) // gets profile button id
-        val mapBtn = findViewById<Button>(R.id.mapBtn)//switch to map layout
         val createEventBtn = findViewById<Button>(R.id.CreateEventBtn)//create event layout
 
-        logoutBtn.setOnClickListener {//logs user out when they click the logout button
-            FirebaseAuth.getInstance().signOut()
-            afterLogout()
-        }
-        profileBtn.setOnClickListener {
-            val intent = Intent(this, ProfilePage::class.java)
-            startActivity(intent)
-        }
-        //switches view to map
-        mapBtn.setOnClickListener {
-            val intent = Intent(this, map::class.java)
-            startActivity(intent)
-        }
-
-        createEventBtn.setOnClickListener {
-            val intent = Intent(this, CreateEventActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     fun afterLogout() {//method to go back to login screen after logout
@@ -95,7 +74,7 @@ class LandingPageActivity : AppCompatActivity() {
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)
                 .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
-                    UserHandling.Logout()
+                    FirebaseAuth.getInstance().signOut()
                     afterLogout()
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->

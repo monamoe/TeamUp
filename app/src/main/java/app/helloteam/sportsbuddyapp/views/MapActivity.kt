@@ -199,14 +199,20 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 for (location in documents) {
                     var park1 = ParkLocationMarker()
 
-                    Log.i("LOG_TAG", "---------------------\nTHIS IS THE DATA WE GOT $location.data")
-//                    park1.createParkLocationMarker(location.id, location.data.LocationName, location.Lat, location.Lon)
-//                    Log.i(
-//                        "LOG_TAG",
-//                        "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
-//                            .toString() + " " + park1.getLon().toString()
-//                    )
-//                    parklocations.add(park1)
+                    Log.i(
+                        "LOG_TAG",
+                        "HAHA: $location"
+                    )
+                    park1.createParkLocationMarker(
+                        "20", "Location Name",
+                        location.get("Lat") as Double, location.get("Lon") as Double
+                    )
+                    Log.i(
+                        "LOG_TAG",
+                        "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
+                            .toString() + " " + park1.getLon().toString()
+                    )
+                    parklocations.add(park1)
                 }
             }
             .addOnFailureListener { exception ->
