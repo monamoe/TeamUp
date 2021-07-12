@@ -21,14 +21,5 @@ class EventDisplayer {
         this.time = time
         this.host = host
 
-        //i dont think we need this anymore
-//        //address
-//        val query = ParseQuery.getQuery<ParseObject>("Event")
-//        val eventlist = query.find()
-//        for (event in eventlist) {
-//
-//            event.getString("eventType")!!
-//            event.getDouble("longitude")
-//        }
     }
 }

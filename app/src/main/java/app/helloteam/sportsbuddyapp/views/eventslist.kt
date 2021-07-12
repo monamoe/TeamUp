@@ -1,6 +1,6 @@
 /*
 Author: monamoe
-Created:  March 21 2020
+Created:  March 21 2021
 Manages List of events
  */
 
@@ -25,9 +25,11 @@ import app.helloteam.sportsbuddyapp.models.EventDisplayer
 import com.google.firebase.ktx.Firebase
 
 
+lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
+
+
 class eventslist : AppCompatActivity() {
 
-    lateinit private var eventList: ArrayList<EventDisplayer>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,36 +66,12 @@ class eventslist : AppCompatActivity() {
                 }
 
                 Log.i(
-                    "LOG_TAG",
-                    "HAHA EventList ArryList size: " + eventList.toString()
+                    "EVENTLIST SIZE",
+                    "HAHA EventList ArryList size: " + eventList.size
                 )
 
-
-//        val query = ParseQuery.getQuery<ParseObject>("Event")
-//        val eventquery = query.find()
-//        for (event in eventquery) {
-//            val sportId = event.getString("sportPlaceID").toString()
-//            if (sportId.equals(locationID)) {
-//                val queryL = ParseQuery.getQuery<ParseObject>("Location")
-//                queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-//                queryL.setLimit(1)
-//                val lQuery = queryL.find()
-//                    Log.i("LOG_TAG", "HAHA: ${event.getString("host")} ${ParseUser.getCurrentUser().username}")
-//                    var e1 = EventDisplayer(
-//                        event.objectId,
-//                        event.getString("eventType")!!,
-//                        lQuery.get(0).getString("Address")!!,
-//                        event.getDate("date").toString(),
-//                        "Hosted by: " + event.getString("host")!!
-//                    )
-//                    eventList.add(e1);
-//
-//            }
-//        }
-
-
                 // list view adapter
-                listview.adapter = HostEvents.EventListAdapter(this)
+                listview.adapter = EventListAdapter(this)
 
                 listview.setOnItemClickListener { parent, view, position, id ->
                     val eventID = eventList.get(position).getID()
@@ -102,48 +80,77 @@ class eventslist : AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+    }
 
 
-        // Event Array List Adapter
-        class EventListAdapter(context: Context) : BaseAdapter() {
+    // Event Array List Adapter
+    internal class EventListAdapter(context: Context) : BaseAdapter() {
 
-            private val mContext: Context = context
+        private val mContext: Context = context
 
-            // overrides
-            override fun getCount(): Int {
-                return eventList.size;
-            }
-
-            override fun getItem(position: Int): Any {
-                return "return override"
-            }
-
-            override fun getItemId(position: Int): Long {
-                return position.toLong()
-            }
-
-            // render each row
-            override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
-                val lI = LayoutInflater.from(mContext)
-                val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false);
-
-                val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
-                val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
-                val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
-                val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
-
-                eventTitle.setText(eventList.get(position).name)
-                eventTitle.text = (eventList.get(position).name)
-                eventAddress.text = (eventList.get(position).address)
-                eventTime.text = (eventList.get(position).time)
-                eventHost.text = (eventList.get(position).host)
-
-                return rowMain;
-            }
+        // overrides
+        override fun getCount(): Int {
+            return eventList.size;
         }
 
+        override fun getItem(position: Int): Any {
+            return "return override"
+        }
 
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        // render each row
+        override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
+            val lI = LayoutInflater.from(mContext)
+            val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false);
+
+            val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
+            val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
+            val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
+            val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
+
+            Log.i(
+                "LOG_TAG",
+                "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position + " and " + eventList.get(
+                    0
+                ).name
+            )
+            eventTitle.setText(eventList.get(position).name)
+            eventTitle.text = (eventList.get(position).name)
+            eventAddress.text = (eventList.get(position).address)
+            eventTime.text = (eventList.get(position).time)
+            eventHost.text = (eventList.get(position).host)
+
+            return rowMain;
+        }
+    }
+
+    // Event Displayer class ( for array list)
+    class EventDisplayer {
+        var id: String = ""
+        var name: String = ""
+        var address: String = ""
+        var time: String = ""
+        var host: String = ""
+
+
+        fun getID(): String {
+            return this.id
+        }
+
+        // main constuctor
+        constructor(id: String, name: String, address: String, time: String, host: String) {
+            this.id = id
+            this.name = name
+            this.address = address
+            this.time = time
+            this.host = host
+        }
     }
 }
+
+
 
 
