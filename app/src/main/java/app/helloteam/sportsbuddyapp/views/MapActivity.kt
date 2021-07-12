@@ -38,8 +38,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.firestore.ktx.*
 import com.google.firebase.ktx.Firebase
-import com.parse.ParseObject
-import com.parse.ParseQuery
 
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
@@ -70,7 +68,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             // get the marker data out of the manager array list
             lateinit var PLM: ParkLocationMarker
             loop@ for (i in 0..parklocations.size - 1) {
-                if (parklocations.get(i).getID() == marker.title) {
+                // this is comparing the name of the location to get its marker title but it should be comparing id or something.
+                if (parklocations.get(i).getName() == marker.title) {
                     PLM = parklocations.get(i)
                     break@loop
                 }
@@ -79,7 +78,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
             //updating ui components on the info window
             val locationUI: String? = PLM.getName()
-            Log.i("LOG_TAG", "HAHA: locationUI:" + locationUI)
+            Log.i("LOG_TAG", "locationUI:" + locationUI)
             val locationComp = inputView.findViewById<TextView>(R.id.location)
             if (locationUI != null) {
                 locationComp.text = locationUI;
@@ -105,8 +104,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     //default user location values
-    var userLocationLon = 0.1
-    var userLocationLat = 0.1
+    var userLocationLon = 69.420
+    var userLocationLat = 69.420
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,7 +150,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     // when the map is ready
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        Log.i("LOG_TAG", "Inside onMapReady()")
+        Log.i("onMapReady", "Inside onMapReady()")
 
         //getting user location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -197,54 +196,63 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             .get()
             .addOnSuccessListener { documents ->
                 for (location in documents) {
-                    var park1 = ParkLocationMarker()
+                    val park1 = ParkLocationMarker()
 
-                    Log.i(
-                        "LOG_TAG",
-                        "HAHA: $location"
-                    )
+//                    Log.i(
+//                        "CreatingParkLocation",
+//                        "heres the info were getting from the database : " + location.get("Lat")
+//                            .toString().toDouble() + " " +
+//                                location.get("Lon").toString().toDouble()
+//                    )
+                    Log.i("DisplayingMarkers", "FUCK " + location.get("Location Name").toString())
+                    Log.i("DisplayingMarkers", "FUCK FUCK: " + location.id)
+
+                    // creates the marker object
                     park1.createParkLocationMarker(
-                        "20", "Location Name",
-                        location.get("Lat") as Double, location.get("Lon") as Double
-                    )
-                    Log.i(
-                        "LOG_TAG",
-                        "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
-                            .toString() + " " + park1.getLon().toString()
+                        location.id,
+                        location.get("Location Name").toString(),
+                        location.get("Lat").toString().toDouble(),
+                        location.get("Lon").toString().toDouble()
                     )
                     parklocations.add(park1)
+
                 }
+
+
+                //display the markers
+                Log.i("DisplayingMarkers", "park locations size " + parklocations.size)
+                for (i in 0..parklocations.size - 1) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(
+                                LatLng(
+                                    parklocations.get(i).getLat(),
+                                    parklocations.get(i).getLon()
+                                )
+                            )
+                            .title(parklocations.get(i).getName())
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                    )
+                    Log.i(
+                        "DisplayingMarkers",
+                        "adding marker to the map :" + parklocations.get(i)
+                            .getID() + ", " + parklocations.get(i).getLat()
+                            .toString() + ", " + parklocations.get(i).getLon().toString()
+                    )
+                }
+
+
             }
             .addOnFailureListener { exception ->
-                Log.w("LOG_TAG", "Error getting documents: ", exception)
+                Log.w("CreatingParkLocation", "Error getting documents: ", exception)
             }
 
 
-        //create the ParkLocationMarker object and set info window for markers
+        //set the info windows and click listeners for the markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
-
-        // info window on click listener
         mMap.setOnInfoWindowClickListener(this)
 
-        Log.i(
-            "LOG_TAG",
-            "HAHA DISPLAYING MARKERS"
-        )
-        //display the markers
-        for (i in 0..parklocations.size - 1) {
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
-                    .title(parklocations.get(i).getID())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-            )
-            Log.i(
-                "LOG_TAG",
-                "HAHA adding location1 :" + parklocations.get(i)
-                    .getID() + ", " + parklocations.get(i).getLat()
-                    .toString() + ", " + parklocations.get(i).getLon().toString()
-            )
-        }
+
     }
 
 
@@ -266,6 +274,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .build()
             )
         )
+
+
     }
 
     // info window event handler ( redirects to the view eventslist.kt )
@@ -273,6 +283,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //get the latlng position from the marker
         val markerPosition = p0?.position
 
+        // find out which object in the arraylist matches with the
         // if the user clicks their own marker
         if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
             var locationId = ""
@@ -284,8 +295,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 }
             }
             Log.i(
-                "LOG_TAG",
-                "HAHA: redirecting to info window with id of: " + locationId
+                "onInfoWindowClick",
+                "redirecting to info window with id of: " + locationId
             )
             val intent = Intent(this, eventslist::class.java)
             intent.putExtra("locationID", locationId)

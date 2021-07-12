@@ -22,8 +22,8 @@ import com.parse.ParseUser
 
 lateinit private var eventList: ArrayList<HostEvents.EventDisplayer>
 
-
 class HostEvents : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_events)
@@ -35,26 +35,25 @@ class HostEvents : AppCompatActivity() {
         eventList = ArrayList()
 
 
-
-            val query = ParseQuery.getQuery<ParseObject>("Event")
-            query.whereEqualTo("host", ParseUser.getCurrentUser().username)
+        val query = ParseQuery.getQuery<ParseObject>("Event")
+        query.whereEqualTo("host", ParseUser.getCurrentUser().username)
         val eventquery = query.find()
-            for (event in eventquery) {
-                Log.i("LOG_TAG", "HAHA hosted events: ${event.getString("sportPlaceID")}")
-                val queryL = ParseQuery.getQuery<ParseObject>("Location")
-                queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-                queryL.setLimit(1)
-                val lQuery = queryL.find()
-                var e1 = EventDisplayer(
-                    event.objectId,
-                    event.getString("eventType")!!,
-                    lQuery.get(0).getString("Address")!!,
-                    event.getDate("date").toString(),
-                    "Hosted by: "+event.getString("host")!!
-                )
-                eventList.add(e1);
+        for (event in eventquery) {
+            Log.i("LOG_TAG", "HAHA hosted events: ${event.getString("sportPlaceID")}")
+            val queryL = ParseQuery.getQuery<ParseObject>("Location")
+            queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
+            queryL.setLimit(1)
+            val lQuery = queryL.find()
+            var e1 = EventDisplayer(
+                event.objectId,
+                event.getString("eventType")!!,
+                lQuery.get(0).getString("Address")!!,
+                event.getDate("date").toString(),
+                "Hosted by: " + event.getString("host")!!
+            )
+            eventList.add(e1);
 
-            }
+        }
 
 
         Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
@@ -106,13 +105,13 @@ class HostEvents : AppCompatActivity() {
 
             Log.i(
                 "LOG_TAG",
-                "HAHA: Displaying data for position from event " + eventList.size.toString() + " " + position+" "+
+                "HAHA: Displaying data for position from event " + eventList.size.toString() + " " + position + " " +
                         eventList[position].name
             )
-            eventTitle.text=(eventList.get(position).name)
-            eventAddress.text=(eventList.get(position).address)
-            eventTime.text=(eventList.get(position).time)
-            eventHost.text=(eventList.get(position).host)
+            eventTitle.text = (eventList.get(position).name)
+            eventAddress.text = (eventList.get(position).address)
+            eventTime.text = (eventList.get(position).time)
+            eventHost.text = (eventList.get(position).host)
 
             return rowMain;
         }
@@ -132,10 +131,10 @@ class HostEvents : AppCompatActivity() {
         }
 
         // main constuctor
-        constructor(id: String, name: String, address: String,time: String, host: String) {
+        constructor(id: String, name: String, address: String, time: String, host: String) {
             this.id = id
             this.name = name
-            this.address=address
+            this.address = address
             this.time = time
             this.host = host
 

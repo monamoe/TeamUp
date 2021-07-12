@@ -38,7 +38,11 @@ class LandingPageActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.ShowUsername).text = "SOME USER"
 
-        val createEventBtn = findViewById<Button>(R.id.CreateEventBtn)//create event layout
+        //create event button
+        findViewById<Button>(R.id.CreateEventBtn).setOnClickListener {
+            val intent = Intent(this, CreateEventActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
