@@ -52,34 +52,56 @@ class eventslist : AppCompatActivity() {
         db.collection("Location").document(locationID).collection("Events")
             .get()
             .addOnSuccessListener { documents ->
+                //loop through the events at that location
                 for (event in documents) {
-
                     val eventObj = EventDisplayer(
                         event.id,
                         event.get("type").toString(),
                         event.get("eventPlaceId").toString(),
                         event.get("date").toString(),
-                        "HOST NAME UNKNOWN"
+                        "AAAAAAAAAA"
                     )
 
-                    eventList.add(eventObj);
+//                    //get the username of the host for the event
+//                    val hostID = event.get("userName").toString()
+//
+//                    db.collection("Users")
+//                        .document(hostID)
+//                        .get()
+//                        .addOnSuccessListener { document ->
+//
+//                            if (document != null) {
+//                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
+//                            } else {
+//                                Log.d("TAG", "No such document")
+//                            }
+//
+//
+//                            document.data[]
+//
+//                            val eventObj = EventDisplayer(
+//                                event.id,
+//                                event.get("type").toString(),
+//                                event.get("eventPlaceId").toString(),
+//                                event.get("date").toString(),"AAAAAAAAAA"
+//                            )
+//
+//                            eventList.add(eventObj)
+//                        }
+
                 }
-
-                Log.i(
-                    "EVENTLIST SIZE",
-                    "HAHA EventList ArryList size: " + eventList.size
-                )
-
                 // list view adapter
                 listview.adapter = EventListAdapter(this)
-
-                listview.setOnItemClickListener { parent, view, position, id ->
-                    val eventID = eventList.get(position).getID()
-                    val intent = Intent(this, event::class.java)
-                    intent.putExtra("eventID", eventID)
-                    startActivity(intent)
-                }
             }
+
+
+
+        listview.setOnItemClickListener { parent, view, position, id ->
+            val eventID = eventList.get(position).getID()
+            val intent = Intent(this, event::class.java)
+            intent.putExtra("eventID", eventID)
+            startActivity(intent)
+        }
     }
 
 

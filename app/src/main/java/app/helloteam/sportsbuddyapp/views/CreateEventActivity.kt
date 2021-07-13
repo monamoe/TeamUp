@@ -141,45 +141,15 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         createBtn.setOnClickListener {
             // enter required fields
             if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
-                //check if a record with that address already exists
-                val query = ParseQuery.getQuery<ParseObject>("Location")
-                query.whereEqualTo("locationPlaceId", locationPlaceId)
-                query.findInBackground { locationlist, e ->
-                    if (e == null) {
-                        // if location doesnt exist, create location
-                        if (locationlist.size == 0) {
-                            // if the location doesn't exist, create it
-                            Log.i("LOG_TAG", "HAHA: creating new location")
-                            var ec = SportLocation(locationPlaceId, address, address, lat, long, 1)
-                            ParseCode.LocationCreation(ec)
-                        } else {
-                            // finding the uid for the location this belongs in
-                            Log.i("LOG_TAG", "HAHA: IN ELSE")
-                            for (locations in locationlist) {
-                                Log.i("LOG_TAG", "HAHA In FOR")
-                                locations.put("amount", locations.getInt("amount") + 1)
-                                Log.i("LOG_TAG", "HAHA " + locations.getInt("amount"))
-                                locations.save()
-                            }
-                        }
-                    } else {
-                        Log.i(
-                            "LOG_TAG",
-                            "HAHA: There was an error with getting the locations : " + e.message
-                        )
-                    }
-                }
-                Log.i("LOG_TAG", "HAHA: Creating event record in database")
+
+
                 var date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
                 var endDate: Date = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
-                Log.i("LOG_TAG", "HAHA Event start and end dates: $date : $endDate")
 
                 //pushing to firestore database required the use of a hashmap,
-                //this needs to be moved into the models folder?
                 val db = Firebase.firestore
 
-                // uid for the locations is sum of the strong values of lat and long
-                // if the location collection doesnt exist, create it
+                //hashmap models
                 val eventHashMap = hashMapOf(
                     "type" to sportSelection,
                     "userName" to FirebaseAuth.getInstance().uid,
@@ -193,62 +163,35 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     "Lon" to long
                 )
 
-                db.collection("Location").document("$lat$long").collection("Events").document().set(
-                    eventHashMap, SetOptions.merge()
-                )
 
-
-
-
+                // add location unless it already exists
                 db.collection("Location").document("$lat$long")
                     .set(LocationsHashMap, SetOptions.merge())
+                    .addOnSuccessListener {
+                        Log.d("CreatingEvent", "Created $lat$long document")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("a", "Error creating location document", e)
+                    }
+
+                // pushes event data to Event Collection inside of Location with ID "$lat$long"
+                db.collection("Location").document("$lat$long").collection("Events").document()
+                    .set(eventHashMap, SetOptions.merge())
                     .addOnSuccessListener {
                         Log.d("CreatingEvent", "Created $lat$long document")
                         val intent = Intent(this, LandingPageActivity::class.java)
                         startActivity(intent)
                     }
-                    .addOnFailureListener { e -> Log.w("a", "Error writing document", e) }
-
-//                // Update one field, creating the document if it does not already exist.
-//                val data = hashMapOf(
-//                    "capital" to 2,
-//                    "something else" to 3
-//                )
-//
-//                //document has its own id iwth .document()
-//                db.collection("cities").document()
-//                    .set(data, SetOptions.merge())a
-
-//                val EventsHashMap = hashMapOf(
-//                    "type" to sportSelection,
-//                    "userName" to FirebaseAuth.getInstance().uid,
-//                    "eventPlaceID" to locationPlaceId,
-//                    "date" to date,
-//                    "endDate" to endDate
-//                )
-
-//                db.collection("Events").document("LA")
-//                    .set(EventsHashMap)
-//                    .addOnSuccessListener {
-//                        Log.d("CreatingEvent", "DocumentSnapshot successfully written!")
-//                        val intent = Intent(this, LandingPageActivity::class.java)
-//                        startActivity(intent)
-//                    }
-//                    .addOnFailureListener { e ->
-//                        Log.w(
-//                            "CreatingEvent",
-//                            "Error writing document",
-//                            e
-//                        )
-//                    }
-
-
+                    .addOnFailureListener { e ->
+                        Log.w("a", "Error creating location document", e)
+                    }
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    // when the time select fragment is li
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
         if (!endTimeBool) {
             val timeBtn = findViewById<Button>(R.id.TimeBtn)

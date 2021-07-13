@@ -10,6 +10,9 @@ import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,16 +34,32 @@ class RegisterActivity : AppCompatActivity() {
             ) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
             } else {
-
                 if (passwordTxt.equals(passwordConfirmTxt)) {
+
+
+                    // store the new user data in firestore
+                    val userHashMap = hashMapOf(
+                        "userName" to userNameTxt,
+                        "userEmail" to emailTxt
+                    )
+
+
+                    // add location unless it already exists
+                    Firebase.firestore.collection("User")
+                        .document(FirebaseAuth.getInstance().uid.toString())
+                        .set(userHashMap, SetOptions.merge())
+                        .addOnSuccessListener {
+                            Log.d("CreatingEvent", "Created new user")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("a", "Error creating location document", e)
+                        }
+
+
                     //Firebase Auth to record user Auth, and user data
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailTxt, passwordTxt)
                         .addOnCompleteListener({
                             if (it.isSuccessful) {
-                                Log.i(
-                                    "LOG_TAG",
-                                    "HAHA Created Firebase user profile with uid of: " + it.result.user?.uid
-                                )
                                 val intent = Intent(this, LandingPageActivity::class.java)
                                 startActivity(intent)
                             }
@@ -52,7 +71,6 @@ class RegisterActivity : AppCompatActivity() {
                         }
 
 
-
                 } else {//if passwords dont match
                     Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show()
                 }
@@ -61,13 +79,70 @@ class RegisterActivity : AppCompatActivity() {
 
         }
 
-        val backBtn = findViewById<TextView>(R.id.backBtn)
 
-        backBtn.setOnClickListener {//allows user to go back to login page from signup
+        findViewById<TextView>(R.id.backBtn).setOnClickListener {//allows user to go back to login page from signup
             val intent = Intent(this, LoginActivity::class.java)
-
-
             startActivity(intent)
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
