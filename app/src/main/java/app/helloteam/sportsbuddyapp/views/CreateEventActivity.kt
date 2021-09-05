@@ -59,18 +59,16 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
         //sport type
-        val sportType = findViewById<RadioGroup>(R.id.SportType)
-        var sportSelection: SportTypes = SportTypes.NONE
-        sportType.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == R.id.SoccerBtn) {
-                sportSelection = SportTypes.SOCCER
-            }
-            if (checkedId == R.id.BasketballBtn) {
-                sportSelection = SportTypes.BASKETBALL
-            }
-            if (checkedId == R.id.HockeyBtn) {
-                sportSelection = SportTypes.BallHockey
-            }
+        val sportType: Spinner = findViewById<Spinner>(R.id.spinner)
+        ArrayAdapter.createFromResource(
+            this,
+            R.array.sporttype,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            sportType.adapter = adapter
         }
 
         //set the start time
@@ -135,8 +133,6 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         createBtn.setOnClickListener {
             // enter required fields
             if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
-
-
                 var date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
                 var endDate: Date = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
 
@@ -146,7 +142,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 //hashmap models
                 val eventHashMap = hashMapOf(
                     "type" to sportSelection,
-                    "userName" to FirebaseAuth.getInstance().uid,
+                    "hostID" to FirebaseAuth.getInstance().uid,
                     "eventPlaceID" to locationPlaceId,
                     "date" to date,
                     "endDate" to endDate
@@ -156,7 +152,6 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     "Lat" to lat,
                     "Lon" to long
                 )
-
 
                 // add location unless it already exists
                 db.collection("Location").document("$lat$long")

@@ -62,6 +62,9 @@ class eventslist : AppCompatActivity() {
                         "Host not setup at the moment"
                     )
 
+                    eventObj.printString()
+
+
                     //get the username of the host for the event
 //                    val hostID = event.get("userName").toString()
 
@@ -90,6 +93,7 @@ class eventslist : AppCompatActivity() {
         listview.setOnItemClickListener { parent, view, position, id ->
             val eventID = eventList.get(position).getID()
             val intent = Intent(this, event::class.java)
+            intent.putExtra("locationID", locationID)
             intent.putExtra("eventID", eventID)
             startActivity(intent)
         }
@@ -124,12 +128,6 @@ class eventslist : AppCompatActivity() {
             val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
-            Log.i(
-                "LOG_TAG",
-                "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position + " and " + eventList.get(
-                    0
-                ).name
-            )
             eventTitle.setText(eventList.get(position).name)
             eventTitle.text = (eventList.get(position).name)
             eventAddress.text = (eventList.get(position).address)
@@ -151,6 +149,11 @@ class eventslist : AppCompatActivity() {
 
         fun getID(): String {
             return this.id
+        }
+
+        fun printString() {
+            var output: String = id + "," + name + ", " + address + ", " + time + ", " + host;
+            Log.i("LOG_TAG", "Event Displayer:" + output)
         }
 
         // main constuctor
