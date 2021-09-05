@@ -13,9 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
-import app.helloteam.sportsbuddyapp.models.SportEvents
-import app.helloteam.sportsbuddyapp.models.SportLocation
-import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -26,9 +23,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.parse.ParseObject
-import com.parse.ParseQuery
-import com.parse.ParseUser
 import java.io.IOException
 import java.util.*
 

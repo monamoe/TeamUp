@@ -59,12 +59,13 @@ class eventslist : AppCompatActivity() {
                         event.get("type").toString(),
                         event.get("eventPlaceId").toString(),
                         event.get("date").toString(),
-                        "AAAAAAAAAA"
+                        "Host not setup at the moment"
                     )
 
-//                    //get the username of the host for the event
+                    //get the username of the host for the event
 //                    val hostID = event.get("userName").toString()
-//
+
+                    // Look through Users document and find the hosts information
 //                    db.collection("Users")
 //                        .document(hostID)
 //                        .get()
@@ -75,20 +76,10 @@ class eventslist : AppCompatActivity() {
 //                            } else {
 //                                Log.d("TAG", "No such document")
 //                            }
-//
-//
-//                            document.data[]
-//
-//                            val eventObj = EventDisplayer(
-//                                event.id,
-//                                event.get("type").toString(),
-//                                event.get("eventPlaceId").toString(),
-//                                event.get("date").toString(),"AAAAAAAAAA"
-//                            )
-//
-//                            eventList.add(eventObj)
 //                        }
 
+
+                    eventList.add(eventObj)
                 }
                 // list view adapter
                 listview.adapter = EventListAdapter(this)

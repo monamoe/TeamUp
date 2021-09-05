@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -29,12 +28,15 @@ class RegisterActivity : AppCompatActivity() {
             val emailTxt = findViewById<TextView>(R.id.emailTxt).text.toString()
 
 
-            if (userNameTxt.equals("") || passwordTxt.equals("")//checks if all fields are filled
-                || passwordConfirmTxt.equals("") || emailTxt.equals("")
+            if (userNameTxt.equals("") || passwordTxt.equals("") ||
+                passwordConfirmTxt.equals("") || emailTxt.equals("")
             ) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
             } else {
+
                 if (passwordTxt.equals(passwordConfirmTxt)) {
+
+                    //check if that user with that email / username exists already
 
 
                     // store the new user data in firestore
@@ -42,9 +44,6 @@ class RegisterActivity : AppCompatActivity() {
                         "userName" to userNameTxt,
                         "userEmail" to emailTxt
                     )
-
-
-                    // add location unless it already exists
                     Firebase.firestore.collection("User")
                         .document(FirebaseAuth.getInstance().uid.toString())
                         .set(userHashMap, SetOptions.merge())
@@ -64,23 +63,21 @@ class RegisterActivity : AppCompatActivity() {
                                 startActivity(intent)
                             }
                         }).addOnFailureListener {
-                            Log.i(
-                                "LOG_TAG",
-                                "HAHA Failed to create firebase user profile " + it.message
-                            )
+                            Toast.makeText(
+                                this,
+                                "There was a problem with creating the User Account, Please try again later..." + it.message,
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
-
 
                 } else {//if passwords dont match
                     Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show()
                 }
-
             }
-
         }
 
-
-        findViewById<TextView>(R.id.backBtn).setOnClickListener {//allows user to go back to login page from signup
+        //allows user to go back to login page from signup
+        findViewById<TextView>(R.id.backBtn).setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }

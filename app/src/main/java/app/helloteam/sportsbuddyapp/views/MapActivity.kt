@@ -284,7 +284,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         val markerPosition = p0?.position
 
         // find out which object in the arraylist matches with the
-        // if the user clicks their own marker
+        // if the user clicks their own
+        Log.i("onInfoWindowClick", "if the user clicks their own marker "+markerPosition.toString() + " " + LatLng(userLocationLat, userLocationLon))
         if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
             var locationId = ""
             //find which latlng that belongs to
