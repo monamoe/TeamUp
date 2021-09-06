@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sporttype">
+    <string-array name="activitylist">
         <item>Basketball</item>
         <item>Hockey</item>
         <item>Soccer</item>

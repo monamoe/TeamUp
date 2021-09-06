@@ -1,5 +1,6 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -8,10 +9,10 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
-import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
@@ -30,13 +31,15 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
     // sports attributes
-    private var hour: Int = 0//time attributes 
+    private var activitySelection: String? = ""
+
+    //time attributes
+    private var hour: Int = 0
     private var min: Int = 0
     private var endHour: Int = 0
     private var endMin: Int = 0
     private var endTimeBool: Boolean = false
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
-
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
@@ -58,17 +61,33 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         // Create a new PlacesClient instance
         val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
+
         //sport type
-        val sportType: Spinner = findViewById<Spinner>(R.id.spinner)
+        val activityType: Spinner = findViewById<Spinner>(R.id.spinner)
         ArrayAdapter.createFromResource(
             this,
-            R.array.sporttype,
+            R.array.activitylist,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            sportType.adapter = adapter
+            activityType.adapter = adapter
+        }
+        activityType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                pos: Int,
+                id: Long
+            ) {
+                if (parent != null) {
+                    activitySelection = parent.getItemAtPosition(pos).toString()
+                }
+            }
+
         }
 
         //set the start time
@@ -130,18 +149,27 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         })
 
 
+        Log.i("LOG_TAG", "$address \n $activitySelection \n $hour ")
         createBtn.setOnClickListener {
             // enter required fields
-            if (!address.equals("") && sportSelection != SportTypes.NONE && hour != 0) {
-                var date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
-                var endDate: Date = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
+            val addressBOOL = !address.equals("")
+            val activityBOOL = !activitySelection.equals("")
+            val hourBOOl = hour != 0
+            Log.i(
+                "LOG_TAG",
+                "Printing BOOLS: $addressBOOL - $activityBOOL - $activitySelection - $hourBOOl"
+            )
+            if (!address.equals("") && !activitySelection.equals("") && hour != 0) {
+                val date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
+                val endDate: Date =
+                    Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
 
                 //pushing to firestore database required the use of a hashmap,
                 val db = Firebase.firestore
 
                 //hashmap models
                 val eventHashMap = hashMapOf(
-                    "type" to sportSelection,
+                    "activity" to activitySelection,
                     "hostID" to FirebaseAuth.getInstance().uid,
                     "eventPlaceID" to locationPlaceId,
                     "date" to date,
@@ -213,4 +241,6 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         }
         return place
     }
+
 }
+
