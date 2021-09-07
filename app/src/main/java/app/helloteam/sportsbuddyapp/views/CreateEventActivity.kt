@@ -30,8 +30,6 @@ import java.util.*
 class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
     private val AUTOCOMPLETE_REQUEST_CODE = 1
 
-    // sports attributes
-    private var activitySelection: String? = ""
 
     //time attributes
     private var hour: Int = 0
@@ -43,12 +41,20 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
     private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
+    // sports attributes
+    private var activitySelection: String? = ""
+
     // location attributes
     private var locationPlaceId: String = "" // place id for the location
     private var locationname: String = "" // the name of the park, (not the address to the park)
     private var address: String = ""
     private var lat: Double = 0.0
     private var long: Double = 0.0
+
+    //additional information
+    private var addionalInformation = ""
+    private var eventTitle = ""
+    private var eventSpace = 0
 
     private val context: Context = this
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,17 +155,19 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         })
 
 
-        Log.i("LOG_TAG", "$address \n $activitySelection \n $hour ")
         createBtn.setOnClickListener {
+            eventTitle = findViewById<TextView>(R.id.eventTitle).text.toString()
+            if (findViewById<EditText>(R.id.eventSpace).text.toString().equals(""))
+                eventSpace = 1;
+            else
+                eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
+            addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
+
             // enter required fields
-            val addressBOOL = !address.equals("")
-            val activityBOOL = !activitySelection.equals("")
-            val hourBOOl = hour != 0
-            Log.i(
-                "LOG_TAG",
-                "Printing BOOLS: $addressBOOL - $activityBOOL - $activitySelection - $hourBOOl"
-            )
-            if (!address.equals("") && !activitySelection.equals("") && hour != 0) {
+            if (!address.equals("") && !activitySelection.equals("") && hour != 0 && !eventTitle.equals(
+                    ""
+                )
+            ) {
                 val date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
                 val endDate: Date =
                     Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
@@ -169,11 +177,14 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
 
                 //hashmap models
                 val eventHashMap = hashMapOf(
+                    "title" to eventTitle,
+                    "eventSpace" to eventSpace,
                     "activity" to activitySelection,
                     "hostID" to FirebaseAuth.getInstance().uid,
                     "eventPlaceID" to locationPlaceId,
                     "date" to date,
                     "endDate" to endDate
+
                 )
                 val LocationsHashMap = hashMapOf(
                     "Location Name" to address,

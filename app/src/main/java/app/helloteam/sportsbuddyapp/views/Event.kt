@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.parse.ParseObject
@@ -33,6 +34,7 @@ class event : AppCompatActivity() {
     var locationID: String = "0000000"
     var attending: Boolean = false
     var hosting: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
@@ -48,6 +50,7 @@ class event : AppCompatActivity() {
         val endtime = findViewById<TextView>(R.id.endtime)
         //val activity = findViewById<TextView>(R.id.activity)
         val space = findViewById<TextView>(R.id.space)
+        val activity = findViewById<TextView>(R.id.activity)
         val information = findViewById<TextView>(R.id.information)
         val hostname = findViewById<TextView>(R.id.hostname)
         val hostbio = findViewById<TextView>(R.id.hostbio)
@@ -68,88 +71,108 @@ class event : AppCompatActivity() {
                 }
 
                 // populate text fields
+                eventTitle.setText(document.get("title").toString())
+                activity.setText(document.get("activity").toString())
                 startTime.setText("Start Time: \n" + document.get("date").toString())
                 endtime.setText("End Time: \n" + document.get("endDate").toString())
-                eventTitle.setText(document.get("eventType").toString())
-                hostname.setText(document.get("host").toString())
-                //search through the users document, find the host and populate the host information for the event
 
+                val hostID = document.get("hostID").toString()
+
+                val currentUser = FirebaseAuth.getInstance().uid.toString()
+                if (hostID.equals(currentUser)) {
+                    // the current user is the one who made this event. display appropriate options
+                    hosting = true;
+                    attendBtn.text = "Cancel Event"
+                } else {
+                    hosting = false;
+                    // check if the user is already attending
+                    db.collection("Location").document(locationID).collection("Events")
+                        .document(eventID).collection("Attendees").document(currentUser)
+                        .get()
+                        .addOnSuccessListener {
+                            // user is already attending
+                            attendBtn.text = "Attend"
+                            attending = false
+                        }
+                        .addOnFailureListener {
+                            // user isnt currently attending
+                            attendBtn.text = "Leave"
+                            attending = true
+                        }
+                }
+
+                // get host's information to display on event page
+                db.collection("User").document(hostID)
+                    .get()
+                    .addOnSuccessListener { userDoc ->
+                        // host name and host BIO
+                        hostname.setText(userDoc.get("userName").toString())
+                    }
             }
             .addOnFailureListener { exception ->
                 Log.d("LOG_TAG", "get failed with ", exception)
             }
 
 
-//        val query = ParseQuery.getQuery<ParseObject>("Event")
-//        query.whereEqualTo("objectId", eventID)
-//        val eventquery = query.find()
-//        for (event in eventquery) {
-//            val locationQuery = ParseQuery.getQuery<ParseObject>("Location")
-//            locationQuery.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-//            val location = locationQuery.find()
-//            val queryU = ParseUser.getQuery()
-//            queryU.whereEqualTo("username", event.getString("host"))
-//            if (event.getString("host") == ParseUser.getCurrentUser().username) {
-//                hosting = true
-//                attendBtn.text = "Cancel"
-//            }
-//            val host = queryU.find()
-//            startTime.setText("Start Time: \n" + event.getDate("date").toString())
-//            endtime.setText("End Time: \n" + event.getDate("endDate").toString())
-//            eventTitle.setText(event.getString("eventType").toString())
-//            hostname.setText(event.getString("host").toString())
-//            space.setText("Space: " + location[0].getString("Address").toString())
-//            hostbio.setText(host[0].getString("aboutMe").toString())
-//        }
 
 
-        // add a check to see if the current user is the host for the event select
-        //if the user is not the host, enable the ability to attend the event
-        val currentUser = FirebaseAuth.getInstance().uid
-
-
-
-        var objectID: String = ""
-//        if (!hosting) {
-//            val queryA = ParseQuery.getQuery<ParseObject>("AttendeeList")
-//            queryA.whereEqualTo("userID", userId)
-//            val attendees = queryA.find()
-//            for (a in attendees) {
-//                if (a.getString("eventID") == eventID) {
-//                    attending = true
-//                    objectID = a.objectId
-//                    attendBtn.text = "Leave"
-//                }
-//            }
-//        }
-
-
-        //
         attendBtn.setOnClickListener {
             if (!hosting) {
                 if (attending) {
-                    ParseCode.EventLeave(objectID)
-                    Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
-                        .show()
+                    // user is already attending, remove them from attendee list
+                    db.collection("Location").document(locationID).collection("Events")
+                        .document(eventID).collection("Attendees")
+                        .document(FirebaseAuth.getInstance().uid.toString())
+                        .delete()
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(
+                                "LOG_TAG",
+                                "Error removing attendence",
+                                e
+                            )
+                        }
+
                 } else {
-                    ParseCode.EventAttend(userId, eventID)
+                    // user is not attending, add them to attendee list
+                    val attendeeHashMap = hashMapOf(
+                        "userID" to FirebaseAuth.getInstance().uid.toString()
+                    )
+
+                    db.collection("Location").document(locationID).collection("Events")
+                        .document(eventID).collection("Attendees").document()
+                        .set(attendeeHashMap, SetOptions.merge())
+                        .addOnSuccessListener {
+                            Log.d("CreatingEvent", "Created Attendee")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("a", "Error creating Attendee document", e)
+                        }
                     Toast.makeText(
                         this,
                         "Successfully registered for this event",
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                 }
             } else {
-                ParseCode.CancelEvent(eventID)
+                db.collection("Location").document(locationID).collection("Events")
+                    .document(eventID)
+                    .delete()
+                    .addOnSuccessListener {
+                        Log.d(
+                            "LOG_TAG",
+                            "Event successfully deleted!"
+                        )
+                    }
+                    .addOnFailureListener { e -> Log.w("LOG_TAG", "Error deleting Event", e) }
                 Toast.makeText(this, "Successfully cancelled event", Toast.LENGTH_SHORT)
                     .show()
             }
             val intent = Intent(this, LandingPageActivity::class.java)
             startActivity(intent)
         }
-
     }
-
-
 }

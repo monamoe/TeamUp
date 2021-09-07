@@ -39,6 +39,7 @@ class RegisterActivity : AppCompatActivity() {
                     //check if that user with that email / username exists already
 
 
+
                     // store the new user data in firestore
                     val userHashMap = hashMapOf(
                         "userName" to userNameTxt,
