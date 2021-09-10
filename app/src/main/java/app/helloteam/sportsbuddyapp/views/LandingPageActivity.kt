@@ -11,15 +11,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+import app.helloteam.sportsbuddyapp.models.weatherTask
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
+
+const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
+var forecast: TextView? = null
+var temp: TextView? = null
+
 
 class LandingPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
-
         val date = Date()
         Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
 
@@ -43,6 +47,11 @@ class LandingPageActivity : AppCompatActivity() {
             val intent = Intent(this, CreateEventActivity::class.java)
             startActivity(intent)
         }
+
+        temp = findViewById(R.id.temp)
+        forecast = findViewById(R.id.forecast)
+
+        weatherTask().execute()
 
     }
 
