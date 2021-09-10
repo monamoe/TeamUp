@@ -33,33 +33,30 @@ class RegisterActivity : AppCompatActivity() {
             ) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
             } else {
-
                 if (passwordTxt.equals(passwordConfirmTxt)) {
 
                     //check if that user with that email / username exists already
-
-
-
-                    // store the new user data in firestore
-                    val userHashMap = hashMapOf(
-                        "userName" to userNameTxt,
-                        "userEmail" to emailTxt
-                    )
-                    Firebase.firestore.collection("User")
-                        .document(FirebaseAuth.getInstance().uid.toString())
-                        .set(userHashMap, SetOptions.merge())
-                        .addOnSuccessListener {
-                            Log.d("CreatingEvent", "Created new user")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("a", "Error creating location document", e)
-                        }
 
 
                     //Firebase Auth to record user Auth, and user data
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailTxt, passwordTxt)
                         .addOnCompleteListener({
                             if (it.isSuccessful) {
+                                // store the new user data in firestore
+                                val userHashMap = hashMapOf(
+                                    "userName" to userNameTxt,
+                                    "userEmail" to emailTxt
+                                )
+                                Firebase.firestore.collection("User")
+                                    .document(FirebaseAuth.getInstance().uid.toString())
+                                    .set(userHashMap, SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        Log.d("CreatingEvent", "Created new user")
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.w("a", "Error creating location document", e)
+                                    }
+
                                 val intent = Intent(this, LandingPageActivity::class.java)
                                 startActivity(intent)
                             }
@@ -70,6 +67,7 @@ class RegisterActivity : AppCompatActivity() {
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+
 
                 } else {//if passwords dont match
                     Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show()

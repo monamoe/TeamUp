@@ -2,23 +2,19 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
-import android.location.Address
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import app.helloteam.sportsbuddyapp.R
-import com.parse.ParseObject
-import com.parse.ParseQuery
-import com.parse.ParseUser
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 lateinit private var eventList: ArrayList<ViewPlayerEvents.EventDisplayer>
 
@@ -31,41 +27,64 @@ class ViewPlayerEvents : AppCompatActivity() {
         val listview = findViewById<ListView>(R.id.listview)
 
 
-        // events array list
+        // events array list, represents the events the user is enrolled in
         eventList = ArrayList()
 
-        // populate array list with events that match the location ID of the marker selected
-        val attendQuery =ParseQuery.getQuery<ParseObject>("AttendeeList")
-        attendQuery.whereEqualTo("userID", ParseUser.getCurrentUser().objectId)
-        val attednees = attendQuery.find()
-        Log.i(
-            "LOG_TAG",
-            "HAHA: events attending : " + attednees.size
-        )
-        for(a in attednees) {
+        // FIREBASE MIGRATION //
+        val db = Firebase.firestore
 
+        // list of events the user is attending
+        db.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+            .collection("Attending")
+            .get()
+            .addOnSuccessListener { attendingList ->
+                Log.i("LOG_TAG", "Attending size " + attendingList.size().toString())
+                for (attendingList in attendingList) {
+                    // get location and event data for the event the user is enrolled in
+                    db.collection("Location").document(attendingList.get("locationID").toString())
+                        .collection("Event")
+                        .document(attendingList.get("eventID").toString())
+                        .get()
+                        .addOnSuccessListener { event ->
+                            if (event == null) {
+                                Log.i(
+                                    "LOG_TAG",
+                                    "Fatal Error: trying to find an event ID that doesn't exit!"
+                                )
+                            } else {
+                                Log.i("LOG_TAG", "Found Matching Event")
+                            }
+                            // getting the address from location doc
+                            var address = ""
+                            db.collection("Location")
+                                .document(attendingList.get("locationID").toString())
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    if (document != null) {
+                                        address = document.get("Address").toString()
+                                    }
+                                }
+                            Log.i("LOG_TAG", "Found address of : " + address)
+                            var hostname = ""
+                            db.collection("User").document(event.get("hostID").toString())
+                                .get()
+                                .addOnSuccessListener { hostuser ->
+                                    hostname = hostuser.get("username").toString()
+                                }
+                            Log.i("LOG_TAG", "Found hostname of : " + address)
 
-            val query = ParseQuery.getQuery<ParseObject>("Event")
-            query.whereEqualTo("objectId", a.getString("eventID"))
-            val eventquery = query.find()
-
-            for (event in eventquery) {
-                val queryL = ParseQuery.getQuery<ParseObject>("Location")
-                queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-                queryL.setLimit(1)
-                val lQuery = queryL.find()
-                if(event.getString("host") != ParseUser.getCurrentUser().username) {
-                    var e1 = EventDisplayer(
-                        event.objectId,
-                        event.getString("eventType")!!,
-                        lQuery.get(0).getString("Address")!!,
-                        event.getDate("date").toString(),
-                        "Hosted by: " + event.getString("host")!!
-                    )
-                    eventList.add(e1);
+                            val ED = EventDisplayer(
+                                event.get("eventID").toString(),
+                                event.get("activity").toString(),
+                                address,
+                                event.get("date").toString(),
+                                hostname
+                            )
+                            eventList.add(ED);
+                        }
                 }
             }
-        }
+
 
         Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
 
@@ -73,11 +92,6 @@ class ViewPlayerEvents : AppCompatActivity() {
         listview.adapter = EventListAdapter(this)
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            Log.i("LOG_TAG", "HAHA: position" + position)
-            Log.i(
-                "LOG_TAG",
-                "HAHA: printing the position info " + eventList.get(position).toString()
-            )
             val eventID = eventList.get(position).getID()
             val intent = Intent(this, event::class.java)
             intent.putExtra("eventID", eventID)
@@ -116,13 +130,13 @@ class ViewPlayerEvents : AppCompatActivity() {
 
             Log.i(
                 "LOG_TAG",
-                "HAHA: Displaying data for position from event " + eventList.size.toString() + " " + position+" "+
+                "HAHA: Displaying data for position from event " + eventList.size.toString() + " " + position + " " +
                         eventList[position].name
             )
-            eventTitle.text=(eventList.get(position).name)
-            eventAddress.text=(eventList.get(position).address)
-            eventTime.text=(eventList.get(position).time)
-            eventHost.text=(eventList.get(position).host)
+            eventTitle.text = (eventList.get(position).name)
+            eventAddress.text = (eventList.get(position).address)
+            eventTime.text = (eventList.get(position).time)
+            eventHost.text = (eventList.get(position).host)
 
             return rowMain;
         }
@@ -142,22 +156,12 @@ class ViewPlayerEvents : AppCompatActivity() {
         }
 
         // main constuctor
-        constructor(id: String, name: String, address: String,time: String, host: String) {
+        constructor(id: String, name: String, address: String, time: String, host: String) {
             this.id = id
             this.name = name
-            this.address=address
+            this.address = address
             this.time = time
             this.host = host
-
-            //address
-            val query = ParseQuery.getQuery<ParseObject>("Event")
-            val eventlist = query.find()
-            for (event in eventlist) {
-
-
-                event.getString("eventType")!!
-                event.getDouble("longitude")
-            }
         }
     }
 }
