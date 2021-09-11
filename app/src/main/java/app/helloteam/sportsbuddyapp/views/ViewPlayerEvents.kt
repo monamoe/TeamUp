@@ -38,20 +38,16 @@ class ViewPlayerEvents : AppCompatActivity() {
             .collection("Attending")
             .get()
             .addOnSuccessListener { attendingList ->
-                Log.i("LOG_TAG", "Attending size " + attendingList.size().toString())
                 for (attendingList in attendingList) {
                     // get location and event data for the event the user is enrolled in
-                    db.collection("Location/" + attendingList.get("locationID").toString()
-                                  + "/Events").document(attendingList.get("eventID").toString())
+                    db.collection(
+                        "Location/" + attendingList.get("locationID").toString()
+                                + "/Events"
+                    ).document(attendingList.get("eventID").toString())
                         .get()
                         .addOnSuccessListener { event ->
-                            if (event == null) {
-                                Log.i(
-                                    "LOG_TAG",
-                                    "Fatal Error: trying to find an event ID that doesn't exit!"
-                                )
-                            }
                             var address = ""
+                            var hostname = ""
                             // getting the address from location doc
                             db.collection("Location")
                                 .document(attendingList.get("locationID").toString())
@@ -59,29 +55,20 @@ class ViewPlayerEvents : AppCompatActivity() {
                                 .addOnSuccessListener { document ->
                                     if (document != null) {
                                         address = document.get("Lat").toString()
-                                        Log.i("LOG_TAG", "Found address of : " + address)
-                                        var hostname = ""
-                                        db.collection("User").document(event.get("hostID").toString())
+                                        db.collection("User")
+                                            .document(event.get("hostID").toString())
                                             .get()
                                             .addOnSuccessListener { hostuser ->
                                                 hostname = hostuser.get("userName").toString()
-                                                Log.i("LOG_TAG", "Found hostname of : " + hostname)
                                                 val ED = EventDisplayer(
                                                     event.get("eventPlaceID").toString(),
+                                                    attendingList.get("locationID").toString(),
                                                     event.get("activity").toString(),
                                                     address,
                                                     event.get("date").toString(),
                                                     hostname
                                                 )
-                                                Log.i("LOG_TAG", "HEREEEEEEEEEE " + ED.host)
-                                                Log.i("LOG_TAG", "HEREEEEEEEEEE " + ED.address)
-                                                Log.i("LOG_TAG", "HEREEEEEEEEEE " + ED.id)
-                                                Log.i("LOG_TAG", "HEREEEEEEEEEE " + ED.name)
-                                                Log.i("LOG_TAG", "HEREEEEEEEEEE " + ED.time)
-
                                                 eventList.add(ED);
-
-                                                Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
 
                                                 // list view adapter
                                                 listview.adapter = EventListAdapter(this)
@@ -96,9 +83,11 @@ class ViewPlayerEvents : AppCompatActivity() {
 
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            val eventID = eventList.get(position).getID()
+            val eventID = eventList.get(position).getEventID()
+            val locationID = eventList.get(position).getLocationID()
             val intent = Intent(this, event::class.java)
             intent.putExtra("eventID", eventID)
+            intent.putExtra("locationID", locationID)
             startActivity(intent)
         }
     }
@@ -148,24 +137,38 @@ class ViewPlayerEvents : AppCompatActivity() {
 
     // Event Displayer class ( for array list)
     class EventDisplayer {
-        var id: String = ""
+        var eventIDED: String = ""
+        var locationIDED: String = ""
         var name: String = ""
         var address: String = ""
         var time: String = ""
         var host: String = ""
 
 
-        fun getID(): String {
-            return this.id
+        fun getEventID(): String {
+            return this.eventIDED
+        }
+
+        fun getLocationID(): String {
+            return this.locationIDED
         }
 
         // main constuctor
-        constructor(id: String, name: String, address: String, time: String, host: String) {
-            this.id = id
+        constructor(
+            eventID: String,
+            locationID: String,
+            name: String,
+            address: String,
+            time: String,
+            host: String
+        ) {
+            this.eventIDED = eventID
+            this.locationIDED = locationID
             this.name = name
             this.address = address
             this.time = time
             this.host = host
+
         }
     }
 }
