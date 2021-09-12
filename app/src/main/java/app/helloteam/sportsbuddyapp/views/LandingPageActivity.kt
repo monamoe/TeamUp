@@ -60,41 +60,7 @@ class LandingPageActivity : AppCompatActivity() {
 
         temp = findViewById(R.id.temp)
         forecast = findViewById(R.id.forecast)
-
-       var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        var userLocationLat = 0.0
-        var userLocationLon = 0.0
-        var cityName = ""
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            //this event only runs when the onMapReady funtion is finished running
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                //program has permission
-                    location ->
-
-                if (location != null) {
-                    //update user interface
-                    userLocationLat = location.latitude
-                    userLocationLon = location.longitude
-
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val addresses: List<Address> = geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
-                    cityName = addresses[0].getLocality()
-                }
-                //render the marker on the users location.
-                weatherTask().execute(cityName) //gets weather for current location
-            }
-        }
-        //request permission
-        else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_FINE_LOCATION
-            )
-        }
+        getUserCity()
 
     }
 
@@ -159,7 +125,7 @@ class LandingPageActivity : AppCompatActivity() {
         when (requestCode) {
             MY_PERMISSION_FINE_LOCATION ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //permission granted
+                    getUserCity()
                 } else {
                     //permission denied
                     Toast.makeText(
@@ -169,6 +135,43 @@ class LandingPageActivity : AppCompatActivity() {
                     ).show()
                     finish()
                 }
+        }
+    }
+
+    fun getUserCity(){
+        var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        var userLocationLat = 0.0
+        var userLocationLon = 0.0
+        var cityName = ""
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            //this event only runs when the onMapReady funtion is finished running
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                //program has permission
+                    location ->
+
+                if (location != null) {
+                    //update user interface
+                    userLocationLat = location.latitude
+                    userLocationLon = location.longitude
+
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses: List<Address> = geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
+                    cityName = addresses[0].getLocality()
+                }
+                //render the marker on the users location.
+                weatherTask().execute(cityName) //gets weather for current location
+            }
+        }
+        //request permission
+        else {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MY_PERMISSION_FINE_LOCATION
+            )
         }
     }
 }

@@ -77,7 +77,7 @@
         android:id="@+id/forecast"
         android:layout_width="122dp"
         android:layout_height="34dp"
-        android:layout_marginStart="72dp"
+        android:layout_marginStart="44dp"
         android:layout_marginBottom="116dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -87,11 +87,12 @@
         android:id="@+id/temp"
         android:layout_width="80dp"
         android:layout_height="39dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="112dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginBottom="116dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/forecast" />
 
 

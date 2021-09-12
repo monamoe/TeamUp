@@ -18,9 +18,9 @@
     <application
         android:name=".parse.ParseSetup"
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/logoteamup"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logo"
+        android:roundIcon="@drawable/logoteamup"
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
