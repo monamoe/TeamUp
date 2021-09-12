@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class LoginActivity : AppCompatActivity() {
@@ -18,7 +20,7 @@ class LoginActivity : AppCompatActivity() {
 
         val user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         Log.i("LOG_TAG", "CURRENT USER: $user")
-        if (user != null) {
+        if (user != null && FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) {
             toLanding()
         }
 
@@ -40,15 +42,19 @@ class LoginActivity : AppCompatActivity() {
 
                 //login with firebase Auth
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(emailTxt, passwordTxt)
-                    .addOnCompleteListener({
+                    .addOnCompleteListener {
                         if (it.isSuccessful) {
                             Log.i(
                                 "LOG_TAG",
                                 "Login Successful with uid of: " + it.result.user?.uid
                             )
-                            toLanding()
+                            if(Firebase.auth.currentUser?.isEmailVerified == true) {
+                                toLanding()
+                            }else{
+                                Toast.makeText(this,"Verify Email",Toast.LENGTH_LONG).show()
+                            }
                         }
-                    }).addOnFailureListener {
+                    }.addOnFailureListener {
                         Log.i(
                             "LOG_TAG",
                             "Login failed: " + it.message

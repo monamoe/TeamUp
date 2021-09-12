@@ -56,6 +56,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.0.1')
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.github.androdocs:Simple-HTTP-Request:v1.0'
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
 }
 

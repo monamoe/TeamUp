@@ -20,8 +20,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import android.location.Geocoder
-
-
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
@@ -34,8 +34,6 @@ class LandingPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
-        val date = Date()
-        Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
 
         //  ParseCode.EventDeletion(date) //method to delete expired events and locations
 
@@ -50,7 +48,7 @@ class LandingPageActivity : AppCompatActivity() {
 
 
 
-        findViewById<TextView>(R.id.ShowUsername).text = "SOME USER"
+        findViewById<TextView>(R.id.ShowUsername).text = Firebase.auth.currentUser?.displayName
 
         //create event button
         findViewById<Button>(R.id.CreateEventBtn).setOnClickListener {
