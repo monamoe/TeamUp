@@ -21,6 +21,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -192,27 +193,50 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     "Lon" to long
                 )
 
-                // add location unless it already exists
-                db.collection("Location").document("$lat$long")
+
+                // pushing location, doesnt overwrite if the location already exists
+                val locationID = lat.toString() + long.toString()
+                db.collection("Location").document(locationID)
                     .set(LocationsHashMap, SetOptions.merge())
                     .addOnSuccessListener {
-                        Log.d("CreatingEvent", "Created $lat$long document")
+                        Log.d("CreatingEvent", "Created $locationID document")
+
+                        // adds event
+                        val eventID =
+                            FirebaseFirestore.getInstance().collection("Location")
+                                .document(locationID)
+                                .collection("Events").document().id
+                        db.collection("Location").document(locationID).collection("Events")
+                            .document(eventID)
+                            .set(eventHashMap, SetOptions.merge())
+                            .addOnSuccessListener {
+
+                                val hostingHashMap = hashMapOf(
+                                    "locationID" to locationID,
+                                    "eventID" to eventID
+                                )
+
+                                // add the hosting data to the user
+                                db.collection("User")
+                                    .document(FirebaseAuth.getInstance().uid.toString())
+                                    .collection("Hosting").document()
+                                    .set(hostingHashMap, SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        val intent = Intent(this, LandingPageActivity::class.java)
+                                        startActivity(intent)
+                                    }
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("a", "Error creating location document", e)
+                            }
+
+
                     }
                     .addOnFailureListener { e ->
                         Log.w("a", "Error creating location document", e)
                     }
 
-                // pushes event data to Event Collection inside of Location with ID "$lat$long"
-                db.collection("Location").document("$lat$long").collection("Events").document()
-                    .set(eventHashMap, SetOptions.merge())
-                    .addOnSuccessListener {
-                        Log.d("CreatingEvent", "Created $lat$long document")
-                        val intent = Intent(this, LandingPageActivity::class.java)
-                        startActivity(intent)
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("a", "Error creating location document", e)
-                    }
+
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }

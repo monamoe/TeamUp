@@ -8,20 +8,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.parse.UserHandling
 import com.google.firebase.auth.FirebaseAuth
-import com.parse.ParseUser
 
 
-class
-LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // if the user is logged in already
-        if (ParseUser.getCurrentUser() != null) {//if user is already logged in
-            afterLogin()
+        val user = FirebaseAuth.getInstance().getCurrentUser()?.uid
+        Log.i("LOG_TAG", "CURRENT USER: $user")
+        if (user != null) {
+            toLanding()
         }
 
         //Sign Up button is pressed
@@ -29,7 +27,6 @@ LoginActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
         }
-
 
         //login button pressed
         findViewById<Button>(R.id.LoginButton).setOnClickListener {
@@ -49,7 +46,7 @@ LoginActivity : AppCompatActivity() {
                                 "LOG_TAG",
                                 "Login Successful with uid of: " + it.result.user?.uid
                             )
-                            afterLogin()
+                            toLanding()
                         }
                     }).addOnFailureListener {
                         Log.i(
@@ -63,9 +60,8 @@ LoginActivity : AppCompatActivity() {
     }
 
     //go to landing activity when called
-    fun afterLogin() {
+    fun toLanding() {
         val intent = Intent(this, LandingPageActivity::class.java)
         startActivity(intent)
     }
-
 }

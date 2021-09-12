@@ -21,14 +21,14 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/eventTitle"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:editable="true"
             android:hint="EventTitle" />
 
         <EditText
             android:id="@+id/eventSpace"
             android:layout_width="400px"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:editable="true"
             android:ems="10"
@@ -39,7 +39,7 @@
         <TextView
             android:id="@+id/textView2"
             android:layout_width="200px"
-            android:layout_height="25px"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:editable="false"
             android:text="Location" />

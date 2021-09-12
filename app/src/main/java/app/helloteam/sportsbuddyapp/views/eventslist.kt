@@ -10,18 +10,14 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.firestore.ktx.firestore
-import app.helloteam.sportsbuddyapp.models.EventDisplayer
 import com.google.firebase.ktx.Firebase
 
 
@@ -29,7 +25,6 @@ lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
 
 
 class eventslist : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,32 +51,11 @@ class eventslist : AppCompatActivity() {
                 for (event in documents) {
                     val eventObj = EventDisplayer(
                         event.id,
-                        event.get("type").toString(),
+                        event.get("activity").toString(),
                         event.get("eventPlaceId").toString(),
                         event.get("date").toString(),
-                        "Host not setup at the moment"
+                        event.get("hostID").toString()
                     )
-
-                    eventObj.printString()
-
-
-                    //get the username of the host for the event
-//                    val hostID = event.get("userName").toString()
-
-                    // Look through Users document and find the hosts information
-//                    db.collection("Users")
-//                        .document(hostID)
-//                        .get()
-//                        .addOnSuccessListener { document ->
-//
-//                            if (document != null) {
-//                                Log.d("TAG", "DocumentSnapshot data: ${document.data}")
-//                            } else {
-//                                Log.d("TAG", "No such document")
-//                            }
-//                        }
-
-
                     eventList.add(eventObj)
                 }
                 // list view adapter
@@ -146,14 +120,8 @@ class eventslist : AppCompatActivity() {
         var time: String = ""
         var host: String = ""
 
-
         fun getID(): String {
             return this.id
-        }
-
-        fun printString() {
-            var output: String = id + "," + name + ", " + address + ", " + time + ", " + host;
-            Log.i("LOG_TAG", "Event Displayer:" + output)
         }
 
         // main constuctor
@@ -166,7 +134,4 @@ class eventslist : AppCompatActivity() {
         }
     }
 }
-
-
-
 

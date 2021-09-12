@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="134dp"
-        android:layout_height="134dp"
+        android:layout_width="335dp"
+        android:layout_height="144dp"
         android:layout_marginTop="82dp"
         android:layout_marginBottom="515dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/logo" />
+        app:srcCompat="@drawable/logoteamup" />
 
     <EditText
         android:id="@+id/emailText"
