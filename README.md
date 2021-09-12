@@ -1,4 +1,4 @@
-# HelloTeam / SportsBuddy 
+# <HelloTeam/> / TeamUp 
 Activity organization platform for small scale event sceduling! 
 
 An app that helps you go outside and play! 🌞
@@ -13,7 +13,7 @@ An app that helps you go outside and play! 🌞
 [soussamu](https://github.com/soussamu)
 
 # Libraries & SDKs
-[Parse Platform](https://docs.parseplatform.org/android/guide/)
+[Firebase](https://firebase.google.com/)
 
 [Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
 
