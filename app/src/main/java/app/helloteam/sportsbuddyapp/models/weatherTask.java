@@ -5,6 +5,7 @@ import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.getTemp;
 import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.weatherAPI;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.androdocs.httprequest.HttpRequest;
@@ -26,7 +27,7 @@ public class weatherTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q=Brampton&units=metric&appid=" + weatherAPI);
+        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q="+strings[0]+"&units=metric&appid=" + weatherAPI);
         return response;
     }
 
@@ -46,7 +47,7 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             String temperature = main.getString("temp");
             String cast = weather.getString("description");
 
-// SET ALL VALUES IN TEXTBOX :
+
 
             getTemp().setText(temperature + "°C");
             getForecast().setText(cast);
