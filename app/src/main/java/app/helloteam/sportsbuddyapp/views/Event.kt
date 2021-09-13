@@ -136,6 +136,11 @@ class event : AppCompatActivity() {
                             )
                         }
 
+                    // removing eventID from the users data
+                    db.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+                        .collection("Attending").document(eventID)
+                        .delete()
+
                 } else {
                     // user is not attending, add them to attendee list
                     val attendeeHashMap = hashMapOf(
@@ -156,6 +161,15 @@ class event : AppCompatActivity() {
                         "Successfully registered for this event",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    val attendingHashMap = hashMapOf(
+                        "locationID" to locationID,
+                        "eventID" to eventID
+                    )
+                    db.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+                        .collection("Attending").document()
+                        .set(attendingHashMap, SetOptions.merge())
+
                 }
             } else {
                 db.collection("Location").document(locationID).collection("Events")

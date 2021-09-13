@@ -2,20 +2,19 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
-import android.location.Address
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import app.helloteam.sportsbuddyapp.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
@@ -34,42 +33,63 @@ class HostEvents : AppCompatActivity() {
         // events array list
         eventList = ArrayList()
 
+        // FIREBASE MIGRATION //
+        val db = Firebase.firestore
 
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-        query.whereEqualTo("host", ParseUser.getCurrentUser().username)
-        val eventquery = query.find()
-        for (event in eventquery) {
-            Log.i("LOG_TAG", "HAHA hosted events: ${event.getString("sportPlaceID")}")
-            val queryL = ParseQuery.getQuery<ParseObject>("Location")
-            queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-            queryL.setLimit(1)
-            val lQuery = queryL.find()
-            var e1 = EventDisplayer(
-                event.objectId,
-                event.getString("eventType")!!,
-                lQuery.get(0).getString("Address")!!,
-                event.getDate("date").toString(),
-                "Hosted by: " + event.getString("host")!!
-            )
-            eventList.add(e1);
+        db.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+            .collection("Hosting")
+            .get()
+            .addOnSuccessListener { hostingList ->
+                for (hostingList in hostingList) {
+                    db.collection("Location").document(hostingList.get("locationID").toString())
+                        .collection("Events")
+                        .document(hostingList.get("eventID").toString())
+                        .get()
+                        .addOnSuccessListener { event ->
+                            var address = ""
+                            var hostname = ""
+                            // getting the address from location doc
+                            db.collection("Location")
+                                .document(hostingList.get("locationID").toString())
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    if (document != null) {
+                                        address = document.get("Lat").toString()
+                                        db.collection("User")
+                                            .document(event.get("hostID").toString())
+                                            .get()
+                                            .addOnSuccessListener { hostuser ->
+                                                hostname = hostuser.get("userName").toString()
+                                                val ED = EventDisplayer(
+                                                    event.get("eventPlaceID").toString(),
+                                                    hostingList.get("locationID").toString(),
+                                                    event.get("activity").toString(),
+                                                    address,
+                                                    event.get("date").toString(),
+                                                    hostname
+                                                )
 
-        }
+                                                eventList.add(ED);
 
-
-        Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
+                                                // list view adapter
+                                                listview.adapter =
+                                                    EventListAdapter(this)
+                                            }
+                                    }
+                                }
+                        }
+                }
+            }
 
         // list view adapter
         listview.adapter = EventListAdapter(this)
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            Log.i("LOG_TAG", "HAHA: position" + position)
-            Log.i(
-                "LOG_TAG",
-                "HAHA: printing the position info " + eventList.get(position).toString()
-            )
-            val eventID = eventList.get(position).getID()
+            val eventID = eventList.get(position).getEventID()
+            val locationID = eventList.get(position).getLocationID()
             val intent = Intent(this, event::class.java)
             intent.putExtra("eventID", eventID)
+            intent.putExtra("locationID", locationID)
             startActivity(intent)
         }
     }
@@ -119,34 +139,46 @@ class HostEvents : AppCompatActivity() {
 
     // Event Displayer class ( for array list)
     class EventDisplayer {
-        var id: String = ""
+        var eventIDED: String = ""
+        var locationIDED: String = ""
         var name: String = ""
         var address: String = ""
         var time: String = ""
         var host: String = ""
 
 
-        fun getID(): String {
-            return this.id
+        fun getEventID(): String {
+            return this.eventIDED
+        }
+
+        fun getLocationID(): String {
+            return this.locationIDED
         }
 
         // main constuctor
-        constructor(id: String, name: String, address: String, time: String, host: String) {
-            this.id = id
+        constructor(
+            eventID: String,
+            locationID: String,
+            name: String,
+            address: String,
+            time: String,
+            host: String
+        ) {
+            this.eventIDED = eventID
+            this.locationIDED = locationID
             this.name = name
             this.address = address
             this.time = time
             this.host = host
 
+            // wtf is this?
             //address
-            val query = ParseQuery.getQuery<ParseObject>("Event")
-            val eventlist = query.find()
-            for (event in eventlist) {
-
-
-                event.getString("eventType")!!
-                event.getDouble("longitude")
-            }
+//            val query = ParseQuery.getQuery<ParseObject>("Event")
+//            val eventlist = query.find()
+//            for (event in eventlist) {
+//                event.getString("eventType")!!
+//                event.getDouble("longitude")
+//            }
         }
     }
 }
