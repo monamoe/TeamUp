@@ -17,3 +17,4 @@ local.properties
 # Api key
 app/src/main/res/values/secrets.xml
 app/src/main/res/values-night/secrets.xml
+app/google-services.json
