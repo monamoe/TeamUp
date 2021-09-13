@@ -1,6 +1,6 @@
 /*
 Author: monamoe
-Created:  March 21 2020
+Created:  March 21 2021
 Manages List of events
  */
 
@@ -10,37 +10,27 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import app.helloteam.sportsbuddyapp.R
-import com.parse.ParseObject
-import com.parse.ParseQuery
-import com.parse.ParseUser
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
 
-class eventslist : AppCompatActivity() {
 
+class eventslist : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_eventslist)
 
         val listview = findViewById<ListView>(R.id.listview)
-
-        Log.i(
-            "LOG_TAG",
-            "-----------------------------------------------------------\n-----------------------------------------------------------\n"
-        )
 
         // Get location ID
         val locationID: String = intent.getStringExtra("locationID").toString()
@@ -49,41 +39,35 @@ class eventslist : AppCompatActivity() {
         eventList = ArrayList()
 
         // populate array list with events that match the location ID of the marker selected
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-        val eventquery = query.find()
-        for (event in eventquery) {
-            val sportId = event.getString("sportPlaceID").toString()
-            if (sportId.equals(locationID)) {
-                val queryL = ParseQuery.getQuery<ParseObject>("Location")
-                queryL.whereEqualTo("locationPlaceId", event.getString("sportPlaceID"))
-                queryL.setLimit(1)
-                val lQuery = queryL.find()
-                    Log.i("LOG_TAG", "HAHA: ${event.getString("host")} ${ParseUser.getCurrentUser().username}")
-                    var e1 = EventDisplayer(
-                        event.objectId,
-                        event.getString("eventType")!!,
-                        lQuery.get(0).getString("Address")!!,
-                        event.getDate("date").toString(),
-                        "Hosted by: " + event.getString("host")!!
+
+        // FIREBASE MIGRATION //
+        val db = Firebase.firestore
+
+        //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
+        db.collection("Location").document(locationID).collection("Events")
+            .get()
+            .addOnSuccessListener { documents ->
+                //loop through the events at that location
+                for (event in documents) {
+                    val eventObj = EventDisplayer(
+                        event.id,
+                        event.get("activity").toString(),
+                        event.get("eventPlaceId").toString(),
+                        event.get("date").toString(),
+                        event.get("hostID").toString()
                     )
-                    eventList.add(e1);
-
+                    eventList.add(eventObj)
+                }
+                // list view adapter
+                listview.adapter = EventListAdapter(this)
             }
-        }
 
-        Log.i("LOG_TAG", "HAHA: Found a total of matching events: " + eventList.size.toString())
 
-        // list view adapter
-        listview.adapter = EventListAdapter(this)
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            Log.i("LOG_TAG", "HAHA: position" + position)
-            Log.i(
-                "LOG_TAG",
-                "HAHA: printing the position info " + eventList.get(position).toString()
-            )
             val eventID = eventList.get(position).getID()
             val intent = Intent(this, event::class.java)
+            intent.putExtra("locationID", locationID)
             intent.putExtra("eventID", eventID)
             startActivity(intent)
         }
@@ -118,15 +102,11 @@ class eventslist : AppCompatActivity() {
             val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
-            Log.i(
-                "LOG_TAG",
-                "HAHA: Displaying data for position from event" + eventList.size.toString() + " " + position +" and "+ eventList.get(0).name
-            )
             eventTitle.setText(eventList.get(position).name)
-            eventTitle.text=(eventList.get(position).name)
-            eventAddress.text=(eventList.get(position).address)
-            eventTime.text=(eventList.get(position).time)
-            eventHost.text=(eventList.get(position).host)
+            eventTitle.text = (eventList.get(position).name)
+            eventAddress.text = (eventList.get(position).address)
+            eventTime.text = (eventList.get(position).time)
+            eventHost.text = (eventList.get(position).host)
 
             return rowMain;
         }
@@ -140,7 +120,6 @@ class eventslist : AppCompatActivity() {
         var time: String = ""
         var host: String = ""
 
-
         fun getID(): String {
             return this.id
         }
@@ -149,21 +128,10 @@ class eventslist : AppCompatActivity() {
         constructor(id: String, name: String, address: String, time: String, host: String) {
             this.id = id
             this.name = name
-            this.address=address
+            this.address = address
             this.time = time
             this.host = host
-
-            //address
-            val query = ParseQuery.getQuery<ParseObject>("Event")
-            val eventlist = query.find()
-            for (event in eventlist) {
-
-
-                event.getString("eventType")!!
-                event.getDouble("longitude")
-            }
         }
     }
 }
-
 

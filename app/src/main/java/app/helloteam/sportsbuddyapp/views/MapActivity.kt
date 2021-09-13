@@ -28,7 +28,7 @@ import androidx.core.app.ActivityCompat
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.R.id.backBtn
 import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+import app.helloteam.sportsbuddyapp.firebase.UserHandling
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,8 +36,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.parse.ParseObject
-import com.parse.ParseQuery
+import com.google.firebase.firestore.ktx.*
+import com.google.firebase.ktx.Firebase
 
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
@@ -68,7 +68,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             // get the marker data out of the manager array list
             lateinit var PLM: ParkLocationMarker
             loop@ for (i in 0..parklocations.size - 1) {
-                if (parklocations.get(i).getID() == marker.title) {
+                // this is comparing the name of the location to get its marker title but it should be comparing id or something.
+                if (parklocations.get(i).getName() == marker.title) {
                     PLM = parklocations.get(i)
                     break@loop
                 }
@@ -77,7 +78,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
             //updating ui components on the info window
             val locationUI: String? = PLM.getName()
-            Log.i("LOG_TAG", "HAHA: locationUI:" + locationUI)
+            Log.i("LOG_TAG", "locationUI:" + locationUI)
             val locationComp = inputView.findViewById<TextView>(R.id.location)
             if (locationUI != null) {
                 locationComp.text = locationUI;
@@ -103,8 +104,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     //default user location values
-    var userLocationLon = 0.1
-    var userLocationLat = 0.1
+    var userLocationLon = 69.420
+    var userLocationLat = 69.420
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,7 +115,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         // back button
         findViewById<Button>(backBtn).setOnClickListener {
             val intent = Intent(this, LandingPageActivity::class.java)
-            // add data to intents using .putExtra("name", "value")
             startActivity(intent)
         }
 
@@ -150,7 +150,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     // when the map is ready
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        Log.i("LOG_TAG", "Inside onMapReady()")
+        Log.i("onMapReady", "Inside onMapReady()")
 
         //getting user location
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -188,51 +188,71 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             )
         }
 
-        //get marker locations from Location tables
-        val query = ParseQuery.getQuery<ParseObject>("Location")
-        val locationlist = query.find()
-        Log.i("LOG_TAG", "HAHA populating array list")
-        for (location in locationlist) {
-            var park1 = ParkLocationMarker()
-            park1.createParkLocationMarker(
-                location.getString("locationPlaceId"),
-                location.getString("Name")!!,
-                location.getDouble("latitude"),
-                location.getDouble("longitude")
-            )
-            Log.i(
-                "LOG_TAG",
-                "HAHA adding location1 :" + park1.getID() + " " + park1.getLat()
-                    .toString() + " " + park1.getLon().toString()
-            )
-            parklocations.add(park1)
-        }
+        // FIREBASE MIGRATION //
+        val db = Firebase.firestore
 
-        //create the ParkLocationMarker object and set info window for markers
+        //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
+        db.collection("Location")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (location in documents) {
+                    val park1 = ParkLocationMarker()
+
+//                    Log.i(
+//                        "CreatingParkLocation",
+//                        "heres the info were getting from the database : " + location.get("Lat")
+//                            .toString().toDouble() + " " +
+//                                location.get("Lon").toString().toDouble()
+//                    )
+                    Log.i("DisplayingMarkers", "FUCK " + location.get("Location Name").toString())
+                    Log.i("DisplayingMarkers", "FUCK FUCK: " + location.id)
+
+                    // creates the marker object
+                    park1.createParkLocationMarker(
+                        location.id,
+                        location.get("Location Name").toString(),
+                        location.get("Lat").toString().toDouble(),
+                        location.get("Lon").toString().toDouble()
+                    )
+                    parklocations.add(park1)
+
+                }
+
+
+                //display the markers
+                Log.i("DisplayingMarkers", "park locations size " + parklocations.size)
+                for (i in 0..parklocations.size - 1) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(
+                                LatLng(
+                                    parklocations.get(i).getLat(),
+                                    parklocations.get(i).getLon()
+                                )
+                            )
+                            .title(parklocations.get(i).getName())
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                    )
+                    Log.i(
+                        "DisplayingMarkers",
+                        "adding marker to the map :" + parklocations.get(i)
+                            .getID() + ", " + parklocations.get(i).getLat()
+                            .toString() + ", " + parklocations.get(i).getLon().toString()
+                    )
+                }
+
+
+            }
+            .addOnFailureListener { exception ->
+                Log.w("CreatingParkLocation", "Error getting documents: ", exception)
+            }
+
+
+        //set the info windows and click listeners for the markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
-
-        // info window on click listener
         mMap.setOnInfoWindowClickListener(this)
 
-        Log.i(
-            "LOG_TAG",
-            "HAHA DISPLAYING MARKERS"
-        )
-        //display the markers
-        for (i in 0..parklocations.size - 1) {
-            mMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(parklocations.get(i).getLat(), parklocations.get(i).getLon()))
-                    .title(parklocations.get(i).getID())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-            )
-            Log.i(
-                "LOG_TAG",
-                "HAHA adding location1 :" + parklocations.get(i)
-                    .getID() + ", " + parklocations.get(i).getLat()
-                    .toString() + ", " + parklocations.get(i).getLon().toString()
-            )
-        }
+
     }
 
 
@@ -254,6 +274,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     .build()
             )
         )
+
+
     }
 
     // info window event handler ( redirects to the view eventslist.kt )
@@ -261,7 +283,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //get the latlng position from the marker
         val markerPosition = p0?.position
 
-        // if the user clicks their own marker
+        // find out which object in the arraylist matches with the
+        // if the user clicks their own
+        Log.i("onInfoWindowClick", "if the user clicks their own marker "+markerPosition.toString() + " " + LatLng(userLocationLat, userLocationLon))
         if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
             var locationId = ""
             //find which latlng that belongs to
@@ -272,8 +296,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 }
             }
             Log.i(
-                "LOG_TAG",
-                "HAHA: redirecting to info window with id of: " + locationId
+                "onInfoWindowClick",
+                "redirecting to info window with id of: " + locationId
             )
             val intent = Intent(this, eventslist::class.java)
             intent.putExtra("locationID", locationId)
@@ -284,7 +308,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     // navigation purposes
     fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
 

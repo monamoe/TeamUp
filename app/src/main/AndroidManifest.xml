@@ -16,14 +16,14 @@
         android:required="true" />
 
     <application
-        android:name=".parse.ParseSetup"
         android:allowBackup="true"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/logoteamup"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/logo"
+        android:roundIcon="@drawable/logoteamup"
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".views.HostEvents"></activity>
         <activity android:name=".views.ViewPlayerEvents" />
 
@@ -33,15 +33,14 @@
 
         <activity android:name=".views.eventslist" />
         <activity android:name=".views.event" />
-        <activity android:name=".views.CreateEvent" />
+        <activity android:name=".views.CreateEventActivity" />
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
-        <activity android:name=".views.SignUpActivity" />
+        <activity android:name=".views.RegisterActivity" />
         <activity android:name=".views.LandingPageActivity" />
-        <activity android:name=".views.MainActivity">
+        <activity android:name=".views.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
