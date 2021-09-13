@@ -24,7 +24,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
+const val weatherAPI = "@string/google_key"
 var forecast: TextView? = null
 var temp: TextView? = null
 
@@ -114,6 +114,7 @@ class LandingPageActivity : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -136,7 +137,7 @@ class LandingPageActivity : AppCompatActivity() {
         }
     }
 
-    fun getUserCity(){
+    fun getUserCity() {
         var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         var userLocationLat = 0.0
         var userLocationLon = 0.0
@@ -157,7 +158,8 @@ class LandingPageActivity : AppCompatActivity() {
                     userLocationLon = location.longitude
 
                     val geocoder = Geocoder(this, Locale.getDefault())
-                    val addresses: List<Address> = geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
+                    val addresses: List<Address> =
+                        geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
                     cityName = addresses[0].getLocality()
                 }
                 //render the marker on the users location.
