@@ -110,6 +110,4 @@ class ProfilePage : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
-
-
 }
