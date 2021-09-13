@@ -65,6 +65,13 @@
             android:layout_height="wrap_content"
             android:text="Back"
             android:textSize="24sp" />
+
+        <CheckBox
+            android:id="@+id/testUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test User" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

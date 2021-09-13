@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
@@ -29,6 +30,8 @@ class RegisterActivity : AppCompatActivity() {
             val passwordTxt = findViewById<TextView>(R.id.passwordTxt).text.toString()
             val passwordConfirmTxt = findViewById<TextView>(R.id.confirmPasswordTxt).text.toString()
             val emailTxt = findViewById<TextView>(R.id.emailTxt).text.toString()
+            val testUser = findViewById<CheckBox>(R.id.testUser).isChecked
+
 
 
             if (userNameTxt.equals("") || passwordTxt.equals("") ||
@@ -49,25 +52,32 @@ class RegisterActivity : AppCompatActivity() {
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = userNameTxt
                                 }
-                                user!!.updateProfile(profileUpdates)
-                                user!!.sendEmailVerification()//sends verification email
-                                    .addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            Toast.makeText(this,"Email Sent",Toast.LENGTH_LONG).show()
-                                            val intent = Intent(this, LoginActivity::class.java)
-                                            startActivity(intent)
+                                if(!testUser) {
+                                    user!!.updateProfile(profileUpdates)
+                                    user!!.sendEmailVerification()//sends verification email
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                Toast.makeText(
+                                                    this,
+                                                    "Email Sent",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
                                         }
-                                    }
+                                }
                                 // store the new user data in firestore
                                 val userHashMap = hashMapOf(
                                     "userName" to userNameTxt,
-                                    "userEmail" to emailTxt
+                                    "userEmail" to emailTxt,
+                                    "testUser" to testUser
                                 )
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())
                                     .set(userHashMap, SetOptions.merge())
                                     .addOnSuccessListener {
                                         Log.d("CreatingEvent", "Created new user")
+                                        val intent = Intent(this, LoginActivity::class.java)
+                                        startActivity(intent)
                                     }
                                     .addOnFailureListener { e ->
                                         Log.w("a", "Error creating location document", e)

@@ -42,13 +42,18 @@ class LoginActivity : AppCompatActivity() {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
-
-
-        val user = FirebaseAuth.getInstance().getCurrentUser()?.uid
-        Log.i("LOG_TAG", "CURRENT USER: $user")
-        if (user != null && FirebaseAuth.getInstance().currentUser?.isEmailVerified == true) {
-            toLanding()
-        }
+        var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
+        val db = Firebase.firestore
+        var testUser = false
+        db.collection("User")
+            .document(user.toString())
+            .get()
+            .addOnSuccessListener { document ->
+                testUser = document.get("testUser").toString().toBoolean()
+                if (user != null && (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true || testUser)) {
+                    toLanding()
+                }
+            }
 
         //Sign Up button is pressed
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
@@ -74,11 +79,21 @@ class LoginActivity : AppCompatActivity() {
                                 "LOG_TAG",
                                 "Login Successful with uid of: " + it.result.user?.uid
                             )
-                            if(Firebase.auth.currentUser?.isEmailVerified == true) {
-                                toLanding()
-                            }else{
-                                Toast.makeText(this,"Verify Email",Toast.LENGTH_LONG).show()
-                            }
+                            db.collection("User")
+                                .document(it.result.user?.uid.toString())
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    testUser = document.get("testUser").toString().toBoolean()
+                                    Log.i(
+                                        "LOG_TAG",
+                                        "HELOOOOOOO " + user
+                                    )
+                                    if(Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
+                                        toLanding()
+                                    }else{
+                                        Toast.makeText(this,"Verify Email",Toast.LENGTH_LONG).show()
+                                    }
+                                }
                         }
                     }.addOnFailureListener {
                         Log.i(

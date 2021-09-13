@@ -24,7 +24,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-const val weatherAPI = "@string/google_key"
 var forecast: TextView? = null
 var temp: TextView? = null
 
@@ -163,7 +162,7 @@ class LandingPageActivity : AppCompatActivity() {
                     cityName = addresses[0].getLocality()
                 }
                 //render the marker on the users location.
-                weatherTask().execute(cityName) //gets weather for current location
+                weatherTask().execute(cityName, getString(R.string.weather_api)) //gets weather for current location
             }
         }
         //request permission

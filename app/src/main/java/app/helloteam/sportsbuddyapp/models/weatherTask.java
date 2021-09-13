@@ -2,7 +2,6 @@ package app.helloteam.sportsbuddyapp.models;
 
 import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.getForecast;
 import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.getTemp;
-import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.weatherAPI;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -27,7 +26,7 @@ public class weatherTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q="+strings[0]+"&units=metric&appid=" + weatherAPI);
+        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q="+strings[0]+"&units=metric&appid=" + strings[1]);
         return response;
     }
 
