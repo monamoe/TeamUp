@@ -15,9 +15,6 @@ import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.parse.ParseObject
-import com.parse.ParseQuery
-import com.parse.ParseUser
 
 lateinit private var eventList: ArrayList<HostEvents.EventDisplayer>
 

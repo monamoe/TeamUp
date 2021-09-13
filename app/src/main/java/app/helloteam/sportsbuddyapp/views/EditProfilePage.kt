@@ -18,7 +18,9 @@ import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.models.User
-import com.parse.ParseUser
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -34,88 +36,105 @@ class EditProfilePage : AppCompatActivity() {
     private val pickImage = 100
     private var imageUri: Uri? = null
 
+    // FIREBASE MIGRATION //
+    private val db = Firebase.firestore
+    private val uid = FirebaseAuth.getInstance().uid.toString()
+
+    private var userName = ""
+
 
     private lateinit var binding: ActivityEditProfilePageBinding
     private var sport = "none"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
+        binding = ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        val btnLoadPic =findViewById<Button>(R.id.btnLoadPicture)
+
+        val btnLoadPic = findViewById<Button>(R.id.btnLoadPicture)
         val profilepic = findViewById<ImageView>(R.id.profilepic)
 
 
-        if(ImageStorage.checkifImageExists(this, "${ParseUser.getCurrentUser().username}ProfilePic")){
-            val file = (ImageStorage.getImage(
-                this,
-                "${ParseUser.getCurrentUser().username}ProfilePic.jpg"
-            ))
-            var mSaveBit: File = file
-            val filePath = mSaveBit.path
-            val bitmap = BitmapFactory.decodeFile(filePath)
-            binding.profilepic.setImageBitmap(bitmap)
 
-        }
-        ParseUser.getCurrentUser().fetch()
+        db.collection("Users").document(uid)
+            .get()
+            .addOnSuccessListener { User ->
 
-        binding.userNameEdit.text= ParseUser.getCurrentUser().username
-        binding.dateText.text= ParseUser.getCurrentUser().createdAt.toString()
+                userName = User.get("userName").toString();
 
 
-        binding.btnLoadPicture.setOnClickListener {
-            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-            startActivityForResult(gallery, pickImage)
 
-        }
+                if (ImageStorage.checkifImageExists(
+                        this,
+                        "${userName}ProfilePic"
+                    )
+                ) {
+                    val file = (ImageStorage.getImage(
+                        this,
+                        "${userName}ProfilePic.jpg"
+                    ))
+                    val mSaveBit: File = file
+                    val filePath = mSaveBit.path
+                    val bitmap = BitmapFactory.decodeFile(filePath)
+                    binding.profilepic.setImageBitmap(bitmap)
 
-
-        if (ParseUser.getCurrentUser().getString("aboutMe")!=null) {
-            binding.aboutMeEdit.setText(ParseUser.getCurrentUser().getString("aboutMe").toString())
-        }
-        sport=ParseUser.getCurrentUser().getString("favouriteSport").toString()
-            when(sport){
-                "None" -> binding.noneBtn.isChecked = true
-                "Soccer" -> binding.soccerBtn.isChecked = true
-                "Ball Hockey" -> binding.ballHockeyBtn.isChecked = true
-                "Basketball" -> binding.basketballBtn.isChecked = true
-                else ->{
-                    binding.noneBtn.isChecked = true
                 }
-            }
-        binding.favSportGroup.setOnCheckedChangeListener { group, checkedId ->
 
-            if (checkedId == R.id.noneBtn) {
-                sport= "none"
-            }
-            if (checkedId == R.id.soccerBtn) {
-                sport = SportTypes.SOCCER.sport
-            }
-            if (checkedId == R.id.ballHockeyBtn) {
-                sport = SportTypes.BallHockey.sport
-            }
-            if (checkedId == R.id.basketballBtn) {
-                sport= SportTypes.BASKETBALL.sport
-            }
+                binding.userNameEdit.text = User.get("userName").toString()
+//                binding.dateText.text = User.get("createdAt").toString()
+//                binding.aboutMeText.text = User.get("bio").toString()
+                sport = User.get("favouriteSport").toString()
 
-        }
+                binding.btnLoadPicture.setOnClickListener {
+                    val gallery =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                    startActivityForResult(gallery, pickImage)
+
+                }
+
+                // needs to be redone with drop down options
+                when (sport) {
+                    "None" -> binding.noneBtn.isChecked = true
+                    "Soccer" -> binding.soccerBtn.isChecked = true
+                    "Ball Hockey" -> binding.ballHockeyBtn.isChecked = true
+                    "Basketball" -> binding.basketballBtn.isChecked = true
+                    else -> {
+                        binding.noneBtn.isChecked = true
+                    }
+                }
+                binding.favSportGroup.setOnCheckedChangeListener { group, checkedId ->
+                    if (checkedId == R.id.noneBtn) {
+                        sport = "none"
+                    }
+                    if (checkedId == R.id.soccerBtn) {
+                        sport = SportTypes.SOCCER.sport
+                    }
+                    if (checkedId == R.id.ballHockeyBtn) {
+                        sport = SportTypes.BallHockey.sport
+                    }
+                    if (checkedId == R.id.basketballBtn) {
+                        sport = SportTypes.BASKETBALL.sport
+                    }
+                }
+
+
+            }
     }
 
     fun onSave(view: View) {
-        if(binding.aboutMeEdit.text.toString().length<=250){
-            ParseUser.getCurrentUser().fetch()
+        if (binding.aboutMeEdit.text.toString().length <= 250) {
+
             finish()
-            Log.i("LOG_TAG", "HAHA wordcount: " + binding.aboutMeEdit.text.toString().length)
             var user = User(
-                ParseUser.getCurrentUser().username,
+                userName,
                 binding.aboutMeEdit.text.toString(),
                 sport
             )
-            ParseCode.UpdateProfile(user)
+
             Toast.makeText(this, "Updated", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, LandingPageActivity::class.java)
             startActivity(intent)
-        }else{
+        } else {
             Toast.makeText(this, "About Me section is too long", Toast.LENGTH_SHORT).show()
         }
     }
@@ -126,7 +145,11 @@ class EditProfilePage : AppCompatActivity() {
             imageUri = data?.data
             binding.profilepic.setImageURI(imageUri)
             val bit = getBitMap(imageUri)
-            ImageStorage.saveInternalStorage(this, bit, "${ParseUser.getCurrentUser().username}ProfilePic")
+            ImageStorage.saveInternalStorage(
+                this,
+                bit,
+                "${ParseUser.getCurrentUser().username}ProfilePic"
+            )
         }
     }
 

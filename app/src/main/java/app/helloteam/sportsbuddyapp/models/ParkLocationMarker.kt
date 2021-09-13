@@ -58,8 +58,4 @@ class ParkLocationMarker {
         return LatLng(this.getLat(), this.getLon())
     }
 
-    fun showdata() {
-        Log.i("ParkLocationsManager", "$name : $lat // $lon \n")
-    }
-
 }

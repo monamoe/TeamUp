@@ -57,6 +57,8 @@ class event : AppCompatActivity() {
 
         // FIREBASE MIGRATION //
         val db = Firebase.firestore
+        val uid = FirebaseAuth.getInstance().uid
+
         db.collection("Location").document(locationID).collection("Events").document(eventID)
             .get()
             .addOnSuccessListener { document ->
@@ -72,7 +74,14 @@ class event : AppCompatActivity() {
                 startTime.setText("Start Time: \n" + document.get("date").toString())
                 endtime.setText("End Time: \n" + document.get("endDate").toString())
 
+                // get host's information to display on event page
                 val hostID = document.get("hostID").toString()
+                db.collection("User").document(hostID)
+                    .get()
+                    .addOnSuccessListener { userDoc ->
+                        // host name and host BIO
+                        hostname.setText(userDoc.get("userName").toString())
+                    }
 
                 val currentUser = FirebaseAuth.getInstance().uid.toString()
                 if (hostID.equals(currentUser)) {
@@ -97,13 +106,7 @@ class event : AppCompatActivity() {
                         }
                 }
 
-                // get host's information to display on event page
-                db.collection("User").document(hostID)
-                    .get()
-                    .addOnSuccessListener { userDoc ->
-                        // host name and host BIO
-                        hostname.setText(userDoc.get("userName").toString())
-                    }
+
             }
             .addOnFailureListener { exception ->
                 Log.d("LOG_TAG", "get failed with ", exception)
@@ -115,6 +118,11 @@ class event : AppCompatActivity() {
         attendBtn.setOnClickListener {
             if (!hosting) {
                 if (attending) {
+                    // check if the event has room
+                    db.collection("Location").document(locationID)
+                    // increace the attending people number to
+
+
                     // user is already attending, remove them from attendee list
                     db.collection("Location").document(locationID).collection("Events")
                         .document(eventID).collection("Attendees")
