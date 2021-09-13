@@ -18,7 +18,6 @@ import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.models.User
-import app.helloteam.sportsbuddyapp.parse.ParseCode
 import com.parse.ParseUser
 import java.io.File
 import java.io.FileNotFoundException

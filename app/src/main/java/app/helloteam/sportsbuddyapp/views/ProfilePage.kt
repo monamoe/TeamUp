@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
-import app.helloteam.sportsbuddyapp.parse.UserHandling
+import app.helloteam.sportsbuddyapp.firebase.UserHandling
 import com.parse.ParseUser
 import java.io.File
 

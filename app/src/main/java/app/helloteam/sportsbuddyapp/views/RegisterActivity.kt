@@ -35,12 +35,9 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 if (passwordTxt.equals(passwordConfirmTxt)) {
 
-                    //check if that user with that email / username exists already
-
-
                     //Firebase Auth to record user Auth, and user data
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailTxt, passwordTxt)
-                        .addOnCompleteListener({
+                        .addOnCompleteListener {
                             if (it.isSuccessful) {
                                 // store the new user data in firestore
                                 val userHashMap = hashMapOf(
@@ -60,7 +57,7 @@ class RegisterActivity : AppCompatActivity() {
                                 val intent = Intent(this, LandingPageActivity::class.java)
                                 startActivity(intent)
                             }
-                        }).addOnFailureListener {
+                        }.addOnFailureListener {
                             Toast.makeText(
                                 this,
                                 "There was a problem with creating the User Account, Please try again later..." + it.message,

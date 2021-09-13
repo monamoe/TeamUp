@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
 
                 //login with firebase Auth
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(emailTxt, passwordTxt)
-                    .addOnCompleteListener({
+                    .addOnCompleteListener {
                         if (it.isSuccessful) {
                             Log.i(
                                 "LOG_TAG",
@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
                             )
                             toLanding()
                         }
-                    }).addOnFailureListener {
+                    }.addOnFailureListener {
                         Log.i(
                             "LOG_TAG",
                             "Login failed: " + it.message
