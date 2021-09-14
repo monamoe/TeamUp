@@ -41,9 +41,6 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 if (passwordTxt.equals(passwordConfirmTxt)) {
 
-                    //check if that user with that email / username exists already
-
-
                     //Firebase Auth to record user Auth, and user data
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailTxt, passwordTxt)
                         .addOnCompleteListener {

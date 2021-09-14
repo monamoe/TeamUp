@@ -34,7 +34,6 @@ class LandingPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
 
-        //  ParseCode.EventDeletion(date) //method to delete expired events and locations
 
         // is the user logged in
         val uid = FirebaseAuth.getInstance().uid
@@ -136,8 +135,8 @@ class LandingPageActivity : AppCompatActivity() {
         }
     }
 
-    fun getUserCity() {
-        var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+    fun getUserCity(){
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         var userLocationLat = 0.0
         var userLocationLon = 0.0
         var cityName = ""
