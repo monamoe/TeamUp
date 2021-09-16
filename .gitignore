@@ -18,3 +18,4 @@ local.properties
 app/src/main/res/values/secrets.xml
 app/src/main/res/values-night/secrets.xml
 app/google-services.json
+functions/node_modules

@@ -14,7 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
@@ -24,16 +23,18 @@ import com.google.firebase.ktx.Firebase
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
 
+
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         auth = Firebase.auth
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // set up google sign in
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+        val gso =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // set up google sign in
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
@@ -54,6 +55,12 @@ class LoginActivity : AppCompatActivity() {
                     toLanding()
                 }
             }
+
+        val user = FirebaseAuth.getInstance().getCurrentUser()?.uid
+        Log.i("LOG_TAG", "CURRENT USER: $user")
+        if (user != null) {
+            toLanding()
+        }
 
         //Sign Up button is pressed
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
@@ -88,12 +95,14 @@ class LoginActivity : AppCompatActivity() {
                                         "LOG_TAG",
                                         "HELOOOOOOO " + user
                                     )
-                                    if(Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
+                                    if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
-                                    }else{
-                                        Toast.makeText(this,"Verify Email",Toast.LENGTH_LONG).show()
+                                    } else {
+                                        Toast.makeText(this, "Verify Email", Toast.LENGTH_LONG)
+                                            .show()
                                     }
                                 }
+                            toLanding()
                         }
                     }.addOnFailureListener {
                         Log.i(
@@ -112,7 +121,11 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { //go to google sign in
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) { //go to google sign in
         super.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -129,6 +142,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun firebaseAuthWithGoogle(idToken: String) { //google authentication
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)

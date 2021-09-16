@@ -24,6 +24,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
+
+
+
+
+const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 var forecast: TextView? = null
 var temp: TextView? = null
 
@@ -35,6 +40,9 @@ class LandingPageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_landing_page)
 
         //  ParseCode.EventDeletion(date) //method to delete expired events and locations
+        val date = Date()
+        Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
+
 
         // is the user logged in
         val uid = FirebaseAuth.getInstance().uid
@@ -113,7 +121,6 @@ class LandingPageActivity : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
