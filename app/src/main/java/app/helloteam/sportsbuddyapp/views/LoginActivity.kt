@@ -13,12 +13,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
@@ -152,7 +154,10 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     val userHashMap = hashMapOf(
                         "userName" to user?.displayName,
-                        "userEmail" to user?.email
+                        "userEmail" to user?.email,
+                        "testUser" to false,
+                        "dateCreated" to Timestamp(Date()),
+                        "favouriteSport" to "none"
                     )
                     Firebase.firestore.collection("User")
                         .document(FirebaseAuth.getInstance().uid.toString())

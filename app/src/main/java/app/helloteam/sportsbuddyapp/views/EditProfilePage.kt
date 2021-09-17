@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -17,6 +18,7 @@ import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.models.User
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -24,6 +26,8 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.jvm.Throws
 
 
@@ -38,12 +42,11 @@ class EditProfilePage : AppCompatActivity() {
     // FIREBASE MIGRATION //
     private val db = Firebase.firestore
     private val uid = FirebaseAuth.getInstance().uid.toString()
-
     private var userName = ""
-
 
     private lateinit var binding: ActivityEditProfilePageBinding
     private var sport = "none"
+    private var bio = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
@@ -55,14 +58,15 @@ class EditProfilePage : AppCompatActivity() {
 
 
 
-        db.collection("Users").document(uid)
+        db.collection("User").document(uid)
             .get()
             .addOnSuccessListener { User ->
 
-                userName = User.get("userName").toString();
-
-
-
+                userName = User.get("userName").toString()
+                val sfd = SimpleDateFormat("yyyy-MM-dd")
+                var time: Timestamp = User.get("dateCreated") as Timestamp
+                var dateCreated = sfd.format(Date(time.seconds*1000))
+                bio = User.get("bio").toString()
                 if (ImageStorage.checkifImageExists(
                         this,
                         "${userName}ProfilePic"
@@ -79,16 +83,15 @@ class EditProfilePage : AppCompatActivity() {
 
                 }
 
-                binding.userNameEdit.text = User.get("userName").toString()
-//                binding.dateText.text = User.get("createdAt").toString()
-//                binding.aboutMeText.text = User.get("bio").toString()
+                if (userName != "null") binding.userNameEdit.text = userName
+                if (dateCreated != null) binding.dateText.text = dateCreated.toString()
+                if (bio != "") binding.aboutMeEdit.setText(User.get("bio").toString())
                 sport = User.get("favouriteSport").toString()
 
                 binding.btnLoadPicture.setOnClickListener {
                     val gallery =
                         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                     startActivityForResult(gallery, pickImage)
-
                 }
 
                 // needs to be redone with drop down options
@@ -101,6 +104,7 @@ class EditProfilePage : AppCompatActivity() {
                         binding.noneBtn.isChecked = true
                     }
                 }
+
                 binding.favSportGroup.setOnCheckedChangeListener { group, checkedId ->
                     if (checkedId == R.id.noneBtn) {
                         sport = "none"
@@ -121,13 +125,19 @@ class EditProfilePage : AppCompatActivity() {
     }
 
     fun onSave(view: View) {
-        if (binding.aboutMeEdit.text.toString().length <= 250) {
+        if (binding.aboutMeEdit.text.toString().length <= 200) {
 
             finish()
             var user = User(
                 userName,
                 binding.aboutMeEdit.text.toString(),
                 sport
+            )
+            db.collection("User").document(uid).update(
+                mapOf(
+                    "favouriteSport" to sport,
+                    "bio" to binding.aboutMeEdit.text.toString()
+                )
             )
 
             Toast.makeText(this, "Updated", Toast.LENGTH_SHORT).show()

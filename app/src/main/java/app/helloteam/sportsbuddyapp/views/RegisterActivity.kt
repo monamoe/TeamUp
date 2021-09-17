@@ -9,6 +9,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
@@ -16,6 +17,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +71,9 @@ class RegisterActivity : AppCompatActivity() {
                                 val userHashMap = hashMapOf(
                                     "userName" to userNameTxt,
                                     "userEmail" to emailTxt,
-                                    "testUser" to testUser
+                                    "testUser" to testUser,
+                                    "dateCreated" to Timestamp(Date()),
+                                    "favouriteSport" to "none"
                                 )
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())

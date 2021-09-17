@@ -113,7 +113,6 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             today.get(Calendar.YEAR), today.get(Calendar.MONTH),
             today.get(Calendar.DAY_OF_MONTH)
         ) { view, year, month, day ->
-            val month = month + 1
             dayPicked = day
             yearPicked = year
             monthPicked = month

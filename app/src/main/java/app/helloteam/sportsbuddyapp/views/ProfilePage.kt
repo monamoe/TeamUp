@@ -8,22 +8,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.io.File
+import java.util.*
+import java.text.SimpleDateFormat
 
 
 class ProfilePage : AppCompatActivity() {
 
     // FIREBASE MIGRATION //
     private val db = Firebase.firestore
-    private val uid = FirebaseAuth.getInstance().uid.toString()
+    private val uid = Firebase.auth.currentUser?.uid.toString()
 
     private val pickImage = 100
     private var imageUri: Uri? = null
@@ -34,9 +40,16 @@ class ProfilePage : AppCompatActivity() {
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        db.collection("Users").document(uid)
+        db.collection("User").document(uid)
             .get()
             .addOnSuccessListener { User ->
+                var userName = User.get("userName")
+                var bio = User.get("bio")
+                var favouriteSport = User.get("favouriteSport")
+
+                val sfd = SimpleDateFormat("yyyy-MM-dd")
+                var time:Timestamp = User.get("dateCreated") as Timestamp
+                var dateCreated = sfd.format(Date(time.seconds*1000))
 
 
                 if (ImageStorage.checkifImageExists(
@@ -53,18 +66,19 @@ class ProfilePage : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeFile(filePath)
                     binding.profilepic.setImageBitmap(bitmap)
                 }
-
-                binding.userNameEdit.text = User.get("userName").toString()
-//                binding.dateText.text = User.get("createdAt").toString()
-                binding.aboutMeText.text = User.get("bio").toString()
-                binding.favSportText.text = User.get("favouriteSport").toString()
+                if (userName != null) binding.userNameEdit.text = userName.toString()
+                if (dateCreated != null) binding.dateText.text = dateCreated.toString()
+                if (bio != null) binding.aboutMeText.text = bio.toString()
+                if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
             }
+
+        findViewById<Button>(R.id.editProfileButton).setOnClickListener {
+            val intent = Intent(this, EditProfilePage::class.java)
+            startActivity(intent)
+        }
     }
 
-    fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu, menu)

@@ -39,9 +39,8 @@ class LandingPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
 
-        //  ParseCode.EventDeletion(date) //method to delete expired events and locations
-        val date = Date()
-        Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
+        // val date = Date()
+       // Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
 
 
         // is the user logged in
