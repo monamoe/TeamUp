@@ -56,7 +56,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-        val user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         Log.i("LOG_TAG", "CURRENT USER: $user")
         if (user != null) {
             toLanding()

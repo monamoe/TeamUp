@@ -107,7 +107,6 @@ class event : AppCompatActivity() {
                         hostname.setText(userDoc.get("userName").toString())
                     }
 
-                val currentUser = FirebaseAuth.getInstance().uid.toString()
                 if (hostID.equals(currentUser)) {
                     // the current user is the one who made this event. display appropriate options
                     hosting = true;
