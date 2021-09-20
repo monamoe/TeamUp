@@ -20,17 +20,16 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import android.location.Geocoder
+import android.widget.ImageView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-
-
-
-
+import com.squareup.picasso.Picasso
 
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 var forecast: TextView? = null
 var temp: TextView? = null
+var icon: ImageView? = null
 
 private val MY_PERMISSION_FINE_LOCATION: Int = 44
 
@@ -38,10 +37,6 @@ class LandingPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_landing_page)
-
-        // val date = Date()
-       // Toast.makeText(this, "$date", Toast.LENGTH_SHORT).show()
-
 
         // is the user logged in
         val uid = FirebaseAuth.getInstance().uid
@@ -51,7 +46,6 @@ class LandingPageActivity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
-
 
 
         findViewById<TextView>(R.id.ShowUsername).text = Firebase.auth.currentUser?.displayName
@@ -64,6 +58,8 @@ class LandingPageActivity : AppCompatActivity() {
 
         temp = findViewById(R.id.temp)
         forecast = findViewById(R.id.forecast)
+        icon = findViewById(R.id.conIcon)
+
         getUserCity()
 
     }
@@ -168,7 +164,7 @@ class LandingPageActivity : AppCompatActivity() {
                     cityName = addresses[0].getLocality()
                 }
                 //render the marker on the users location.
-                weatherTask().execute(cityName, getString(R.string.weather_api)) //gets weather for current location
+                weatherTask(icon).execute(cityName, getString(R.string.weather_api)) //gets weather for current location
             }
         }
         //request permission
