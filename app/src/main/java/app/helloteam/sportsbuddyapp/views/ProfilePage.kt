@@ -63,6 +63,7 @@ class ProfilePage : AppCompatActivity() {
             }
 
         findViewById<Button>(R.id.editProfileButton).setOnClickListener {
+            finish()
             val intent = Intent(this, EditProfilePage::class.java)
             startActivity(intent)
         }

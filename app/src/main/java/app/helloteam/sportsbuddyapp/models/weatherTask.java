@@ -62,7 +62,7 @@ public class weatherTask extends AsyncTask<String, Void, String> {
 
 
             getTemp().setText(temperature + "°C");
-            getForecast().setText(cast);
+            getForecast().setText(cast.toUpperCase());
 
             Picasso.get().load(iconUrl).into(x);
 

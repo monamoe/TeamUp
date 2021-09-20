@@ -9,6 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#C2E89A"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -22,24 +23,27 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profilepic"
                 android:layout_width="131dp"
                 android:layout_height="134dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="100dp"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="144dp"
-                android:src="@drawable/logoteamup" />
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/logoteamup"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="10dp"
+                android:background="@drawable/customboard">
 
                 <TextView
                     android:id="@+id/userName"
@@ -59,6 +63,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/customboard"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
@@ -82,6 +88,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/customboard"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingEnd="10dp">
@@ -129,42 +137,52 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_marginTop="1dp"
+                android:background="@drawable/customboard"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:text="About Me:" />
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:orientation="horizontal"
-                android:paddingTop="20dp"
-                android:paddingEnd="10dp">
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="About Me:" />
+                </LinearLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textLayout"
-                    android:layout_width="300dp"
-                    android:layout_height="200dp"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="200">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="10dp">
 
-                    <EditText
-                        android:id="@+id/aboutMeEdit"
-                        android:layout_width="300dp"
-                        android:layout_height="160dp"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:gravity="start|top"
-                        android:hint="Max 200 Characters"
-                        android:inputType="textMultiLine"
-                        android:textSize="12sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="200">
+
+                        <EditText
+                            android:id="@+id/aboutMeEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="160dp"
+                            android:layout_weight="1"
+                            android:background="@color/white"
+                            android:ems="10"
+                            android:gravity="start|top"
+                            android:hint="Max 200 Characters"
+                            android:inputType="textMultiLine"
+                            android:textSize="12sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -178,7 +196,8 @@
                 android:id="@+id/editProfileButton"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="156dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
                 android:onClick="onSave"
                 android:text="Save"
                 android:textAlignment="center" />

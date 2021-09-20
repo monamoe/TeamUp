@@ -60,9 +60,14 @@ class HostEvents : AppCompatActivity() {
                                             .document(event.get("hostID").toString())
                                             .get()
                                             .addOnSuccessListener { hostuser ->
-                                                val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
-                                                var time: Timestamp = event.get("date") as Timestamp
-                                                var eventTime = sfd.format(Date(time.seconds*1000))
+                                                var eventTime = event.get("date")
+                                                if(event.get("date") != null) {
+                                                    val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                                                    var time: Timestamp =
+                                                        event.get("date") as Timestamp
+                                                     eventTime =
+                                                        sfd.format(Date(time.seconds * 1000))
+                                                }
                                                 hostname = hostuser.get("userName").toString()
                                                 val ED = EventDisplayer(
                                                     event.id,

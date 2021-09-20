@@ -22,6 +22,7 @@ import java.util.*
 import android.location.Geocoder
 import android.widget.ImageView
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 
@@ -47,8 +48,12 @@ class LandingPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-        findViewById<TextView>(R.id.ShowUsername).text = Firebase.auth.currentUser?.displayName
+        val db = Firebase.firestore
+        val location = db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
+        location.get().addOnSuccessListener { user ->
+            findViewById<TextView>(R.id.ShowUsername).text =
+                "Welcome " + user.get("userName")
+        }
 
         //create event button
         findViewById<Button>(R.id.CreateEventBtn).setOnClickListener {
