@@ -24,7 +24,6 @@ import android.widget.ImageView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
@@ -70,6 +69,7 @@ class LandingPageActivity : AppCompatActivity() {
     }
 
     fun afterLogout() {//method to go back to login screen after logout
+        finish()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
@@ -114,6 +114,11 @@ class LandingPageActivity : AppCompatActivity() {
         }
         R.id.action_map -> {
             val intent = Intent(this, map::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_team -> {
+            val intent = Intent(this, TeamsActivity::class.java)
             startActivity(intent)
             true
         }

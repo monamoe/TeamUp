@@ -15,6 +15,9 @@
         android:id="@+id/action_hosted"
         android:title="Hosted Events" />
     <item
+        android:id="@+id/action_team"
+        android:title="Teams" />
+    <item
         android:id="@+id/action_map"
         android:title="Go to Map" />
 </menu>

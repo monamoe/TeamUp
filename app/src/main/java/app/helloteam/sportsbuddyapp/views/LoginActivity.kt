@@ -118,6 +118,7 @@ class LoginActivity : AppCompatActivity() {
 
     //go to landing activity when called
     fun toLanding() {
+        finish()
         val intent = Intent(this, LandingPageActivity::class.java)
         startActivity(intent)
     }

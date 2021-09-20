@@ -3,7 +3,6 @@ package app.helloteam.sportsbuddyapp.views
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -12,14 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
-import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import java.io.File
 import java.util.*
 import java.text.SimpleDateFormat
 
@@ -111,6 +108,11 @@ class ProfilePage : AppCompatActivity() {
         }
         R.id.action_map -> {
             val intent = Intent(this, map::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_team -> {
+            val intent = Intent(this, TeamsActivity::class.java)
             startActivity(intent)
             true
         }
