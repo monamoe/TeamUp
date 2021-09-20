@@ -17,8 +17,12 @@ import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
 import app.helloteam.sportsbuddyapp.R
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
@@ -42,26 +46,33 @@ class eventslist : AppCompatActivity() {
 
         // FIREBASE MIGRATION //
         val db = Firebase.firestore
-
+        val location = db.collection("Location").document(locationID)
+        location.get().addOnSuccessListener { x ->
+            val address = x.get("Location Name").toString()
         //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
-        db.collection("Location").document(locationID).collection("Events")
+        location.collection("Events")
             .get()
             .addOnSuccessListener { documents ->
                 //loop through the events at that location
                 for (event in documents) {
-                    val eventObj = EventDisplayer(
-                        event.id,
-                        event.get("activity").toString(),
-                        event.get("eventPlaceId").toString(),
-                        event.get("date").toString(),
-                        event.get("hostID").toString()
-                    )
-                    eventList.add(eventObj)
+
+                    val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                            var time: Timestamp = event.get("date") as Timestamp
+                            var eventTime = sfd.format(Date(time.seconds * 1000))
+                            val eventObj = EventDisplayer(
+                                event.id,
+                                event.get("activity").toString(),
+                                address,
+                                eventTime,
+                                event.get("hostID").toString()
+                            )
+                            eventList.add(eventObj)
+
                 }
                 // list view adapter
                 listview.adapter = EventListAdapter(this)
             }
-
+    }
 
 
         listview.setOnItemClickListener { parent, view, position, id ->

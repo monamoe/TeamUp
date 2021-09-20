@@ -2,24 +2,23 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
+import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.util.*
 import java.text.SimpleDateFormat
@@ -30,9 +29,6 @@ class ProfilePage : AppCompatActivity() {
     // FIREBASE MIGRATION //
     private val db = Firebase.firestore
     private val uid = Firebase.auth.currentUser?.uid.toString()
-
-    private val pickImage = 100
-    private var imageUri: Uri? = null
 
     private lateinit var binding: ActivityProfilePageBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,25 +46,19 @@ class ProfilePage : AppCompatActivity() {
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
                 var time:Timestamp = User.get("dateCreated") as Timestamp
                 var dateCreated = sfd.format(Date(time.seconds*1000))
+                val user = Firebase.auth.currentUser
 
+                 if (user?.photoUrl != null) {
+                        Picasso.get()
+                            .load(user.photoUrl)
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(binding.profilepic)
 
-                if (ImageStorage.checkifImageExists(
-                        this,
-                        "${User.get("userName").toString()}ProfilePic"
-                    )
-                ) {
-                    val file = (ImageStorage.getImage(
-                        this,
-                        "${User.get("userName").toString()}ProfilePic.jpg"
-                    ))
-                    val mSaveBit: File = file
-                    val filePath = mSaveBit.path
-                    val bitmap = BitmapFactory.decodeFile(filePath)
-                    binding.profilepic.setImageBitmap(bitmap)
                 }
                 if (userName != null) binding.userNameEdit.text = userName.toString()
                 if (dateCreated != null) binding.dateText.text = dateCreated.toString()
-                if (bio != null) binding.aboutMeText.text = bio.toString()
+                if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text = bio.toString()
                 if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
             }
 

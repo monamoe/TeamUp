@@ -39,7 +39,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
     private var endMin: Int = 0
     private var endTimeBool: Boolean = false
     private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
-    private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH)) + 1
+    private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH))
     private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
     // sports attributes
@@ -161,7 +161,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 eventSpace = 1;
             else
                 eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
-            addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
+            //addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
 
             // enter required fields
             if (!address.equals("") && !activitySelection.equals("") && hour != 0 && !eventTitle.equals(
@@ -189,7 +189,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 val LocationsHashMap = hashMapOf(
                     "Location Name" to address,
                     "Lat" to lat,
-                    "Lon" to long
+                    "Lon" to long,
                 )
 
 

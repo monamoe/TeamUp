@@ -55,6 +55,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.github.androdocs:Simple-HTTP-Request:v1.0'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }
 

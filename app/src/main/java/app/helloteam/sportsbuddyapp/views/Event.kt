@@ -17,10 +17,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class event : AppCompatActivity() {
@@ -63,16 +66,24 @@ class event : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d("LOG_TAG", "DocumentSnapshot data: ${document.data}")
+                    Log.d("LOG_TAG", "DocumentSnapshot data: ${eventID}")
                 } else {
                     Log.d("LOG_TAG", "No such document")
                 }
-
+                val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                var startTimeStamp: Timestamp = document.get("date") as Timestamp
+                var eventStartTime = sfd.format(Date(startTimeStamp.seconds*1000))
+                var endTimeStamp: Timestamp =document.get("endDate") as Timestamp
+                var eventEndTime = sfd.format(Date(endTimeStamp.seconds*1000))
                 // populate text fields
                 eventTitle.setText(document.get("title").toString())
                 activity.setText(document.get("activity").toString())
-                startTime.setText("Start Time: \n" + document.get("date").toString())
-                endtime.setText("End Time: \n" + document.get("endDate").toString())
+                startTime.setText("Start Time: \n" + eventStartTime.toString())
+                endtime.setText("End Time: \n" + eventEndTime.toString())
+                space.setText("Space : " + document.get("eventSpace"))
+                db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
+                    information.setText(loc.get("Location Name").toString())
+                }
 
                 val hostID = document.get("hostID").toString()
 
@@ -85,17 +96,18 @@ class event : AppCompatActivity() {
                     hosting = false;
                     // check if the user is already attending
                     db.collection("Location").document(locationID).collection("Events")
-                        .document(eventID).collection("Attendees").document(currentUser)
+                        .document(eventID).collection("Attendees")
                         .get()
-                        .addOnSuccessListener {
-                            // user is already attending
+                        .addOnSuccessListener { users ->
                             attendBtn.text = "Attend"
                             attending = false
-                        }
-                        .addOnFailureListener {
-                            // user isnt currently attending
-                            attendBtn.text = "Leave"
-                            attending = true
+                            for(user in users){
+                                Log.i("Attendies", user.get("userID").toString())
+                                if(user.get("userID").toString() == currentUser){
+                                    attendBtn.text = "Leave"
+                                    attending = true
+                                }
+                            }
                         }
                 }
 
@@ -105,29 +117,9 @@ class event : AppCompatActivity() {
                     .addOnSuccessListener { userDoc ->
                         // host name and host BIO
                         hostname.setText(userDoc.get("userName").toString())
+                        var bio = userDoc.get("bio")
+                        if (bio != "null" && bio != null && bio != "") hostbio.setText(bio.toString())
                     }
-
-                if (hostID.equals(currentUser)) {
-                    // the current user is the one who made this event. display appropriate options
-                    hosting = true;
-                    attendBtn.text = "Cancel Event"
-                } else {
-                    hosting = false;
-                    // check if the user is already attending
-                    db.collection("Location").document(locationID).collection("Events")
-                        .document(eventID).collection("Attendees").document(currentUser)
-                        .get()
-                        .addOnSuccessListener {
-                            // user is already attending
-                            attendBtn.text = "Attend"
-                            attending = false
-                        }
-                        .addOnFailureListener {
-                            // user isnt currently attending
-                            attendBtn.text = "Leave"
-                            attending = true
-                        }
-                }
 
 
             }

@@ -12,9 +12,13 @@ import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
 import app.helloteam.sportsbuddyapp.R
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 lateinit private var eventList: ArrayList<HostEvents.EventDisplayer>
 
@@ -51,18 +55,21 @@ class HostEvents : AppCompatActivity() {
                                 .get()
                                 .addOnSuccessListener { document ->
                                     if (document != null) {
-                                        address = document.get("Lat").toString()
+                                        address = document.get("Location Name").toString()
                                         db.collection("User")
                                             .document(event.get("hostID").toString())
                                             .get()
                                             .addOnSuccessListener { hostuser ->
+                                                val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                                                var time: Timestamp = event.get("date") as Timestamp
+                                                var eventTime = sfd.format(Date(time.seconds*1000))
                                                 hostname = hostuser.get("userName").toString()
                                                 val ED = EventDisplayer(
-                                                    event.get("eventPlaceID").toString(),
+                                                    event.id,
                                                     hostingList.get("locationID").toString(),
                                                     event.get("activity").toString(),
                                                     address,
-                                                    event.get("date").toString(),
+                                                    eventTime.toString(),
                                                     hostname
                                                 )
 

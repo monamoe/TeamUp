@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -14,14 +13,14 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.data.ImageStorage
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
-import app.helloteam.sportsbuddyapp.models.User
+import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -29,6 +28,11 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.jvm.Throws
+
+import com.google.firebase.auth.UserProfileChangeRequest
+
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.storage.ktx.storage
 
 
 class EditProfilePage : AppCompatActivity() {
@@ -42,50 +46,40 @@ class EditProfilePage : AppCompatActivity() {
     // FIREBASE MIGRATION //
     private val db = Firebase.firestore
     private val uid = FirebaseAuth.getInstance().uid.toString()
-    private var userName = ""
 
+    private var userName = ""
     private lateinit var binding: ActivityEditProfilePageBinding
     private var sport = "none"
     private var bio = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
 
-        val btnLoadPic = findViewById<Button>(R.id.btnLoadPicture)
-        val profilepic = findViewById<ImageView>(R.id.profilepic)
-
-
-
         db.collection("User").document(uid)
             .get()
             .addOnSuccessListener { User ->
-
+                val user = Firebase.auth.currentUser
                 userName = User.get("userName").toString()
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
                 var time: Timestamp = User.get("dateCreated") as Timestamp
                 var dateCreated = sfd.format(Date(time.seconds*1000))
                 bio = User.get("bio").toString()
-                if (ImageStorage.checkifImageExists(
-                        this,
-                        "${userName}ProfilePic"
-                    )
-                ) {
-                    val file = (ImageStorage.getImage(
-                        this,
-                        "${userName}ProfilePic.jpg"
-                    ))
-                    val mSaveBit: File = file
-                    val filePath = mSaveBit.path
-                    val bitmap = BitmapFactory.decodeFile(filePath)
-                    binding.profilepic.setImageBitmap(bitmap)
 
+                if (user?.photoUrl != null) {
+                        Picasso.get()
+                            .load(user.photoUrl)
+                            .resize(100, 100)
+                            .centerCrop()
+                            .into(binding.profilepic)
                 }
 
                 if (userName != "null") binding.userNameEdit.text = userName
                 if (dateCreated != null) binding.dateText.text = dateCreated.toString()
-                if (bio != "") binding.aboutMeEdit.setText(User.get("bio").toString())
+                if (bio != "null" && bio != null && bio != "") binding.aboutMeEdit.setText(User.get("bio").toString())
                 sport = User.get("favouriteSport").toString()
 
                 binding.btnLoadPicture.setOnClickListener {
@@ -128,21 +122,15 @@ class EditProfilePage : AppCompatActivity() {
         if (binding.aboutMeEdit.text.toString().length <= 200) {
 
             finish()
-            var user = User(
-                userName,
-                binding.aboutMeEdit.text.toString(),
-                sport
-            )
             db.collection("User").document(uid).update(
                 mapOf(
                     "favouriteSport" to sport,
                     "bio" to binding.aboutMeEdit.text.toString()
                 )
             )
-
-            Toast.makeText(this, "Updated", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, LandingPageActivity::class.java)
-            startActivity(intent)
+            if (imageUri != null) { //Image uploading
+                FileHandling.uploadProfileImage(imageUri!!,this)
+            }
         } else {
             Toast.makeText(this, "About Me section is too long", Toast.LENGTH_SHORT).show()
         }
@@ -152,48 +140,11 @@ class EditProfilePage : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            binding.profilepic.setImageURI(imageUri)
-            val bit = getBitMap(imageUri)
-            ImageStorage.saveInternalStorage(
-                this,
-                bit,
-                "${userName}ProfilePic"
-            )
+            Picasso.get()
+                .load(imageUri)
+                .resize(100, 100)
+                .centerCrop()
+                .into(binding.profilepic)
         }
     }
-
-    @Throws(FileNotFoundException::class, IOException::class)
-    fun getBitMap(uri: Uri?): Bitmap? {
-        var input: InputStream? = this.contentResolver.openInputStream(uri!!)
-        val onlyBoundsOptions = BitmapFactory.Options()
-        onlyBoundsOptions.inJustDecodeBounds = true
-        onlyBoundsOptions.inDither = true //optional
-        onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //optional
-        BitmapFactory.decodeStream(input, null, onlyBoundsOptions)
-        if (input != null) {
-            input.close()
-        }
-        if (onlyBoundsOptions.outWidth == -1 || onlyBoundsOptions.outHeight == -1) {
-            return null
-        }
-        val originalSize =
-            if (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) onlyBoundsOptions.outHeight else onlyBoundsOptions.outWidth
-        val ratio = if (originalSize > 200.00) originalSize / 200.00 else 1.0
-        val bitmapOptions = BitmapFactory.Options()
-        bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio)
-        bitmapOptions.inDither = true //optional
-        bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888 //
-        input = this.contentResolver.openInputStream(uri)
-        val bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions)
-        if (input != null) {
-            input.close()
-        }
-        return bitmap
-    }
-
-    private fun getPowerOfTwoForSampleRatio(ratio: Double): Int {
-        val k = Integer.highestOneBit(Math.floor(ratio).toInt())
-        return if (k == 0) 1 else k
-    }
-
 }
