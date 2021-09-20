@@ -110,7 +110,7 @@ class eventslist : AppCompatActivity() {
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
-            val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
+            val eventTime = rowMain.findViewById<TextView>(R.id.memberSport)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
             eventTitle.setText(eventList.get(position).name)

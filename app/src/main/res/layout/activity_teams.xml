@@ -15,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
@@ -36,9 +36,12 @@
             </LinearLayout>
 
             <ListView
+                android:id="@+id/listView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true"/>
+                android:layout_height="447dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/customboard"
+                android:clickable="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,9 +53,17 @@
                     android:id="@+id/addMemberButton"
                     android:layout_width="124dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
                     android:layout_weight="0"
                     android:gravity="center_horizontal"
                     android:text="Add Member" />
+
+                <Button
+                    android:id="@+id/invitesButton"
+                    android:layout_width="124dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="View Invites" />
             </LinearLayout>
 
         </LinearLayout>

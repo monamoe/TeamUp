@@ -25,6 +25,9 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".TeamInvites"
+            android:exported="true" />
+        <activity
             android:name=".views.TeamsActivity"
             android:exported="true" />
         <activity

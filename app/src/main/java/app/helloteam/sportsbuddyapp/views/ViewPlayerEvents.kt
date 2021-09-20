@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -127,7 +126,7 @@ class ViewPlayerEvents : AppCompatActivity() {
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
-            val eventTime = rowMain.findViewById<TextView>(R.id.eventTime)
+            val eventTime = rowMain.findViewById<TextView>(R.id.memberSport)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
 
             Log.i(
