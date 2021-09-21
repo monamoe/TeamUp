@@ -87,8 +87,6 @@ class RegisterActivity : AppCompatActivity() {
                                         Log.w("a", "Error creating location document", e)
                                     }
 
-                                val intent = Intent(this, LandingPageActivity::class.java)
-                                startActivity(intent)
                             }
                         }.addOnFailureListener {
                             Toast.makeText(

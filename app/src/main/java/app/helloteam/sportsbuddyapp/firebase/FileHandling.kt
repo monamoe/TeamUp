@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat.startActivity
 import app.helloteam.sportsbuddyapp.views.LandingPageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -17,6 +18,7 @@ import java.net.URI
 object FileHandling {
     private val storage = Firebase.storage
     private var storageRef = storage.reference
+    private val db = Firebase.firestore
 
     fun getStorageRef(): StorageReference {
         return storageRef
@@ -34,6 +36,11 @@ object FileHandling {
 
                         user!!.updateProfile(profileUpdates)
                             .addOnCompleteListener { task ->
+                                db.collection("User").document(user.uid).update(
+                                    mapOf(
+                                        "photoUrl" to it.result.toString()
+                                    )
+                                )
                                 Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show()
                             }
                     }

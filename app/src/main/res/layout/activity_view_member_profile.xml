@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    tools:context=".views.ViewMemberProfileActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#C2E89A"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#C2E89A"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profilepic"
+                    android:layout_width="131dp"
+                    android:layout_height="134dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:src="@drawable/logoteamupsmall"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="User Name: "
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/userNameEdit"
+                    android:layout_width="235dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="User Name not found."
+                    android:textColor="#6C6B6B"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:id="@+id/dateJoined"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="Joined:"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Joined date not found."
+                    android:textColor="#6C6B6B"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp">
+
+                <TextView
+                    android:id="@+id/favSport"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="Favourite Sport:"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/favSportText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="No favourite Sport selected."
+                    android:textColor="#6C6B6B"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:paddingEnd="10dp">
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="About Me:"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/aboutMeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="196dp"
+                    android:layout_weight="1"
+                    android:text="Please fill out a small bio about you. (Max 200 words.)"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/inviteButtons"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/editProfileButton"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="Accept"
+                    android:textAlignment="center" />
+
+                <Button
+                    android:id="@+id/declineButon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:text="Decline" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/removeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Remove Team Member"
+                    tools:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

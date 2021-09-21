@@ -8,14 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 
 lateinit private var inviteList: ArrayList<TeamInvites.InviteDisplayer>
 
@@ -41,7 +39,9 @@ class TeamInvites : AppCompatActivity() {
                         .get().addOnSuccessListener { user ->
                             val eventObj = InviteDisplayer(
                                 user.id,
-                                user.get("userName").toString()
+                                invite.id,
+                                user.get("userName").toString(),
+                                user.get("photoUrl").toString()
                             )
                             inviteList.add(eventObj)
 
@@ -54,16 +54,14 @@ class TeamInvites : AppCompatActivity() {
 
         listview.setOnItemClickListener { parent, view, position, id ->
             val memberID = inviteList.get(position).getID()
-            val intent = Intent(this, event::class.java)
-            intent.putExtra("invite", memberID)
+            val inviteID = inviteList.get(position).getInviteID()
+            val intent = Intent(this, ViewMemberProfileActivity::class.java)
+            intent.putExtra("member", memberID)
+            intent.putExtra("invite", inviteID)
             startActivity(intent)
+            finish()
         }
 
-        findViewById<Button>(R.id.addMemberButton).setOnClickListener {
-            finish()
-            val intent = Intent(this, TeamSearchActivity::class.java)
-            startActivity(intent)
-        }
     }
 
 
@@ -91,10 +89,16 @@ class TeamInvites : AppCompatActivity() {
             val rowMain = lI.inflate(R.layout.invite_list_adapter_view, viewGroup, false);
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
-            val sport = rowMain.findViewById<TextView>(R.id.memberSport)
+            val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
 
             name.text = (inviteList.get(position).name)
-
+            if (inviteList.get(position).image != null && inviteList.get(position).image != "null") {
+                Picasso.get()
+                    .load(inviteList.get(position).image)
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(profileImage)
+            }
 
             return rowMain;
         }
@@ -103,16 +107,25 @@ class TeamInvites : AppCompatActivity() {
     // Event Displayer class ( for array list)
     class InviteDisplayer {
         var id: String = ""
+        var inviteId: String = " "
         var name: String = ""
+        var image: String = ""
 
         fun getID(): String {
             return this.id
         }
 
+        fun getInviteID(): String {
+            return this.inviteId
+        }
+
+
         // main constuctor
-        constructor(id: String, name: String) {
+        constructor(id: String, inviteId: String, name: String, image: String) {
             this.id = id
+            this.inviteId = inviteId
             this.name = name
+            this.image = image
         }
     }
 }

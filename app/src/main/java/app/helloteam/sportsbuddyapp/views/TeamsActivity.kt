@@ -8,14 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.Button
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 
 lateinit private var memberList: ArrayList<TeamsActivity.TeamDisplayer>
 
@@ -37,35 +35,45 @@ class TeamsActivity : AppCompatActivity() {
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .collection("Team") //creates team inside user
             .get().addOnSuccessListener { members ->
-                for (member in members){
-                    Log.i("Teamssss", member.toString())
-                    db.collection("User").document(member.get("userId").toString())
-                        .get().addOnSuccessListener { user ->
-                            val eventObj = TeamDisplayer(
-                                user.id,
-                                user.get("userName").toString(),
-                                user.get("favouriteSport").toString()
-                            )
-                            memberList.add(eventObj)
+                for (member in members) {
+                    db.collection("User").document(member.get("member").toString())
+                        .get().addOnSuccessListener { u ->
+                    val eventObj = TeamDisplayer(
+                        member.id,
+                        member.get("member").toString(),
+                        u.get("userName").toString(),
+                        u.get("favouriteSport").toString(),
+                        u.get("photoUrl").toString()
+                    )
+                    memberList.add(eventObj)
 
-                            // list view adapter
-                            listview.adapter = TeamListAdapter(this)
-                        }
+                    // list view adapter
+                    listview.adapter = TeamListAdapter(this)
+                }
                 }
             }
 
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            val memberID = memberList.get(position).getID()
-            val intent = Intent(this, event::class.java)
+            val teamID = memberList.get(position).getID()
+            val memberID = memberList.get(position).getMemberID()
+            val intent = Intent(this, ViewMemberProfileActivity::class.java)
             intent.putExtra("member", memberID)
+            intent.putExtra("invite", teamID)
             startActivity(intent)
+            finish()
         }
 
         findViewById<Button>(R.id.addMemberButton).setOnClickListener {
             finish()
             val intent = Intent(this, TeamSearchActivity::class.java)
             startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.invitesButton).setOnClickListener {
+            val intent = Intent(this, TeamInvites::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -95,10 +103,17 @@ class TeamsActivity : AppCompatActivity() {
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
             val sport = rowMain.findViewById<TextView>(R.id.memberSport)
+            val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
 
             name.text = (memberList.get(position).name)
             sport.text = (memberList.get(position).favSport)
-
+            if (memberList.get(position).image != null && memberList.get(position).image != "null") {
+                Picasso.get()
+                    .load(memberList.get(position).image)
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(profileImage)
+            }
             return rowMain;
         }
     }
@@ -106,18 +121,26 @@ class TeamsActivity : AppCompatActivity() {
     // Event Displayer class ( for array list)
     class TeamDisplayer {
         var id: String = ""
+        var memberId: String = ""
         var name: String = ""
         var favSport: String = ""
+        var image: String = ""
 
         fun getID(): String {
             return this.id
         }
 
+        fun getMemberID(): String {
+            return this.memberId
+        }
+
         // main constuctor
-        constructor(id: String, name: String, favSport: String) {
+        constructor(id: String, memberId: String, name: String, favSport: String, image: String) {
             this.id = id
+            this.memberId = memberId
             this.name = name
             this.favSport = favSport
+            this.image = image
         }
     }
 }

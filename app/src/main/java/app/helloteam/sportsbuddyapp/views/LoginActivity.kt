@@ -58,11 +58,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-        Log.i("LOG_TAG", "CURRENT USER: $user")
-        if (user != null) {
-            toLanding()
-        }
-
         //Sign Up button is pressed
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
             val intent = Intent(this, RegisterActivity::class.java)
@@ -92,10 +87,6 @@ class LoginActivity : AppCompatActivity() {
                                 .get()
                                 .addOnSuccessListener { document ->
                                     testUser = document.get("testUser").toString().toBoolean()
-                                    Log.i(
-                                        "LOG_TAG",
-                                        "HELOOOOOOO " + user
-                                    )
                                     if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
                                     } else {
@@ -103,7 +94,6 @@ class LoginActivity : AppCompatActivity() {
                                             .show()
                                     }
                                 }
-                            toLanding()
                         }
                     }.addOnFailureListener {
                         Log.i(

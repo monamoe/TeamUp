@@ -21,34 +21,38 @@ class TeamSearchActivity : AppCompatActivity() {
             var email = findViewById<EditText>(R.id.memberEmail).text
             // FIREBASE MIGRATION //
             val db = Firebase.firestore
-            db.collection("User").whereEqualTo("userEmail", email.toString())
-                .get().addOnSuccessListener { users ->
-                    for (user in users) {
-                        val invite = hashMapOf(
-                            "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                            "receiver" to user.id,
-                            "inviteType" to "Team"
-                        )
+            if (email.toString() == FirebaseAuth.getInstance().currentUser?.email){
+                Toast.makeText(this, "Can not invite yourself", Toast.LENGTH_SHORT).show()
+            } else {
+                db.collection("User").whereEqualTo("userEmail", email.toString())
+                    .get().addOnSuccessListener { users ->
+                        for (user in users) {
+                            val invite = hashMapOf(
+                                "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                "receiver" to user.id,
+                                "inviteType" to "Team"
+                            )
 
-                        db.collection("User").document(user.id)
-                            .collection("Invites")
-                            .add(invite)
-                            .addOnSuccessListener {
-                                finish()
-                                Toast.makeText(this, "Invite Sent", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, TeamsActivity::class.java)
-                                startActivity(intent)
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(this, "Invite Failed", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, TeamsActivity::class.java)
-                                startActivity(intent)
-                            }
+                            db.collection("User").document(user.id)
+                                .collection("Invites")
+                                .add(invite)
+                                .addOnSuccessListener {
+                                    finish()
+                                    Toast.makeText(this, "Invite Sent", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, TeamsActivity::class.java)
+                                    startActivity(intent)
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Invite Failed", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this, TeamsActivity::class.java)
+                                    startActivity(intent)
+                                }
+                        }
+                        if (users.isEmpty) {
+                            Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    if (users.isEmpty){
-                        Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            }
         }
     }
 }
