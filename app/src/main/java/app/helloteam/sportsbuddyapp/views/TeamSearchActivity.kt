@@ -30,9 +30,11 @@ class TeamSearchActivity : AppCompatActivity() {
                             "inviteType" to "Team"
                         )
 
-                        db.collection("Invites")
+                        db.collection("User").document(user.id)
+                            .collection("Invites")
                             .add(invite)
                             .addOnSuccessListener {
+                                finish()
                                 Toast.makeText(this, "Invite Sent", Toast.LENGTH_SHORT).show()
                                 val intent = Intent(this, TeamsActivity::class.java)
                                 startActivity(intent)
