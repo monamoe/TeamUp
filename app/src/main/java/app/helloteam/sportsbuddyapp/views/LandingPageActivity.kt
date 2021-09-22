@@ -64,6 +64,7 @@ class LandingPageActivity : AppCompatActivity() {
         forecast = findViewById(R.id.forecast)
         icon = findViewById(R.id.conIcon)
 
+
         getUserCity()
 
     }
