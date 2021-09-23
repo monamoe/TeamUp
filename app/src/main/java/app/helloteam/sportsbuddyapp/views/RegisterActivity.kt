@@ -99,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
                         }.addOnFailureListener {
                             Toast.makeText(
                                 this,
-                                "There was a problem with creating the User Account, Please try again later..." + it.message,
+                                "There was a problem with creating the User Account, Please try again later...",
                                 Toast.LENGTH_LONG
                             ).show()
                         }

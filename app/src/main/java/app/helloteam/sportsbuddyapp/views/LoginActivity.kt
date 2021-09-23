@@ -98,9 +98,9 @@ class LoginActivity : AppCompatActivity() {
                     }.addOnFailureListener {
                         Log.i(
                             "LOG_TAG",
-                            "Login failed: " + it.message
+                            "Login failed: " + it.localizedMessage
                         )
-                        Toast.makeText(this, "Login Error $it.message ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT).show()
                     }
             }
         }
