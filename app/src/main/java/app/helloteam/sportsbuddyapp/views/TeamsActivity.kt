@@ -95,7 +95,6 @@ class TeamsActivity : AppCompatActivity() {
                                     ).show()
                                 } else {
                                     for (user in users) {
-                                        Log.i("userssssss", code)
 
                                         db.collection(
                                             "User/" + user.id
@@ -106,11 +105,11 @@ class TeamsActivity : AppCompatActivity() {
 
                                                     val invite = hashMapOf(
                                                         "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                                        "receiver" to u.id,
+                                                        "receiver" to user.id,
                                                         "inviteType" to "Team"
                                                     )
 
-                                                    db.collection("User").document(u.id)
+                                                    db.collection("User").document(user.id)
                                                         .collection("Invites")
                                                         .add(invite)
                                                         .addOnSuccessListener {

@@ -41,8 +41,11 @@ class ProfilePage : AppCompatActivity() {
                 var favouriteSport = User.get("favouriteSport")
 
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
-                var time:Timestamp = User.get("dateCreated") as Timestamp
-                var dateCreated = sfd.format(Date(time.seconds*1000))
+                var getTime = User.get("dateCreated")
+                if (getTime != null) {
+                    var time: Timestamp = getTime as Timestamp
+                    getTime = sfd.format(Date(time.seconds * 1000))
+                }
                 val user = Firebase.auth.currentUser
 
                  if (user?.photoUrl != null) {
@@ -64,7 +67,7 @@ class ProfilePage : AppCompatActivity() {
 
                     }
                 if (userName != null) binding.userNameEdit.text = userName.toString()
-                if (dateCreated != null) binding.dateText.text = dateCreated.toString()
+                if (getTime != null) binding.dateText.text = getTime.toString()
                 if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text = bio.toString()
                 if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
             }
