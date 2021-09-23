@@ -148,7 +148,7 @@ class event : AppCompatActivity() {
         }
     }
 
-    // delete the eventID from every attendee in the event's Attendee list
+    // delete the eventID from every attendee in the users's Attendee list
     // delete the eventID from the host's hosting list
     // remove the event document from the location collection
     // delete location if the location has no more events at it
@@ -174,6 +174,17 @@ class event : AppCompatActivity() {
                                 "Error deleting eventID from attendeelist of #newuid",
                                 e
                             )
+                        }
+
+                    db.collection("Location").document(locationID).collection("Events")
+                        .document(eventID).collection("Attendees").get()
+                        .addOnSuccessListener { docs ->
+                            for (doc in docs) {
+                                db.collection("Location").document(locationID).collection("Events")
+                                    .document(eventID).collection("Attendees")
+                                    .document(doc.get("userID").toString())
+                                    .delete()
+                            }
                         }
                 }
 
