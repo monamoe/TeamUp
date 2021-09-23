@@ -177,6 +177,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 //hashmap models
                 val eventHashMap = hashMapOf(
                     "title" to eventTitle,
+                    "currentlyAttending" to 0,
                     "eventSpace" to eventSpace,
                     "activity" to activitySelection,
                     "hostID" to FirebaseAuth.getInstance().uid,
@@ -217,7 +218,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                                 // add the hosting data to the user
                                 db.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())
-                                    .collection("Hosting").document()
+                                    .collection("Hosting").document(eventID)
                                     .set(hostingHashMap, SetOptions.merge())
                                     .addOnSuccessListener {
                                         val intent = Intent(this, LandingPageActivity::class.java)
