@@ -150,31 +150,32 @@ class LoginActivity : AppCompatActivity() {
                         "dateCreated" to Timestamp(Date()),
                         "favouriteSport" to "none"
                     )
-                    val x = Firebase.firestore.collection("User")
-                        .document(FirebaseAuth.getInstance().uid.toString())
-                    if (x == null) {
-                        Firebase.firestore.collection("User")
-                            .document(FirebaseAuth.getInstance().uid.toString())
-                            .set(userHashMap, SetOptions.merge())
-                            .addOnSuccessListener {
-                                val friend = hashMapOf(
-                                    "user" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                )
-                                var u = Firebase.firestore.collection("User")
+                    Firebase.firestore.collection("User")
+                        .document(FirebaseAuth.getInstance().uid.toString()).get().addOnSuccessListener { x ->
+                            if (!x.exists()) {
+                                Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())
-                                    .collection("FriendCode")
-                                if (u == null) {
-                                    u.add(friend).addOnSuccessListener { friend ->
-                                        friend.update("code", friend.id.takeLast(6))
+                                    .set(userHashMap, SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        val friend = hashMapOf(
+                                            "user" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                        )
+                                        var u = Firebase.firestore.collection("User")
+                                            .document(FirebaseAuth.getInstance().uid.toString())
+                                            .collection("FriendCode")
+                                        u.add(friend).addOnSuccessListener { friend ->
+                                            friend.update("code", friend.id.takeLast(6))
+                                        }
+                                        Log.d("CreatingEvent", "Created new user")
                                     }
-                                }
-                                Log.d("CreatingEvent", "Created new user")
+                                    .addOnFailureListener { e ->
+                                        Log.w("a", "Error creating location document", e)
+                                    }
                             }
-                            .addOnFailureListener { e ->
-                                Log.w("a", "Error creating location document", e)
-                            }
-                    }
-                    toLanding()
+                            toLanding()
+                        }
+
+
                 }
             }
     }
