@@ -64,8 +64,8 @@
 
     <TextView
         android:id="@+id/forecast"
-        android:layout_width="122dp"
-        android:layout_height="34dp"
+        android:layout_width="152dp"
+        android:layout_height="33dp"
         android:layout_marginTop="52dp"
         android:inputType="textCapWords"
         android:text="Weather"
@@ -80,7 +80,7 @@
         android:layout_marginTop="52dp"
         android:text="Unavailable"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintHorizontal_bias="0.408"
         app:layout_constraintStart_toEndOf="@+id/forecast"
         app:layout_constraintTop_toTopOf="parent" />
 

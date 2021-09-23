@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import app.helloteam.sportsbuddyapp.R
+import com.baoyz.widget.PullRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -61,7 +62,30 @@ class TeamInvites : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+       val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
+        layout.setOnRefreshListener {
+            db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                .collection("Invites").whereEqualTo("inviteType", "Team")
+                .get().addOnSuccessListener { invites ->
+                    for (invite in invites){
+                        db.collection("User").document(invite.get("sender").toString())
+                            .get().addOnSuccessListener { user ->
+                                val eventObj = InviteDisplayer(
+                                    user.id,
+                                    invite.id,
+                                    user.get("userName").toString(),
+                                    user.get("photoUrl").toString()
+                                )
+                                inviteList.add(eventObj)
 
+                                // list view adapter
+                                listview.adapter = TeamListAdapter(this)
+                            }
+                    }
+                    layout.setRefreshing(false);
+
+                }
+        }
     }
 
 
