@@ -1,15 +1,20 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import app.helloteam.sportsbuddyapp.R
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -19,6 +24,7 @@ lateinit private var memberList: ArrayList<TeamsActivity.TeamDisplayer>
 
 class TeamsActivity : AppCompatActivity() {
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_teams)
@@ -63,11 +69,47 @@ class TeamsActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
+        val context = this
         findViewById<Button>(R.id.addMemberButton).setOnClickListener {
-            finish()
-            val intent = Intent(this, TeamSearchActivity::class.java)
-            startActivity(intent)
+           MaterialDialog(this).show {
+                title(R.string.invite_title)
+                input(hint = "example@hotmail.com"){ dialog, text ->
+                        var email = text.toString().trim()
+                        // FIREBASE MIGRATION //
+                        val db = Firebase.firestore
+                        if (email == FirebaseAuth.getInstance().currentUser?.email){
+                            Toast.makeText(context, "Can not invite yourself", Toast.LENGTH_SHORT).show()
+                        } else {
+                            db.collection("User").whereEqualTo("userEmail", email.toString())
+                                .get().addOnSuccessListener { users ->
+                                    for (user in users) {
+                                        val invite = hashMapOf(
+                                            "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                            "receiver" to user.id,
+                                            "inviteType" to "Team"
+                                        )
+
+                                        db.collection("User").document(user.id)
+                                            .collection("Invites")
+                                            .add(invite)
+                                            .addOnSuccessListener {
+                                                finish()
+                                                Toast.makeText(context, "Invite Sent", Toast.LENGTH_SHORT).show()
+                                            }
+                                            .addOnFailureListener {
+                                                Toast.makeText(context, "Invite Failed", Toast.LENGTH_SHORT).show()
+                                            }
+                                    }
+                                    if (users.isEmpty) {
+                                        Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                        }
+
+                }
+                positiveButton(R.string.submit)
+                negativeButton(R.string.cancel)
+           }
         }
 
         findViewById<Button>(R.id.invitesButton).setOnClickListener {

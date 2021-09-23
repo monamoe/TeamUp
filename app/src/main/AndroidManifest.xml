@@ -33,9 +33,6 @@
         <activity
             android:name=".views.TeamsActivity"
             android:exported="true" />
-        <activity
-            android:name=".views.TeamSearchActivity"
-            android:exported="true" />
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
 
