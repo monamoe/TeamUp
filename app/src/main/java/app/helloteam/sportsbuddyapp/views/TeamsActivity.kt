@@ -73,38 +73,67 @@ class TeamsActivity : AppCompatActivity() {
         findViewById<Button>(R.id.addMemberButton).setOnClickListener {
            MaterialDialog(this).show {
                 title(R.string.invite_title)
-                input(hint = "example@hotmail.com"){ dialog, text ->
-                        var email = text.toString().trim()
+                input(hint = "6 characters long"){ dialog, text ->
+                        var code = text.toString().trim()
                         // FIREBASE MIGRATION //
                         val db = Firebase.firestore
-                        if (email == FirebaseAuth.getInstance().currentUser?.email){
-                            Toast.makeText(context, "Can not invite yourself", Toast.LENGTH_SHORT).show()
-                        } else {
-                            db.collection("User").whereEqualTo("userEmail", email.toString())
-                                .get().addOnSuccessListener { users ->
+                    db.collection("User").get().addOnSuccessListener { users ->
+                        db.collection(
+                            "User/" + FirebaseAuth.getInstance().currentUser?.uid.toString()
+                                    + "/FriendCode"
+                        ).whereEqualTo("code", code).get()
+                            .addOnSuccessListener { codes ->
+                                var yourCode = ""
+                                for (c in codes) {
+                                    yourCode = c.get("code").toString()
+                                }
+                                if (code == yourCode) {
+                                    Toast.makeText(
+                                        context,
+                                        "Can not invite yourself",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
                                     for (user in users) {
-                                        val invite = hashMapOf(
-                                            "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                            "receiver" to user.id,
-                                            "inviteType" to "Team"
-                                        )
+                                        Log.i("userssssss", code)
 
-                                        db.collection("User").document(user.id)
-                                            .collection("Invites")
-                                            .add(invite)
-                                            .addOnSuccessListener {
-                                                finish()
-                                                Toast.makeText(context, "Invite Sent", Toast.LENGTH_SHORT).show()
+                                        db.collection(
+                                            "User/" + user.id
+                                                    + "/FriendCode"
+                                        ).whereEqualTo("code", code).get()
+                                            .addOnSuccessListener { inviting ->
+                                                for (u in inviting) {
+
+                                                    val invite = hashMapOf(
+                                                        "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                                        "receiver" to u.id,
+                                                        "inviteType" to "Team"
+                                                    )
+
+                                                    db.collection("User").document(u.id)
+                                                        .collection("Invites")
+                                                        .add(invite)
+                                                        .addOnSuccessListener {
+                                                            finish()
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Invite Sent",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                        .addOnFailureListener {
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Invite Failed",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }
+                                                }
                                             }
-                                            .addOnFailureListener {
-                                                Toast.makeText(context, "Invite Failed", Toast.LENGTH_SHORT).show()
-                                            }
-                                    }
-                                    if (users.isEmpty) {
-                                        Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                        }
+                            }
+                    }
 
                 }
                 positiveButton(R.string.submit)

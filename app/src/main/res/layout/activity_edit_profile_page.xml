@@ -70,6 +70,32 @@
                 android:paddingBottom="10dp">
 
                 <TextView
+                    android:id="@+id/friendCode"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="FriendCode: "
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/friendCodeEdit"
+                    android:layout_width="235dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="No Code Found"
+                    android:textColor="#6C6B6B"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
                     android:id="@+id/dateJoined"
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"

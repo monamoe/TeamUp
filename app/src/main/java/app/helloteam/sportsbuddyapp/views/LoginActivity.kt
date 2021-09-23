@@ -154,6 +154,14 @@ class LoginActivity : AppCompatActivity() {
                         .document(FirebaseAuth.getInstance().uid.toString())
                         .set(userHashMap, SetOptions.merge())
                         .addOnSuccessListener {
+                            val friend = hashMapOf(
+                                "user" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                            )
+                            Firebase.firestore.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+                                .collection("FriendCode")
+                                .add(friend).addOnSuccessListener {friend->
+                                    friend.update("code", friend.id.takeLast(6))
+                                }
                             Log.d("CreatingEvent", "Created new user")
                         }
                         .addOnFailureListener { e ->

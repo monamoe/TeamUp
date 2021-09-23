@@ -76,7 +76,16 @@ class EditProfilePage : AppCompatActivity() {
                             .centerCrop()
                             .into(binding.profilepic)
                 }
+                db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)
+                    .get()
+                    .addOnSuccessListener { codes ->
+                        var friendCode =""
+                        for(code in codes){
+                            friendCode = code.get("code").toString()
+                            if (friendCode != "null") binding.friendCodeEdit.text = friendCode
+                        }
 
+                    }
                 if (userName != "null") binding.userNameEdit.text = userName
                 if (dateCreated != null) binding.dateText.text = dateCreated.toString()
                 if (bio != "null" && bio != null && bio != "") binding.aboutMeEdit.setText(User.get("bio").toString())

@@ -87,6 +87,44 @@
                 android:paddingBottom="10dp">
 
                 <TextView
+                    android:id="@+id/friendCode"
+                    android:layout_width="126dp"
+                    android:layout_height="wrap_content"
+                    android:text="FriendCode: "
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/friendCodeEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="No Code Found"
+                    android:textColor="#6C6B6B"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/copyButton"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/clipboard"
+                    android:paddingLeft="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/customboard"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
                     android:id="@+id/dateJoined"
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"

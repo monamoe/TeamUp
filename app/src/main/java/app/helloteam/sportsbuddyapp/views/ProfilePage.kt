@@ -1,12 +1,12 @@
 package app.helloteam.sportsbuddyapp.views
 
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
@@ -53,6 +53,16 @@ class ProfilePage : AppCompatActivity() {
                             .into(binding.profilepic)
 
                 }
+                db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)
+                    .get()
+                    .addOnSuccessListener { codes ->
+                        var friendCode =""
+                    for(code in codes){
+                        friendCode = code.get("code").toString()
+                        if (friendCode != "null") binding.friendCodeEdit.text = friendCode
+                    }
+
+                    }
                 if (userName != null) binding.userNameEdit.text = userName.toString()
                 if (dateCreated != null) binding.dateText.text = dateCreated.toString()
                 if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text = bio.toString()
@@ -63,6 +73,13 @@ class ProfilePage : AppCompatActivity() {
             finish()
             val intent = Intent(this, EditProfilePage::class.java)
             startActivity(intent)
+        }
+
+        binding.copyButton.setOnClickListener {
+            var clip = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            var clipData = ClipData.newPlainText("friendCode", binding.friendCodeEdit.text.toString())
+            clip.setPrimaryClip(clipData)
+            Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
         }
     }
 
