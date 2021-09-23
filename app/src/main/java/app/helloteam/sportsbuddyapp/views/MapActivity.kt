@@ -206,30 +206,32 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                     location.get("Lon").toString().toDouble()
                                 )
                                 parklocations.add(park1)
+                                for (i in 0..parklocations.size - 1) {
+                                    mMap.addMarker(
+                                        MarkerOptions()
+                                            .position(
+                                                LatLng(
+                                                    parklocations.get(i).getLat(),
+                                                    parklocations.get(i).getLon()
+                                                )
+                                            )
+                                            .title(parklocations.get(i).getName())
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                                    )
+                                    Log.i(
+                                        "DisplayingMarkers",
+                                        "adding marker to the map :" + parklocations.get(i)
+                                            .getID() + ", " + parklocations.get(i).getLat()
+                                            .toString() + ", " + parklocations.get(i).getLon()
+                                            .toString()
+                                    )
+                                }
                             }
                         }
                 }
 
                 //display the markers
-                for (i in 0..parklocations.size - 1) {
-                    mMap.addMarker(
-                        MarkerOptions()
-                            .position(
-                                LatLng(
-                                    parklocations.get(i).getLat(),
-                                    parklocations.get(i).getLon()
-                                )
-                            )
-                            .title(parklocations.get(i).getName())
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                    )
-                    Log.i(
-                        "DisplayingMarkers",
-                        "adding marker to the map :" + parklocations.get(i)
-                            .getID() + ", " + parklocations.get(i).getLat()
-                            .toString() + ", " + parklocations.get(i).getLon().toString()
-                    )
-                }
+
             }
             .addOnFailureListener { exception ->
                 Log.w("CreatingParkLocation", "Error getting documents: ", exception)
