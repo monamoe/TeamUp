@@ -15,10 +15,10 @@ import app.helloteam.sportsbuddyapp.R
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 
 lateinit private var memberList: ArrayList<TeamsActivity.TeamDisplayer>
 
@@ -178,11 +178,9 @@ class TeamsActivity : AppCompatActivity() {
             name.text = (memberList.get(position).name)
             sport.text = (memberList.get(position).favSport)
             if (memberList.get(position).image != null && memberList.get(position).image != "null") {
-                Picasso.get()
-                    .load(memberList.get(position).image)
-                    .resize(100, 100)
-                    .centerCrop()
-                    .into(profileImage)
+                if (viewGroup != null) {
+                    Glide.with(viewGroup).load(memberList.get(position).image).into(profileImage)
+                };
             }
             return rowMain;
         }

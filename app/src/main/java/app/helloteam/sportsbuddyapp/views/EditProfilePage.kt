@@ -16,11 +16,11 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.firebase.FileHandling
+import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -70,11 +70,7 @@ class EditProfilePage : AppCompatActivity() {
                 bio = User.get("bio").toString()
 
                 if (user?.photoUrl != null) {
-                        Picasso.get()
-                            .load(user.photoUrl)
-                            .resize(100, 100)
-                            .centerCrop()
-                            .into(binding.profilepic)
+                    Glide.with(this).load(user.photoUrl).into(binding.profilepic);
                 }
                 db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)
                     .get()
@@ -149,11 +145,8 @@ class EditProfilePage : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            Picasso.get()
-                .load(imageUri)
-                .resize(100, 100)
-                .centerCrop()
-                .into(binding.profilepic)
+            Glide.with(this).load(imageUri).into(binding.profilepic);
+
         }
     }
 }

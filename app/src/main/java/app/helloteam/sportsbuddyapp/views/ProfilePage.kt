@@ -11,12 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
+import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 import java.util.*
 import java.text.SimpleDateFormat
 
@@ -49,11 +49,9 @@ class ProfilePage : AppCompatActivity() {
                 val user = Firebase.auth.currentUser
 
                  if (user?.photoUrl != null) {
-                        Picasso.get()
-                            .load(user.photoUrl)
-                            .resize(100, 100)
-                            .centerCrop()
-                            .into(binding.profilepic)
+
+                     Glide.with(this).load(user.photoUrl).into(binding.profilepic);
+
 
                 }
                 db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)

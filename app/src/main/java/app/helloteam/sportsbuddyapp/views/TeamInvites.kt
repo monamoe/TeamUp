@@ -11,20 +11,20 @@ import android.view.ViewGroup
 import android.widget.*
 import app.helloteam.sportsbuddyapp.R
 import com.baoyz.widget.PullRefreshLayout
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 
 lateinit private var inviteList: ArrayList<TeamInvites.InviteDisplayer>
 
 
 class TeamInvites : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_invites)
         val listview = findViewById<ListView>(R.id.listView)
-
         inviteList = ArrayList()
 
         // populate array list with events that match the location ID of the marker selected
@@ -117,11 +117,11 @@ class TeamInvites : AppCompatActivity() {
 
             name.text = (inviteList.get(position).name)
             if (inviteList.get(position).image != null && inviteList.get(position).image != "null") {
-                Picasso.get()
-                    .load(inviteList.get(position).image)
-                    .resize(100, 100)
-                    .centerCrop()
-                    .into(profileImage)
+
+                if (viewGroup != null) {
+                    Glide.with(viewGroup).load(inviteList.get(position).image).into(profileImage)
+                };
+
             }
 
             return rowMain;

@@ -10,11 +10,11 @@ import android.widget.Button
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityViewMemberProfileBinding
+import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,11 +42,9 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                 var dateCreated = sfd.format(Date(time.seconds*1000))
 
                 if (User.get("photoUrl") != null) {
-                    Picasso.get()
-                        .load(User.get("photoUrl").toString())
-                        .resize(100, 100)
-                        .centerCrop()
-                        .into(binding.profilepic)
+
+                    Glide.with(this).load(User.get("photoUrl").toString()).into(binding.profilepic);
+
 
                 }
                 if (userName != null) binding.userNameEdit.text = userName.toString()
