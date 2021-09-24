@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.EventHandling
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -84,7 +85,7 @@ class event : AppCompatActivity() {
                 activity.setText(document.get("activity").toString())
                 startTime.setText("Start Time: \n" + eventStartTime.toString())
                 endtime.setText("End Time: \n" + eventEndTime.toString())
-                space.setText("Space : " + document.get("eventSpace"))
+                EventHandling.getSpacesLeft(locationID, eventID, document.get("eventSpace").toString().toInt(), space)
 
                 db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
                     information.setText(loc.get("Location Name").toString())
@@ -107,9 +108,9 @@ class event : AppCompatActivity() {
                         .addOnSuccessListener { users ->
                             attendBtn.text = "Attend"
                             attending = false
+                            EventHandling.getSpacesLeft(locationID, eventID, document.get("eventSpace").toString().toInt(), attendBtn)
                             for (user in users) {
                                 if (user.get("userID").toString() == uid) {
-                                    attendBtn.text = "Leave"
                                     attending = true
                                 }
                             }

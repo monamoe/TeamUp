@@ -20,7 +20,7 @@
             android:layout_height="43dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="100dp"
-            android:text="Space: "
+            android:text="Space Left: "
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/eventTitle" />
