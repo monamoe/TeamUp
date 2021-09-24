@@ -50,13 +50,18 @@ class eventslist : AppCompatActivity() {
         location.get().addOnSuccessListener { x ->
             val address = x.get("Location Name").toString()
         //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
-        location.collection("Events")
-            .get()
-            .addOnSuccessListener { documents ->
-                //loop through the events at that location
-                for (event in documents) {
-
-                    val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+        db.collection("User").get()
+            .addOnSuccessListener { users ->
+                location.collection("Events")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (event in documents) {
+                            var userName = ""
+                            for (user in users){
+                                if (user.id == event.get("hostID"))
+                                    userName = user.get("userName").toString()
+                            }
+                            val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
                             var time: Timestamp = event.get("date") as Timestamp
                             var eventTime = sfd.format(Date(time.seconds * 1000))
                             val eventObj = EventDisplayer(
@@ -64,13 +69,14 @@ class eventslist : AppCompatActivity() {
                                 event.get("activity").toString(),
                                 address,
                                 eventTime,
-                                event.get("hostID").toString()
+                                userName
                             )
                             eventList.add(eventObj)
 
-                }
-                // list view adapter
-                listview.adapter = EventListAdapter(this)
+                        }
+                        // list view adapter
+                        listview.adapter = EventListAdapter(this)
+                    }
             }
     }
 
