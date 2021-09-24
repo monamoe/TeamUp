@@ -1,8 +1,5 @@
 package app.helloteam.sportsbuddyapp.models;
 
-import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.getForecast;
-import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.getTemp;
-import static app.helloteam.sportsbuddyapp.views.LandingPageActivityKt.weatherAPI;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,14 +19,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import app.helloteam.sportsbuddyapp.views.LandingPageActivity;
 
 public class weatherTask extends AsyncTask<String, Void, String> {
 
     public ImageView x;
-    public weatherTask(ImageView im){
+
+    public weatherTask(ImageView im) {
         x = im;
     }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -37,7 +35,8 @@ public class weatherTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q="+strings[0]+"&units=metric&appid=" + weatherAPI);
+        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q=" + strings[0] + "&units=metric&appid=");
+//        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q=" + strings[0] + "&units=metric&appid=" + weatherAPI);
         return response;
     }
 
@@ -60,13 +59,13 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
 
-
-            getTemp().setText(temperature + "°C");
-            getForecast().setText(cast.toUpperCase());
+//
+//            getTemp().setText(temperature + "°C");
+//            getForecast().setText(cast.toUpperCase());
 
             Picasso.get().load(iconUrl).into(x);
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }

@@ -1,56 +1,75 @@
-package app.helloteam.sportsbuddyapp.views.LandingPage
+package app.helloteam.sportsbuddyapp.views
 
-//import androidx.fragment.app.viewModels
-//import androidx.navigation.findNavController
-//import androidx.navigation.fragment.navArgs
+
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.compose.material.MaterialTheme
+import android.os.Parcel
+import android.os.Parcelable
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Text
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.databinding.ActivityLandingPageBinding
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
-var forecast: TextView? = null
-var temp: TextView? = null
-var icon: ImageView? = null
 
 private val MY_PERMISSION_FINE_LOCATION: Int = 44
 
-class LandingPageActivity : Fragment() {
 
-    override fun onCreate(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+class LandingPage : AppCompatActivity() {
 
-
-        val binding = DataBindingUtil.inflate<ActivityLandingPageBinding>(
-            inflater, R.layout.activity_landing_page, container, false
-        )
-        binding.apply {
-            composeView.setContent {
-                MaterialTheme {
-                    Text("HELLO COMPOSABLE")
-                }
-            }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MessageCard("Landing Page")
         }
-
-        setHasOptionsMenu(true)
-        return binding.root
     }
 
-    // is the user logged in
-    val uid = FirebaseAuth.getInstance().uid
+}
+
+@Preview
+@Composable
+fun PreviewMessageCard() {
+    MessageCard("Android")
+}
+
+
+@Composable
+fun MessageCard(name: String) {
+    Text(text = "Hello $name!")
+}
+
+
+//
+//class LandingPageActivity() : Fragment(), Parcelable {
+//
+//    override fun onCreate(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?,
+//        savedInstanceState: Bundle?
+//    ): View? {
+//
+//
+//        val binding = DataBindingUtil.inflate<ActivityLandingPageBinding>(
+//            inflater, R.layout.activity_landing_page, container, false
+//        )
+//        binding.apply {
+//            composeView.setContent {
+//                MaterialTheme {
+//                    Text("HELLO COMPOSABLE")
+//                }
+//            }
+//        }
+//
+//        setHasOptionsMenu(true)
+//        return binding.root
+//    }
+//
+//    // is the user logged in
+//    val uid = FirebaseAuth.getInstance().uid
+//
+//    constructor(parcel: Parcel) : this() {
+//    }
 
 
 //        if (uid == null) {
@@ -200,4 +219,23 @@ class LandingPageActivity : Fragment() {
 //            MY_PERMISSION_FINE_LOCATION
 //        )
 //    }
-}
+//override fun writeToParcel(parcel: Parcel, flags: Int) {
+//
+//}
+//
+//override fun describeContents(): Int {
+//    return 0
+//}
+//
+//companion object CREATOR : Parcelable.Creator<LandingPageActivity> {
+//    override fun createFromParcel(parcel: Parcel): LandingPageActivity {
+//        return LandingPageActivity(parcel)
+//    }
+//
+//    override fun newArray(size: Int): Array<LandingPageActivity?> {
+//        return arrayOfNulls(size)
+//    }
+//}
+
+
+

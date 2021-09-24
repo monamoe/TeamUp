@@ -100,7 +100,8 @@ class LoginActivity : AppCompatActivity() {
                             "LOG_TAG",
                             "Login failed: " + it.localizedMessage
                         )
-                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT)
+                            .show()
                     }
             }
         }
@@ -108,8 +109,10 @@ class LoginActivity : AppCompatActivity() {
 
     //go to landing activity when called
     fun toLanding() {
-        val intent = Intent(this, LandingPageActivity::class.java)
-        startActivity(intent)
+        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
+            .show()
+//        val intent = Intent(this, LandingPageActivity::class.java)
+//        startActivity(intent)
         finish()
     }
 
@@ -151,7 +154,8 @@ class LoginActivity : AppCompatActivity() {
                         "favouriteSport" to "none"
                     )
                     Firebase.firestore.collection("User")
-                        .document(FirebaseAuth.getInstance().uid.toString()).get().addOnSuccessListener { x ->
+                        .document(FirebaseAuth.getInstance().uid.toString()).get()
+                        .addOnSuccessListener { x ->
                             if (!x.exists()) {
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())

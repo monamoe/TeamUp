@@ -110,11 +110,13 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
+        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
+            .show()
         // back button
-        findViewById<Button>(backBtn).setOnClickListener {
-            val intent = Intent(this, LandingPageActivity::class.java)
-            startActivity(intent)
-        }
+//        findViewById<Button>(backBtn).setOnClickListener {
+//            val intent = Intent(this, LandingPageActivity::class.java)
+//            startActivity(intent)
+//        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
