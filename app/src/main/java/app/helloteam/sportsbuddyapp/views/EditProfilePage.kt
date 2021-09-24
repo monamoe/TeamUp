@@ -33,6 +33,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.storage.ktx.storage
+import com.ramotion.fluidslider.FluidSlider
 
 
 class EditProfilePage : AppCompatActivity() {
@@ -51,6 +52,7 @@ class EditProfilePage : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfilePageBinding
     private var sport = "none"
     private var bio = ""
+    var distancePosition = 0.0f
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +60,12 @@ class EditProfilePage : AppCompatActivity() {
         binding = ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
+        val max = 100
+        val min = 10
+
+        val slider = findViewById<FluidSlider>(R.id.fluidSlider)
+        slider.startText ="$min km"
+        slider.endText = "$max km"
 
         db.collection("User").document(uid)
             .get()
@@ -68,6 +76,7 @@ class EditProfilePage : AppCompatActivity() {
                 var time: Timestamp = User.get("dateCreated") as Timestamp
                 var dateCreated = sfd.format(Date(time.seconds*1000))
                 bio = User.get("bio").toString()
+                slider.position = User.get("distance").toString().toFloat()/100
 
                 if (user?.photoUrl != null) {
                     Glide.with(this).load(user.photoUrl).into(binding.profilepic);
@@ -119,18 +128,20 @@ class EditProfilePage : AppCompatActivity() {
                     }
                 }
 
-
+                binding.fluidSlider.positionListener = { p ->
+                    distancePosition = p*100
+                }
             }
     }
 
     fun onSave(view: View) {
         if (binding.aboutMeEdit.text.toString().length <= 200) {
-
             finish()
             db.collection("User").document(uid).update(
                 mapOf(
                     "favouriteSport" to sport,
-                    "bio" to binding.aboutMeEdit.text.toString()
+                    "bio" to binding.aboutMeEdit.text.toString(),
+                    "distance" to distancePosition.toInt()
                 )
             )
             if (imageUri != null) { //Image uploading

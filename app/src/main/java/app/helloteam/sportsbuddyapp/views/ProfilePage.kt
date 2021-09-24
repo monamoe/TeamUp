@@ -2,6 +2,7 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -17,8 +18,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.ramotion.fluidslider.FluidSlider
 import java.util.*
 import java.text.SimpleDateFormat
+import kotlin.Unit
+
+
+
+
+
+
 
 
 class ProfilePage : AppCompatActivity() {
@@ -39,7 +48,7 @@ class ProfilePage : AppCompatActivity() {
                 var userName = User.get("userName")
                 var bio = User.get("bio")
                 var favouriteSport = User.get("favouriteSport")
-
+                var maxDistance = User.get("distance")
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
                 var getTime = User.get("dateCreated")
                 if (getTime != null) {
@@ -68,6 +77,7 @@ class ProfilePage : AppCompatActivity() {
                 if (getTime != null) binding.dateText.text = getTime.toString()
                 if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text = bio.toString()
                 if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
+                if (maxDistance != null) binding.maxDistanceEdit.text = maxDistance.toString() + "KM"
             }
 
         findViewById<Button>(R.id.editProfileButton).setOnClickListener {
@@ -82,6 +92,8 @@ class ProfilePage : AppCompatActivity() {
             clip.setPrimaryClip(clipData)
             Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
         }
+
+
     }
 
 

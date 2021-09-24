@@ -14,6 +14,7 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.*
 import com.google.firebase.ktx.Firebase
 
@@ -46,6 +48,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     // park locations arraylist
     var parklocations = ArrayList<ParkLocationMarker>()
 
+    var locationA: Location = Location("point A")
+    var locationB = Location("point B")
 
     // custom Info Windows Rendering
     // https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
@@ -104,6 +108,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     //default user location values
     var userLocationLon = 32.00
     var userLocationLat = 32.00
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,7 +170,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-
+                    locationA.latitude = userLocationLat;
+                    locationA.longitude = userLocationLon;
                     //checking accuracy
                     // idk why we need this, yet
                     if (location.hasAccuracy()) {
@@ -188,7 +194,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         // FIREBASE MIGRATION //
         val db = Firebase.firestore
 
-
+        db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
+            .get().addOnSuccessListener { user ->
         db.collection("Location")
             .get()
             .addOnSuccessListener { documents ->
@@ -205,7 +212,22 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                     location.get("Lat").toString().toDouble(),
                                     location.get("Lon").toString().toDouble()
                                 )
-                                parklocations.add(park1)
+                                locationB.latitude = location.get("Lat").toString().toDouble();
+                                locationB.longitude = location.get("Lon").toString().toDouble();
+                                val distance = locationA.distanceTo(locationB)
+                                var maxDistance = user.get("distance")
+                                if (maxDistance == null){
+                                    if (distance <= 20000
+                                    ) {
+                                        parklocations.add(park1)
+                                    }
+                                } else {
+                                    if (distance <= user.get("distance").toString()
+                                            .toInt() * 1000
+                                    ) {
+                                        parklocations.add(park1)
+                                    }
+                                }
                                 for (i in 0..parklocations.size - 1) {
                                     mMap.addMarker(
                                         MarkerOptions()
@@ -236,7 +258,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             .addOnFailureListener { exception ->
                 Log.w("CreatingParkLocation", "Error getting documents: ", exception)
             }
-
+    }
 
         //set the info windows and click listeners for the markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())

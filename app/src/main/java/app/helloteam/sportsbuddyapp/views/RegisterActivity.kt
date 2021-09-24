@@ -73,7 +73,8 @@ class RegisterActivity : AppCompatActivity() {
                                     "userEmail" to emailTxt,
                                     "testUser" to testUser,
                                     "dateCreated" to Timestamp(Date()),
-                                    "favouriteSport" to "none"
+                                    "favouriteSport" to "none",
+                                    "distance" to 20
                                 )
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())

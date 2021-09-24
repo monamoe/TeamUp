@@ -148,7 +148,8 @@ class LoginActivity : AppCompatActivity() {
                         "userEmail" to user?.email,
                         "testUser" to false,
                         "dateCreated" to Timestamp(Date()),
-                        "favouriteSport" to "none"
+                        "favouriteSport" to "none",
+                        "distance" to 20
                     )
                     Firebase.firestore.collection("User")
                         .document(FirebaseAuth.getInstance().uid.toString()).get().addOnSuccessListener { x ->
