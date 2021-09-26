@@ -1,26 +1,18 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputType
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.TeamHandling
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-lateinit private var memberList: ArrayList<TeamsActivity.TeamDisplayer>
 
 class TeamsActivity : AppCompatActivity() {
 
@@ -31,44 +23,8 @@ class TeamsActivity : AppCompatActivity() {
 
         val listview = findViewById<ListView>(R.id.listView)
 
-        memberList = ArrayList()
+        TeamHandling.getTeam(listview,this, "Team", "", "")
 
-        // populate array list with events that match the location ID of the marker selected
-        Log.i("Teamssss", "i just wanna test")
-
-        // FIREBASE MIGRATION //
-        val db = Firebase.firestore
-        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-            .collection("Team") //creates team inside user
-            .get().addOnSuccessListener { members ->
-                for (member in members) {
-                    db.collection("User").document(member.get("member").toString())
-                        .get().addOnSuccessListener { u ->
-                    val eventObj = TeamDisplayer(
-                        member.id,
-                        member.get("member").toString(),
-                        u.get("userName").toString(),
-                        u.get("favouriteSport").toString(),
-                        u.get("photoUrl").toString()
-                    )
-                    memberList.add(eventObj)
-
-                    // list view adapter
-                    listview.adapter = TeamListAdapter(this)
-                }
-                }
-            }
-
-
-        listview.setOnItemClickListener { parent, view, position, id ->
-            val teamID = memberList.get(position).getID()
-            val memberID = memberList.get(position).getMemberID()
-            val intent = Intent(this, ViewMemberProfileActivity::class.java)
-            intent.putExtra("member", memberID)
-            intent.putExtra("invite", teamID)
-            startActivity(intent)
-            finish()
-        }
         val context = this
         findViewById<Button>(R.id.addMemberButton).setOnClickListener {
            MaterialDialog(this).show {
@@ -144,71 +100,6 @@ class TeamsActivity : AppCompatActivity() {
             val intent = Intent(this, TeamInvites::class.java)
             startActivity(intent)
             finish()
-        }
-    }
-
-
-    // Event Array List Adapter
-    internal class TeamListAdapter(context: Context) : BaseAdapter() {
-
-        private val mContext: Context = context
-
-        // overrides
-        override fun getCount(): Int {
-            return memberList.size;
-        }
-
-        override fun getItem(position: Int): Any {
-            return "return override"
-        }
-
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
-
-        // render each row
-        override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
-            val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.team_list_adapter_view, viewGroup, false);
-
-            val name = rowMain.findViewById<TextView>(R.id.eventTitle)
-            val sport = rowMain.findViewById<TextView>(R.id.memberSport)
-            val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
-
-            name.text = (memberList.get(position).name)
-            sport.text = (memberList.get(position).favSport)
-            if (memberList.get(position).image != null && memberList.get(position).image != "null") {
-                if (viewGroup != null) {
-                    Glide.with(viewGroup).load(memberList.get(position).image).into(profileImage)
-                };
-            }
-            return rowMain;
-        }
-    }
-
-    // Event Displayer class ( for array list)
-    class TeamDisplayer {
-        var id: String = ""
-        var memberId: String = ""
-        var name: String = ""
-        var favSport: String = ""
-        var image: String = ""
-
-        fun getID(): String {
-            return this.id
-        }
-
-        fun getMemberID(): String {
-            return this.memberId
-        }
-
-        // main constuctor
-        constructor(id: String, memberId: String, name: String, favSport: String, image: String) {
-            this.id = id
-            this.memberId = memberId
-            this.name = name
-            this.favSport = favSport
-            this.image = image
         }
     }
 }

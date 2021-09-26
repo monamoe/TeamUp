@@ -9,6 +9,7 @@
     -->
     <string name="hello_world">Hello Square World!</string>
     <string name="submit">Submit</string>
+    <string name="yes">Yes</string>
     <string name="invite_title">Enter Friend Code</string>
     <string name="cancel">Cancel</string>
 </resources>

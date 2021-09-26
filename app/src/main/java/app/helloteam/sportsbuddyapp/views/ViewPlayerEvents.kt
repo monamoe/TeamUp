@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
 import app.helloteam.sportsbuddyapp.R
@@ -96,6 +97,11 @@ class ViewPlayerEvents : AppCompatActivity() {
             val intent = Intent(this, event::class.java)
             intent.putExtra("eventID", eventID)
             intent.putExtra("locationID", locationID)
+            startActivity(intent)
+        }
+
+        findViewById<Button>(R.id.eventInviteButton).setOnClickListener{
+            val intent = Intent(this, EventInviteActivity::class.java)
             startActivity(intent)
         }
     }
