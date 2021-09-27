@@ -53,14 +53,26 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                 if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
             }
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-            .collection("Team").whereEqualTo("member", user) //creates team inside user
+            .collection("Team").whereEqualTo("member", user)
             .get().addOnSuccessListener { member ->
-                if(!member.isEmpty){
-                    binding.inviteButtons.setVisibility(View.GONE)
-                    binding.removeButton.setVisibility(View.VISIBLE)
-                } else {
-                    binding.removeButton.setVisibility(View.GONE)
-                }
+                db.collection("User")
+                    .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                    .collection("Invites").whereEqualTo("sender", user)
+                    .whereEqualTo("inviteType", "Team")
+                    .get().addOnSuccessListener { invite ->
+                        if (!member.isEmpty) {
+                            binding.inviteButtons.setVisibility(View.GONE)
+                            binding.sendButton.setVisibility(View.GONE)
+                            binding.removeButton.setVisibility(View.VISIBLE)
+                        } else if (intent.getStringExtra("event").toString() == "event" && invite.isEmpty) {
+                            binding.inviteButtons.setVisibility(View.GONE)
+                            binding.removeButton.setVisibility(View.GONE)
+                            binding.sendButton.setVisibility(View.VISIBLE)
+                        } else {
+                            binding.removeButton.setVisibility(View.GONE)
+                            binding.sendButton.setVisibility(View.GONE)
+                        }
+                    }
             }
 
         binding.acceptButton.setOnClickListener { //accept team invite
@@ -112,6 +124,33 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
+                }
+        }
+
+        binding.sendButton.setOnClickListener {
+            val invite = hashMapOf(
+                "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                "receiver" to user,
+                "inviteType" to "Team"
+            )
+
+            db.collection("User").document(user)
+                .collection("Invites")
+                .add(invite)
+                .addOnSuccessListener {
+                    finish()
+                    Toast.makeText(
+                        this,
+                        "Invite Sent",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        this,
+                        "Invite Failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
     }

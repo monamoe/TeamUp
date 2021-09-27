@@ -50,11 +50,14 @@ class event : AppCompatActivity() {
         val listview = findViewById<ListView>(R.id.listView)
         listview.isNestedScrollingEnabled = true;
 
+        val listViewAttendees = findViewById<ListView>(R.id.listViewAttendees)
+        listViewAttendees.isNestedScrollingEnabled = true;
+
         // get id for the event selected
         eventID = intent.getStringExtra("eventID").toString()
         locationID = intent.getStringExtra("locationID").toString()
         TeamHandling.getTeam(listview,this, "Event", eventID, locationID)
-
+        EventHandling.getAttendees(listViewAttendees, this, locationID, eventID)
         // ui fields to data from the event database
         val attendBtn = findViewById<Button>(R.id.attendBtn)
         val eventTitle = findViewById<TextView>(R.id.eventTitle)
@@ -175,6 +178,14 @@ class event : AppCompatActivity() {
                 findViewById<TextView>(R.id.inviteText).setText("Invite Team Members ▼")
             } else {
                 findViewById<TextView>(R.id.inviteText).setText("Invite Team Members ►")
+            }
+        }
+        findViewById<LinearLayout>(R.id.attendeeLayout).setOnClickListener{
+            findViewById<ExpandableLayout>(R.id.expandable_layout_attendees).toggle()
+            if(findViewById<ExpandableLayout>(R.id.expandable_layout_attendees).isExpanded){
+                findViewById<TextView>(R.id.attendeeText).setText("View Attendees ▼")
+            } else {
+                findViewById<TextView>(R.id.attendeeText).setText("View Attendees ►")
             }
         }
     }
