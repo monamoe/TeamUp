@@ -81,6 +81,10 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$rootProject.composeVersion"
     implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
 
+    // Navigation
+//    implementation("androidx.navigation:navigation-compose:$rootProject.navigationComposeVersion")
+
+    // Compose XML theming
     implementation "com.google.android.material:compose-theme-adapter:$rootProject.materialComposeAdapterVersion"
 
 }

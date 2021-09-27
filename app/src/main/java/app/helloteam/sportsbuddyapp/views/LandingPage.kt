@@ -46,7 +46,9 @@ class LandingPage : AppCompatActivity() {
 @Preview
 @Composable
 fun PreviewMessageCard() {
-    LandingPage("Android")
+    TeamUpTheme {
+        LandingPage("Landing Page")
+    }
 }
 
 
@@ -82,7 +84,7 @@ fun GreetingSection(
         ) {
             Text(
                 text = "Good morning, $name",
-                style = MaterialTheme.typography.h2
+                style = MaterialTheme.typography.h1
             )
             Text(
                 text = "We wish you have a good day!",
