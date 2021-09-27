@@ -69,6 +69,7 @@ class event : AppCompatActivity() {
         val information = findViewById<TextView>(R.id.information)
         val hostname = findViewById<TextView>(R.id.hostname)
         val hostbio = findViewById<TextView>(R.id.hostbio)
+
         attendBtn.text = "Attend"
 
         // populate array list with events that match the location ID of the marker selected
@@ -87,7 +88,6 @@ class event : AppCompatActivity() {
                     Toast.makeText(this, "Event No Longer Exsists", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("LOG_TAG", "DocumentSnapshot data: ${eventID}")
-
 
                     val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
                     val startTimeStamp: Timestamp = document.get("date") as Timestamp
@@ -109,6 +109,7 @@ class event : AppCompatActivity() {
                     db.collection("Location").document(locationID).get()
                         .addOnSuccessListener { loc ->
                             information.setText(loc.get("Location Name").toString())
+                            //EventHandling.setEventPhoto(findViewById(R.id.eventImage),this, loc.get("Lat").toString(), loc.get("Lon").toString())
                         }
 
                     val hostID = document.get("hostID").toString()

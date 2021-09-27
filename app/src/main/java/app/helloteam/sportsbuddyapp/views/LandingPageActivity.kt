@@ -26,7 +26,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
-const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 var forecast: TextView? = null
 var temp: TextView? = null
 var icon: ImageView? = null

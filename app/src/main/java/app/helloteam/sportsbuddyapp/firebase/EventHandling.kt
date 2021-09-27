@@ -10,7 +10,6 @@ import android.widget.*
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.views.ProfilePage
 import app.helloteam.sportsbuddyapp.views.ViewMemberProfileActivity
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -21,6 +20,12 @@ object EventHandling {
 
     val db = Firebase.firestore
 
+    fun setEventPhoto(imageView: ImageView, context: Context, lat: String, long: String){
+        Log.w("Photo", lat)
+        Log.w("Photo", long)
+        var photoUrl =  "https://maps.googleapis.com/maps/api/streetview?size=400x400&location=${lat},${long}&fov=80&heading=70&pitch=0&key=${context.getString(R.string.google_key)}"
+        Glide.with(context).load(photoUrl).into(imageView);
+    }
     fun getSpacesLeft(locationID: String, eventID: String, totalSpace: Int, textView: TextView) {
         db.collection("Location/" + locationID + "/Events/" + eventID + "/Attendees")
             .get()
