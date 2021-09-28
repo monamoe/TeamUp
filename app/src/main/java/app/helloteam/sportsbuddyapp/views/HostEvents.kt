@@ -61,11 +61,11 @@ class HostEvents : AppCompatActivity() {
                                             .get()
                                             .addOnSuccessListener { hostuser ->
                                                 var eventTime = event.get("date")
-                                                if(event.get("date") != null) {
+                                                if (event.get("date") != null) {
                                                     val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
                                                     var time: Timestamp =
                                                         event.get("date") as Timestamp
-                                                     eventTime =
+                                                    eventTime =
                                                         sfd.format(Date(time.seconds * 1000))
                                                 }
                                                 hostname = hostuser.get("userName").toString()
@@ -179,7 +179,6 @@ class HostEvents : AppCompatActivity() {
             this.address = address
             this.time = time
             this.host = host
-
         }
     }
 }

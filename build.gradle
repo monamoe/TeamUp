@@ -5,7 +5,7 @@ buildscript {
         composeVersion = '1.0.2'
         android_plugin_version = '7.0.2'
         materialComposeAdapterVersion = '1.0.0'
-        navigationComposeVersion = '2.4.0-alpha09'
+        navigationComposeVersion = '2.4.0-alpha06'
     }
     repositories {
         google()

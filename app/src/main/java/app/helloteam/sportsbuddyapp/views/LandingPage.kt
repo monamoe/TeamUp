@@ -3,21 +3,19 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,13 +23,19 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 
@@ -61,79 +65,153 @@ fun PreviewMessageCard() {
 
 @Composable
 fun LandingPage(name: String) {
-    Box(
-        modifier = Modifier
-            .background(Color.Blue)
-            .fillMaxSize()
-    ) {
-        Column {
-            GreetingSection("AK")
-//            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
-            CurrentWeather()
 
-//            val title: String,
-//            val id: String,
-//            val imageId: String,
-//            @DrawableRes
-//            val activityIcon: Int,
-//            val lightColor: Color,
-//            val mediumColor: Color,
-//            val darkColor: Color,
-//            val isHosting: Boolean,
-//            val hostName: String,
-            EventScroll(
-                events = listOf(
-                    Event(
-                        "Title",
-                        "eventID",
-                        "imageID",
-                        R.drawable.common_google_signin_btn_icon_light,
-                        BlueViolet1,
-                        BlueViolet2,
-                        BlueViolet3,
-                        false,
-                        "AK"
+    val navController = rememberNavController()
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(
+                items = listOf(
+                    NavMenuContent(
+                        title = "Home",
+                        route = "home",
+                        icon = Icons.Default.Home
                     ),
-                    Event(
-                        "Title",
-                        "eventID",
-                        "imageID",
-                        R.drawable.common_google_signin_btn_icon_light,
-                        LightGreen1,
-                        LightGreen2,
-                        LightGreen3,
-                        false,
-                        "AK"
+                    NavMenuContent(
+                        title = "Home",
+                        route = "home",
+                        icon = Icons.Default.Home
                     ),
-                    Event(
-                        "Title",
-                        "eventID",
-                        "imageID",
-                        R.drawable.common_google_signin_btn_icon_light,
-                        OrangeYellow1,
-                        OrangeYellow2,
-                        OrangeYellow3,
-                        false,
-                        "AK"
+                    NavMenuContent(
+                        title = "Messages",
+                        route = "home",
+                        icon = Icons.Default.Home
                     ),
-                    Event(
-                        "Title",
-                        "eventID",
-                        "imageID",
-                        R.drawable.common_google_signin_btn_icon_light,
-                        Beige1,
-                        Beige2,
-                        Beige3,
-                        false,
-                        "AK"
+                    NavMenuContent(
+                        title = "Map",
+                        route = "chat",
+                        icon = Icons.Default.Notifications,
+                        badgeCount = 23
                     ),
-                )
-//                navigateToEvent
+                    NavMenuContent(
+                        title = "Notifications",
+                        route = "settings",
+                        icon = Icons.Default.Settings,
+                        badgeCount = 214
+                    ),
+                    NavMenuContent(
+                        title = "Profile",
+                        route = "settings",
+                        icon = Icons.Default.Settings,
+                        badgeCount = 214
+                    ),
+                ),
+                navController = navController,
+                onItemClicker = {
+                    navController.navigate(it.route)
+                }
             )
         }
+    ) {
+        Navigation(navController = navController)
     }
 }
 
+
+//            Box(
+//                modifier = Modifier
+//                    .background(colorResource(id = R.color.primaryDarkColor))
+//                    .fillMaxSize()
+//            ) {
+//                Column {
+//                    GreetingSection("AK")
+////            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
+//                    CurrentWeather()
+//
+////            val title: String,
+////            val id: String,
+////            val imageId: String,
+////            @DrawableRes
+////            val activityIcon: Int,
+////            val lightColor: Color,
+////            val mediumColor: Color,
+////            val darkColor: Color,
+////            val isHosting: Boolean,
+////            val hostName: String,
+//                    val eventList = listOf(
+//                        Event(
+//                            "Title",
+//                            "eventID",
+//                            "imageID",
+//                            R.drawable.common_google_signin_btn_icon_light,
+//                            BlueViolet1,
+//                            BlueViolet2,
+//                            BlueViolet3,
+//                            false,
+//                            "AK"
+//                        ),
+//                        Event(
+//                            "Title",
+//                            "eventID",
+//                            "imageID",
+//                            R.drawable.common_google_signin_btn_icon_light,
+//                            LightGreen1,
+//                            LightGreen2,
+//                            LightGreen3,
+//                            false,
+//                            "AK"
+//                        ),
+//                        Event(
+//                            "Title",
+//                            "eventID",
+//                            "imageID",
+//                            R.drawable.common_google_signin_btn_icon_light,
+//                            OrangeYellow1,
+//                            OrangeYellow2,
+//                            OrangeYellow3,
+//                            false,
+//                            "AK"
+//                        ),
+//                        Event(
+//                            "Title",
+//                            "eventID",
+//                            "imageID",
+//                            R.drawable.common_google_signin_btn_icon_light,
+//                            Beige1,
+//                            Beige2,
+//                            Beige3,
+//                            false,
+//                            "AK"
+//                        ),
+//                    )
+//                    EventScroll(
+//                        events = eventList
+////                navigateToEvent
+//                    )
+////            RecommendedEventScroll(events = eventList)
+//
+//                    /* Navigation */
+//
+////            NavMenu(
+////                items = listOf(
+////                    NavMenuContent("Home", R.drawable.clipboard),
+////                    NavMenuContent("Messaging", R.drawable.clipboard),
+////                    NavMenuContent("Map", R.drawable.clipboard),
+////                    NavMenuContent(
+////                        "Notifications",
+////                        R.drawable.clipboard
+////                    ),
+////                    NavMenuContent("Profile", R.drawable.clipboard),
+////                )
+////            )
+//
+//                }
+//            }
+
+/**
+ * Horizontal scrolling cards for Recommended Events
+ *
+ * @param name
+ */
 @Composable
 fun GreetingSection(
     name: String = "User"
@@ -190,17 +268,15 @@ fun ChipSection(
 }
 
 @Composable
-fun CurrentWeather(
-    color: Color = LightRed
-) {
+fun CurrentWeather() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .padding(15.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(color)
-            .padding(horizontal = 15.dp, vertical = 20.dp)
+            .background(colorResource(R.color.primaryLightColor))
+            .padding(horizontal = 15.dp, vertical = 15.dp)
             .fillMaxWidth()
     ) {
         Column {
@@ -214,20 +290,22 @@ fun CurrentWeather(
                 color = TextWhite
             )
         }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(ButtonBlue)
-                .padding(10.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.common_full_open_on_phone),
-                contentDescription = "Play",
-                tint = Color.White,
-                modifier = Modifier.size(16.dp)
-            )
+        Column {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(ButtonBlue)
+                    .padding(10.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.common_full_open_on_phone),
+                    contentDescription = "Play",
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }
@@ -241,13 +319,49 @@ fun CurrentWeather(
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+fun RecommendedEventScroll(
+    events: List<Event>
+) {
+    Column(
+        modifier = Modifier
+            .background(Color.Blue)
+    ) {
+        Text(
+            text = "Recommended Events",
+            style = MaterialTheme.typography.h1,
+            modifier = Modifier.padding(15.dp)
+        )
+        LazyRow(
+            modifier = Modifier
+                .fillMaxHeight()
+        ) {
+            items(events) { state ->
+                EventCard(
+                    state,
+//                    navigateToEvent,
+                    Modifier.padding(start = 16.dp, bottom = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+
+/**
+ * Horizontal scrolling cards for your events
+ *
+ * @param events ListOf state events to display
+ * @param navigateToEvent (event) request navigation to Article screen
+ * navigateToEvent: (String) -> Unit
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun EventScroll(
     events: List<Event>
 ) {
     Column(
         modifier = Modifier
             .background(Color.Blue)
-            .fillMaxSize()
     ) {
         Text(
             text = "Your Events",
@@ -255,9 +369,6 @@ fun EventScroll(
             modifier = Modifier.padding(15.dp)
         )
         LazyRow(
-            modifier = Modifier
-                .padding(end = 7.5.dp, start = 7.5.dp)
-                .fillMaxHeight()
         ) {
             items(events) { state ->
                 EventCard(
@@ -280,38 +391,98 @@ fun EventCard(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.size(280.dp, 240.dp)
     ) {
-//        Column(modifier = Modifier.clickable(onClick = { navigateToArticle(event.id) })) {
-        Column(modifier = Modifier.clickable(onClick = { })) {
-            // banner image TO DO GET THIS TO WORK
-            Image(
-                painter = painterResource(R.drawable.clipboard),
-                contentDescription = null, // decorative
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()
-            )
+        BoxWithConstraints(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(10.dp))
+                .background(event.darkColor)
+        ) {
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
 
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = event.title,
-                    style = MaterialTheme.typography.h6,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = event.hostName,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.body2
-                )
-                Text(
-                    text = "YEAH",
-                    style = MaterialTheme.typography.body2
-                )
 
+            // Medium colored path
+            val mediumColoredPoint1 = Offset(0f, height * 0.3f)
+            val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
+            val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
+            val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
+            val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
+
+            val mediumColoredPath = Path().apply {
+                moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
+                standardQuadFromTo(mediumColoredPoint1, mediumColoredPoint2)
+                standardQuadFromTo(mediumColoredPoint2, mediumColoredPoint3)
+                standardQuadFromTo(mediumColoredPoint3, mediumColoredPoint4)
+                standardQuadFromTo(mediumColoredPoint4, mediumColoredPoint5)
+                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+                lineTo(-100f, height.toFloat() + 100f)
+                close()
             }
 
+            // Light colored path
+            val lightPoint1 = Offset(0f, height * 0.35f)
+            val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
+            val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
+            val lightPoint4 = Offset(width * 0.65f, height.toFloat())
+            val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
+
+            val lightColoredPath = Path().apply {
+                moveTo(lightPoint1.x, lightPoint1.y)
+                standardQuadFromTo(lightPoint1, lightPoint2)
+                standardQuadFromTo(lightPoint2, lightPoint3)
+                standardQuadFromTo(lightPoint3, lightPoint4)
+                standardQuadFromTo(lightPoint4, lightPoint5)
+                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+                lineTo(-100f, height.toFloat() + 100f)
+                close()
+            }
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                drawPath(
+                    path = mediumColoredPath,
+                    color = event.mediumColor
+                )
+                drawPath(
+                    path = lightColoredPath,
+                    color = event.lightColor
+                )
+            }
+
+
+            //        Column(modifier = Modifier.clickable(onClick = { navigateToArticle(event.id) })) {
+            Column(modifier = Modifier.clickable(onClick = { })) {
+
+                // banner image TO DO GET THIS TO WORK
+                Image(
+                    painter = painterResource(R.drawable.clipboard),
+                    contentDescription = null, // decorative
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(100.dp)
+                        .fillMaxWidth()
+                )
+
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = event.title,
+                        style = MaterialTheme.typography.h6,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = event.hostName,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.body2
+                    )
+                    Text(
+                        text = "YEAH",
+                        style = MaterialTheme.typography.body2
+                    )
+                }
+            }
         }
     }
 
@@ -419,6 +590,170 @@ private fun ContentDivider() {
         color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
     )
 }
+
+
+@Composable
+fun Navigation(
+    navController: NavHostController
+) {
+    NavHost(navController = navController, startDestination = "home") {
+        composable(route = "home") {
+
+        }
+        composable(route = "messaging") {
+
+        }
+        composable(route = "map") {
+
+        }
+        composable(route = "notifications") {
+
+        }
+        composable(route = "profile") {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun BottomNavigationBar(
+    items: List<NavMenuContent>,
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    onItemClicker: (NavMenuContent) -> Unit
+) {
+    val a = navController.currentBackStackEntryAsState()
+    BottomNavigation(
+        modifier = modifier.background(Color.DarkGray)
+    ) {
+//        RowScope
+        items.forEach { item ->
+            val selected = item.route == a.value?.destination?.route
+            BottomNavigationItem(
+                selected = selected,
+                onClick = { onItemClicker(item) },
+                selectedContentColor = DeepBlue,
+                unselectedContentColor = Color.Gray,
+                icon = {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        if (item.badgeCount > 0) {
+                            BadgeBox(
+                                badgeContent = {
+                                    Text(
+                                        text = item.badgeCount.toString()
+                                    )
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.title
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.title
+                            )
+                        }
+                        if (selected) {
+                            Text(
+                                text = item.title,
+                                textAlign = TextAlign.Center,
+                                fontSize = 10.sp
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeScreen() {
+
+}
+
+
+//@Composable
+//fun NavMenu(
+//    items: List<NavMenuContent>,
+//    mod: Modifier = Modifier,
+//    activeHighlightColor: Color = ButtonBlue,
+//    activeTextColor: Color = Color.White,
+//    inactiveTextColor: Color = Color.Blue,
+//    initialSelectedItemIndex: Int = 0
+//) {
+//    var selectedItemIndex by remember {
+//        mutableStateOf(initialSelectedItemIndex)
+//    }
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = mod
+//            .fillMaxWidth()
+//            .background(DeepBlue)
+//            .padding(15.dp)
+//    ) {
+//        items.forEachIndexed { index, item ->
+//            NavMenuItem(
+//                item = item,
+//                isSelected = true,
+//                activeHighlightColor = activeHighlightColor,
+//                activeTextColor = activeTextColor,
+//                inactiveTextColor = inactiveTextColor,
+//            ) {
+//                selectedItemIndex = index
+//            }
+//        }
+//    }
+//}
+
+
+//
+//@Composable
+//fun NavMenuItem(
+//    item: NavMenuContent,
+//    isSelected: Boolean = false,
+//    activeHighlightColor: Color = ButtonBlue,
+//    activeTextColor: Color = Color.White,
+//    inactiveTextColor: Color = Color.Blue,
+//    onItemClick: () -> Unit
+//) {
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center,
+//        modifier = Modifier.clickable {
+//            onItemClick()
+//        }
+//    ) {
+//        Box(
+//            contentAlignment = Alignment.Center,
+//            modifier = Modifier
+//                .clip(RoundedCornerShape(10.dp))
+//                .background(
+//                    if (isSelected)
+//                        activeHighlightColor
+//                    else
+//                        Color.Transparent
+//                )
+//        ) {
+//            Icon(
+//                painter = painterResource(id = item.icon),
+//                contentDescription = item.title,
+//                tint = if (isSelected) activeTextColor else inactiveTextColor,
+//                modifier = Modifier.size(30.dp)
+//            )
+//        }
+//        Text(
+//            text = item.title,
+//            color = if (isSelected) activeTextColor else inactiveTextColor
+//        )
+//    }
+//}
 
 //
 //class LandingPageActivity() : Fragment(), Parcelable {
