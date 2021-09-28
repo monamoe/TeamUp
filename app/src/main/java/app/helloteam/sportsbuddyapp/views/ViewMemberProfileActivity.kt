@@ -64,6 +64,13 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                             binding.inviteButtons.setVisibility(View.GONE)
                             binding.sendButton.setVisibility(View.GONE)
                             binding.removeButton.setVisibility(View.VISIBLE)
+                            for(m in member){
+                                db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                    .collection("Team").document(m.id).get()
+                                    .addOnSuccessListener { team ->
+                                        inviteId = team.id
+                                    }
+                            }
                         } else if (intent.getStringExtra("event").toString() == "event" && invite.isEmpty) {
                             binding.inviteButtons.setVisibility(View.GONE)
                             binding.removeButton.setVisibility(View.GONE)
@@ -71,6 +78,9 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                         } else {
                             binding.removeButton.setVisibility(View.GONE)
                             binding.sendButton.setVisibility(View.GONE)
+                            for (i in invite){
+                                inviteId = i.id
+                            }
                         }
                     }
             }
@@ -119,7 +129,7 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                 .collection("Team").document(inviteId).delete().addOnSuccessListener {
                     db.collection("User").document(user)
                         .collection("Team").document(inviteId).delete().addOnSuccessListener {
-                            Toast.makeText(this, "Team Member Removed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "User Removed", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this, TeamsActivity::class.java)
                             startActivity(intent)
                             finish()

@@ -70,8 +70,8 @@ object TeamHandling {
                     negativeButton(R.string.cancel)
                 }
             }else {
-                val teamID = memberList.get(position).getID()
                 val memberID = memberList.get(position).getMemberID()
+                val teamID = memberList.get(position).getID()
                 val intent = Intent(context, ViewMemberProfileActivity::class.java)
                 intent.putExtra("member", memberID)
                 intent.putExtra("invite", teamID)
