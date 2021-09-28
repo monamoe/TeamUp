@@ -3,20 +3,16 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +24,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,45 +70,68 @@ fun LandingPage(name: String) {
             GreetingSection("AK")
 //            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
             CurrentWeather()
+
+//            val title: String,
+//            val id: String,
+//            val imageId: String,
+//            @DrawableRes
+//            val activityIcon: Int,
+//            val lightColor: Color,
+//            val mediumColor: Color,
+//            val darkColor: Color,
+//            val isHosting: Boolean,
+//            val hostName: String,
             EventScroll(
-                features = listOf(
-                    EventCard(
-                        title = "Event1",
-                        R.drawable.common_full_open_on_phone,
+                events = listOf(
+                    Event(
+                        "Title",
+                        "eventID",
+                        "imageID",
+                        R.drawable.common_google_signin_btn_icon_light,
                         BlueViolet1,
                         BlueViolet2,
                         BlueViolet3,
-                        true
+                        false,
+                        "AK"
                     ),
-                    EventCard(
-                        title = "Event2",
-                        R.drawable.common_full_open_on_phone,
+                    Event(
+                        "Title",
+                        "eventID",
+                        "imageID",
+                        R.drawable.common_google_signin_btn_icon_light,
                         LightGreen1,
                         LightGreen2,
                         LightGreen3,
-                        false
+                        false,
+                        "AK"
                     ),
-                    EventCard(
-                        title = "Event2",
-                        R.drawable.common_full_open_on_phone,
+                    Event(
+                        "Title",
+                        "eventID",
+                        "imageID",
+                        R.drawable.common_google_signin_btn_icon_light,
                         OrangeYellow1,
                         OrangeYellow2,
                         OrangeYellow3,
-                        false
+                        false,
+                        "AK"
                     ),
-                    EventCard(
-                        title = "Event2",
-                        R.drawable.common_full_open_on_phone,
+                    Event(
+                        "Title",
+                        "eventID",
+                        "imageID",
+                        R.drawable.common_google_signin_btn_icon_light,
                         Beige1,
                         Beige2,
                         Beige3,
-                        false
-                    )
+                        false,
+                        "AK"
+                    ),
                 )
+//                navigateToEvent
             )
         }
     }
-
 }
 
 @Composable
@@ -129,10 +151,6 @@ fun GreetingSection(
             Text(
                 text = "Good morning, $name",
                 style = MaterialTheme.typography.h1
-            )
-            Text(
-                text = "We wish you have a good day!",
-                style = MaterialTheme.typography.body1
             )
         }
         Icon(
@@ -214,10 +232,18 @@ fun CurrentWeather(
     }
 }
 
-
+/**
+ * Horizontal scrolling cards for Recommended Events
+ *
+ * @param events ListOf state events to display
+ * @param navigateToEvent (event) request navigation to Article screen
+ * navigateToEvent: (String) -> Unit
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EventScroll(features: List<EventCard>) {
+fun EventScroll(
+    events: List<Event>
+) {
     Column(
         modifier = Modifier
             .background(Color.Blue)
@@ -229,109 +255,157 @@ fun EventScroll(features: List<EventCard>) {
             modifier = Modifier.padding(15.dp)
         )
         LazyRow(
-            contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp),
-//            modifier = Modifier.fillMaxHeight()
+            modifier = Modifier
+                .padding(end = 7.5.dp, start = 7.5.dp)
+                .fillMaxHeight()
         ) {
-            items(features.size) {
-                EventCard(feature = features[it])
+            items(events) { state ->
+                EventCard(
+                    state,
+//                    navigateToEvent,
+                    Modifier.padding(start = 16.dp, bottom = 16.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun EventCard(feature: EventCard) {
-    BoxWithConstraints(
-        modifier = Modifier
-            .padding(7.5.dp)
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(10.dp))
-            .background(feature.darkColor)
+fun EventCard(
+    event: Event,
+//    navigateToArticle: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.size(280.dp, 240.dp)
     ) {
-        // draw path
-        val width = constraints.maxWidth
-        val height = constraints.maxHeight
-
-        //create a point generation function
-
-        // dark path
-        val darkColoredPoint1 = Offset(0f, height * 0.3f)
-        val darkColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
-        val darkColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
-        val darkColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
-        val darkColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
-
-        val mediumColoredPath = Path().apply {
-            moveTo(darkColoredPoint1.x, darkColoredPoint1.y)
-            standardQuadFromTo(darkColoredPoint1, darkColoredPoint2)
-            standardQuadFromTo(darkColoredPoint2, darkColoredPoint3)
-            standardQuadFromTo(darkColoredPoint3, darkColoredPoint4)
-            standardQuadFromTo(darkColoredPoint4, darkColoredPoint5)
-            //out of box points
-            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-            lineTo(-100f, height.toFloat() + 100f)
-            close()
-        }
-
-        val lightPoint1 = Offset(0f, height * 0.35f)
-        val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
-        val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
-        val lightPoint4 = Offset(width * 0.65f, height.toFloat())
-        val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
-
-        val lightColoredPath = Path().apply {
-            moveTo(lightPoint1.x, lightPoint1.y)
-            standardQuadFromTo(lightPoint1, lightPoint2)
-            standardQuadFromTo(lightPoint2, lightPoint3)
-            standardQuadFromTo(lightPoint3, lightPoint4)
-            standardQuadFromTo(lightPoint4, lightPoint5)
-            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-            lineTo(-100f, height.toFloat() + 100f)
-            close()
-        }
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawPath(
-                path = mediumColoredPath,
-                color = feature.mediumColor
-            )
-            drawPath(
-                path = lightColoredPath,
-                color = feature.lightColor
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(15.dp)
-        ) {
-            Text(
-                text = feature.title,
-                style = MaterialTheme.typography.h2,
-                lineHeight = 26.sp,
-                modifier = Modifier.align(Alignment.TopStart)
-            )
-//                Icon(
-//                    painter = painterResource(id = feature.IconID),
-//                    contentDescription = feature.title,
-//                    tint = Color.White,
-//                    modifier = Modifier.align(Alignment.BottomStart),
-//                )
-            Text(
-                text = "Start",
-                color = TextWhite,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+//        Column(modifier = Modifier.clickable(onClick = { navigateToArticle(event.id) })) {
+        Column(modifier = Modifier.clickable(onClick = { })) {
+            // banner image TO DO GET THIS TO WORK
+            Image(
+                painter = painterResource(R.drawable.clipboard),
+                contentDescription = null, // decorative
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .clickable {
-                        // go to event view
-                    }
-                    .align(Alignment.BottomEnd)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(ButtonBlue)
-                    .padding(vertical = 6.dp, horizontal = 15.dp)
+                    .height(100.dp)
+                    .fillMaxWidth()
             )
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = event.title,
+                    style = MaterialTheme.typography.h6,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = event.hostName,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.body2
+                )
+                Text(
+                    text = "YEAH",
+                    style = MaterialTheme.typography.body2
+                )
+
+            }
+
         }
     }
+
+//    BoxWithConstraints(
+//        modifier = Modifier
+//            .padding(7.5.dp)
+//            .aspectRatio(1f)
+//            .clip(RoundedCornerShape(10.dp))
+//            .background(event.darkColor)
+//    ) {
+//        // draw path
+//        val width = constraints.maxWidth
+//        val height = constraints.maxHeight
+//
+//        //create a point generation function
+//
+//        // dark path
+//        val darkColoredPoint1 = Offset(0f, height * 0.3f)
+//        val darkColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
+//        val darkColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
+//        val darkColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
+//        val darkColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
+//
+//        val mediumColoredPath = Path().apply {
+//            moveTo(darkColoredPoint1.x, darkColoredPoint1.y)
+//            standardQuadFromTo(darkColoredPoint1, darkColoredPoint2)
+//            standardQuadFromTo(darkColoredPoint2, darkColoredPoint3)
+//            standardQuadFromTo(darkColoredPoint3, darkColoredPoint4)
+//            standardQuadFromTo(darkColoredPoint4, darkColoredPoint5)
+//            //out of box points
+//            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+//            lineTo(-100f, height.toFloat() + 100f)
+//            close()
+//        }
+//
+//        val lightPoint1 = Offset(0f, height * 0.35f)
+//        val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
+//        val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
+//        val lightPoint4 = Offset(width * 0.65f, height.toFloat())
+//        val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
+//
+//        val lightColoredPath = Path().apply {
+//            moveTo(lightPoint1.x, lightPoint1.y)
+//            standardQuadFromTo(lightPoint1, lightPoint2)
+//            standardQuadFromTo(lightPoint2, lightPoint3)
+//            standardQuadFromTo(lightPoint3, lightPoint4)
+//            standardQuadFromTo(lightPoint4, lightPoint5)
+//            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+//            lineTo(-100f, height.toFloat() + 100f)
+//            close()
+//        }
+//        Canvas(modifier = Modifier.fillMaxSize()) {
+//            drawPath(
+//                path = mediumColoredPath,
+//                color = event.mediumColor
+//            )
+//            drawPath(
+//                path = lightColoredPath,
+//                color = event.lightColor
+//            )
+//        }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(15.dp)
+//        ) {
+//            Text(
+//                text = event.title,
+//                style = MaterialTheme.typography.h2,
+//                lineHeight = 26.sp,
+//                modifier = Modifier.align(Alignment.TopStart)
+//            )
+////                Icon(
+////                    painter = painterResource(id = feature.IconID),
+////                    contentDescription = feature.title,
+////                    tint = Color.White,
+////                    modifier = Modifier.align(Alignment.BottomStart),
+////                )
+//            Text(
+//                text = "Start",
+//                color = TextWhite,
+//                fontSize = 14.sp,
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier
+//                    .clickable {
+//                        // go to event view
+//                    }
+//                    .align(Alignment.BottomEnd)
+//                    .clip(RoundedCornerShape(10.dp))
+//                    .background(ButtonBlue)
+//                    .padding(vertical = 6.dp, horizontal = 15.dp)
+//            )
+//        }
+//    }
 }
 
 
