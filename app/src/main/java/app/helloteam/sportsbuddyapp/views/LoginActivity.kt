@@ -1,5 +1,6 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,8 +8,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import app.helloteam.sportsbuddyapp.PasswordRest
 import app.helloteam.sportsbuddyapp.R
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -28,6 +30,7 @@ private lateinit var auth: FirebaseAuth
 
 
 class LoginActivity : AppCompatActivity() {
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -61,10 +64,24 @@ class LoginActivity : AppCompatActivity() {
 
         //Forgot Password is pressed
         // add popup or activity for entering in email and submitting
-
+        val context = this
         findViewById<TextView>(R.id.forgotPasswordButton).setOnClickListener {//go to forgot password activity
-            val intent = Intent(this, PasswordRest::class.java)
-            startActivity(intent)
+            MaterialDialog(this).show {
+                title(R.string.password_title)
+                input(hint = "example@gmail.com"){ dialog, text ->
+                    Firebase.auth.sendPasswordResetEmail(text.toString().trim())
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.i("Log", "Email sent.")
+                                Toast.makeText(context, "Password reset successfully sent", Toast.LENGTH_LONG).show()
+                            }else{
+                                Toast.makeText(context, "Password reset not sent", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                }
+                positiveButton(R.string.submit)
+                negativeButton(R.string.cancel)
+            }
         }
 
 

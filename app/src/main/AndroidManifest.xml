@@ -36,7 +36,6 @@
         <activity
             android:name=".views.TeamsActivity"
             android:exported="true" />
-        <activity android:name=".PasswordRest"></activity>
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
 
