@@ -30,6 +30,7 @@ const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 var forecast: TextView? = null
 var temp: TextView? = null
 var icon: ImageView? = null
+var greet: ImageView? = null
 
 private val MY_PERMISSION_FINE_LOCATION: Int = 44
 
@@ -63,6 +64,7 @@ class LandingPageActivity : AppCompatActivity() {
         temp = findViewById(R.id.temp)
         forecast = findViewById(R.id.forecast)
         icon = findViewById(R.id.conIcon)
+        greet = findViewById(R.id.UserGreeting)
 
 
         getUserCity()
