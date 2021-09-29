@@ -12,9 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,32 +75,27 @@ fun LandingPage(name: String) {
                         icon = Icons.Default.Home
                     ),
                     NavMenuContent(
-                        title = "Home",
-                        route = "home",
-                        icon = Icons.Default.Home
-                    ),
-                    NavMenuContent(
                         title = "Messages",
-                        route = "home",
-                        icon = Icons.Default.Home
+                        route = "chat",
+                        icon = Icons.Default.Email,
+                        badgeCount = 5
+
                     ),
                     NavMenuContent(
                         title = "Map",
-                        route = "chat",
-                        icon = Icons.Default.Notifications,
-                        badgeCount = 23
+                        route = "map",
+                        icon = Icons.Default.Favorite,
                     ),
                     NavMenuContent(
                         title = "Notifications",
-                        route = "settings",
-                        icon = Icons.Default.Settings,
-                        badgeCount = 214
+                        route = "notifications",
+                        icon = Icons.Default.Notifications,
+                        badgeCount = 4
                     ),
                     NavMenuContent(
                         title = "Profile",
                         route = "settings",
-                        icon = Icons.Default.Settings,
-                        badgeCount = 214
+                        icon = Icons.Default.Person
                     ),
                 ),
                 navController = navController,
