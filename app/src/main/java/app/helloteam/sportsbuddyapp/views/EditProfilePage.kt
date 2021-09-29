@@ -62,6 +62,7 @@ class EditProfilePage : AppCompatActivity() {
 
         val max = 100
         val min = 10
+        val total = max - min
 
         val slider = findViewById<FluidSlider>(R.id.fluidSlider)
         slider.startText ="$min km"
@@ -128,8 +129,8 @@ class EditProfilePage : AppCompatActivity() {
                     }
                 }
 
-                binding.fluidSlider.positionListener = { p ->
-                    distancePosition = p*100
+                binding.fluidSlider.positionListener = { p ->  slider.bubbleText = "${min + (total  * p).toInt()}"
+                    distancePosition = min + (total  * p)
                 }
             }
     }
@@ -140,10 +141,16 @@ class EditProfilePage : AppCompatActivity() {
             db.collection("User").document(uid).update(
                 mapOf(
                     "favouriteSport" to sport,
-                    "bio" to binding.aboutMeEdit.text.toString(),
-                    "distance" to distancePosition.toInt()
+                    "bio" to binding.aboutMeEdit.text.toString()
                 )
             )
+            if (distancePosition != 0F){
+                db.collection("User").document(uid).update(
+                    mapOf(
+                        "distance" to distancePosition.toInt()
+                    )
+                )
+            }
             if (imageUri != null) { //Image uploading
                 FileHandling.uploadProfileImage(imageUri!!,this)
             }
