@@ -25,6 +25,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
+@SuppressLint("StaticFieldLeak")
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
 
