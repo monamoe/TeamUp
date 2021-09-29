@@ -15,26 +15,25 @@ fun Navigation() {
     NavHost(navController = navController, startDestination = Screen.LandingPage.route) {
 
 
-
         // Landing Page
         composable(route = Screen.LandingPage.route) {
-            LandingPage(navController = navController)
+//            LandingPage(navController = navController)
         }
 
 
-        // Event Page
-        composable(
-            route = Screen.DetailScreen.route + "/{name}",
-            arguments = listOf(
-                navArgument("name") {
-                    type = NavType.StringType
-                    defaultValue = "Phillip"
-                    nullable = true
-                }
-            )
-        ) { entry ->
-            DetailScreen(name = entry.arguments?.getString("name"))
-        }
+//        // Detail Page
+//        composable(
+//            route = Screen.DetailScreen.route + "/{name}",
+//            arguments = listOf(
+//                navArgument("name") {
+//                    type = NavType.StringType
+//                    defaultValue = "Phillip"
+//                    nullable = true
+//                }
+//            )
+//        ) { entry ->
+//            DetailScreen(name = entry.arguments?.getString("name"))
+//        }
     }
 }
 

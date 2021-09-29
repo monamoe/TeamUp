@@ -42,27 +42,29 @@ private const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
 class LandingPage : AppCompatActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            Navigation()
             TeamUpTheme {
-                LandingPage("Landing Page")
+//                LandingPageCompose(navController)
             }
         }
     }
 }
 
-@Preview
+//@Preview
 @Composable
-fun PreviewMessageCard() {
+fun PreviewLandingPage(navController: NavController) {
     TeamUpTheme {
-        LandingPage("Landing Page")
+        LandingPageCompose(navController = navController)
     }
 }
 
 
 @Composable
-fun LandingPage(name: String) {
+fun LandingPageCompose(navController: NavController) {
 
     val navController = rememberNavController()
     Scaffold(

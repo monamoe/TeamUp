@@ -1,23 +1,16 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocal
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.databinding.DataBindingUtil.setContentView
-import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -35,26 +28,114 @@ import java.util.*
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
 
+//
+//class LoginActivity : AppCompatActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            TeamUpTheme {
+//                LoginPage()
+//            }
+//        }
+//    }
+//}
+//
+//
+//@Preview
+//@Composable
+//fun LoginScreenPreview() {
+//    TeamUpTheme {
+//        LoginPage()
+//    }
+//}
+//
+//
+//@Composable
+//fun LoginPage() {
+//    val logo = painterResource(id = R.drawable.logoteamupsmall)
+//    val emailValue = remember { mutableStateOf("") }
+//    val passwordValue = remember { mutableStateOf("") }
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.Black),
+//        contentAlignment = Alignment.TopCenter
+//    ) {
+//        Image(logo, null)
+//    }
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(Color.Black)
+//    )
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .fillMaxHeight()
+//    ) {
+//        Text(
+//            text = "Sign In",
+//            style = MaterialTheme.typography.h2,
+//            color = Color.Black
+//        )
+//        Spacer(modifier = Modifier.padding(20.dp))
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            OutlinedTextField(
+//                value = emailValue.value,
+//                onValueChange = { emailValue.value = it },
+//                label = { Text(text = "Email Address") },
+//                placeholder = { Text(text = "Email Address") },
+//                singleLine = true,
+//                modifier = Modifier.fillMaxWidth(9f)
+//            )
+//
+//            OutlinedTextField(
+//                value = passwordValue.value,
+//                onValueChange = { passwordValue.value = it },
+//                visualTransformation = PasswordVisualTransformation(),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                label = { Text(text = "Password") },
+//                placeholder = { Text(text = "Password") },
+//                singleLine = true,
+//                modifier = Modifier.fillMaxWidth(9f)
+//            )
+//
+//            Spacer(modifier = Modifier.padding(10.dp))
+//            Button(
+//                onClick = {},
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(50.dp)
+//            ) {
+//                Text(text = "Sign In", style = MaterialTheme.typography.h1)
+//            }
+//
+//            Spacer(modifier = Modifier.padding(20.dp))
+//            Text(text = "Create an Account", modifier = Modifier.clickable { })
+//            Spacer(modifier = Modifier.padding(20.dp))
+//
+//            Button(
+//                onClick = {},
+//                modifier = Modifier
+//                    .padding(10.dp)
+//                    .height(30.dp)
+//            ) {
+//                Text(text = "Sign In With Google", color = Color.Black)
+//            }
+//        }
+//    }
+//}
 
 
 class LoginActivity : AppCompatActivity() {
-
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        context = ContextAmbient.current
-        val view = inflater.inflate(R.layout.activity_login, container, false)
-        // inside compose //
-        view.findViewById<ComposeView>(R.id.compose_view).setContent {
-
-            val customView
-        }
-        // outside of compose //
-
-
-        // current context
-
-        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
         auth = Firebase.auth
 
         val gso =
@@ -66,11 +147,10 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         //Sign Up button is pressed
-        view.findViewById<SignInButton>(R.id.googleSignIn)
-            .setOnClickListener {//go to sign up activity
-                val signInIntent = googleSignInClient.signInIntent
-                startActivityForResult(signInIntent, RC_SIGN_IN)
-            }
+        findViewById<SignInButton>(R.id.googleSignIn).setOnClickListener {//go to sign up activity
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, RC_SIGN_IN)
+        }
         var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         val db = Firebase.firestore
         var testUser = false
@@ -84,18 +164,48 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-        //Sign Up button is pressed
-        view.findViewById<TextView>(R.id.signUpButtonMain)
-            .setOnClickListener {//go to sign up activity
-                val intent = Intent(this, RegisterActivity::class.java)
-                startActivity(intent)
+        //Forgot Password is pressed
+        // add popup or activity for entering in email and submitting
+        val context = this
+        findViewById<TextView>(R.id.forgotPasswordButton).setOnClickListener {//go to forgot password activity
+            MaterialDialog(this).show {
+                title(R.string.password_title)
+                input(hint = "example@gmail.com") { dialog, text ->
+                    Firebase.auth.sendPasswordResetEmail(text.toString().trim())
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.i("Log", "Email sent.")
+                                Toast.makeText(
+                                    context,
+                                    "Password reset successfully sent",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Password reset not sent",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                }
+                positiveButton(R.string.submit)
+                negativeButton(R.string.cancel)
             }
+        }
+
+
+        //Sign Up button is pressed
+        findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
 
         //login button pressed
-        view.findViewById<Button>(R.id.LoginButton).setOnClickListener {
+        findViewById<Button>(R.id.LoginButton).setOnClickListener {
 
-            val emailTxt = view.findViewById<TextView>(R.id.emailText).text.toString()
-            val passwordTxt = view.findViewById<TextView>(R.id.PasswordText).text.toString()
+            val emailTxt = findViewById<TextView>(R.id.emailText).text.toString()
+            val passwordTxt = findViewById<TextView>(R.id.PasswordText).text.toString()
 
             if (emailTxt.equals("") || passwordTxt.equals("")) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
@@ -132,22 +242,11 @@ class LoginActivity : AppCompatActivity() {
                     }
             }
         }
-
-
-        //return inflated view onCreateView
-        return view
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-
     }
 
     //go to landing activity when called
     fun toLanding() {
-//        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
-//            .show()
-        val intent = Intent(this, LandingPage::class.java)
+        val intent = Intent(this, LandingPageActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -187,7 +286,8 @@ class LoginActivity : AppCompatActivity() {
                         "userEmail" to user?.email,
                         "testUser" to false,
                         "dateCreated" to Timestamp(Date()),
-                        "favouriteSport" to "none"
+                        "favouriteSport" to "none",
+                        "distance" to 20
                     )
                     Firebase.firestore.collection("User")
                         .document(FirebaseAuth.getInstance().uid.toString()).get()
