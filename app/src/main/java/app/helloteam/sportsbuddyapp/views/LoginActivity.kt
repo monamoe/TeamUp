@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import app.helloteam.sportsbuddyapp.PasswordRest
 import app.helloteam.sportsbuddyapp.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -57,6 +58,17 @@ class LoginActivity : AppCompatActivity() {
                     toLanding()
                 }
             }
+
+        //Forgot Password is pressed
+        // add popup or activity for entering in email and submitting
+
+        findViewById<TextView>(R.id.forgotPasswordButton).setOnClickListener {//go to forgot password activity
+            val intent = Intent(this, PasswordRest::class.java)
+            startActivity(intent)
+        }
+
+
+
 
         //Sign Up button is pressed
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
