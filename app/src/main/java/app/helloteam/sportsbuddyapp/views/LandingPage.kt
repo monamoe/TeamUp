@@ -1,7 +1,13 @@
 package app.helloteam.sportsbuddyapp.views
 
+// activity view fragment with a compose element
+// using intens for navigation, make the compose code run an intent function outside the composable
 
 import android.os.Bundle
+import android.text.Layout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
@@ -21,6 +27,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -40,31 +48,39 @@ import app.helloteam.sportsbuddyapp.helperUI.*
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 private const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
-class LandingPage : AppCompatActivity() {
+class LandingPage : Fragment() {
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        insavedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_landing_page, container, false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
+        view.findViewById<ComposeView>(R.id.compose_view).setContent {
             Navigation()
             TeamUpTheme {
-//                LandingPageCompose(navController)
+                LandingPageCompose()
             }
         }
+
+        return view
     }
+
+
 }
 
-//@Preview
+@Preview
 @Composable
-fun PreviewLandingPage(navController: NavController) {
+fun PreviewLandingPage() {
     TeamUpTheme {
-        LandingPageCompose(navController = navController)
+        LandingPageCompose()
     }
 }
 
 
 @Composable
-fun LandingPageCompose(navController: NavController) {
+fun LandingPageCompose() {
 
     val navController = rememberNavController()
     Scaffold(

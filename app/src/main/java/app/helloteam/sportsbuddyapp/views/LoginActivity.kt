@@ -164,36 +164,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
 
-        //Forgot Password is pressed
-        // add popup or activity for entering in email and submitting
-        val context = this
-        findViewById<TextView>(R.id.forgotPasswordButton).setOnClickListener {//go to forgot password activity
-            MaterialDialog(this).show {
-                title(R.string.password_title)
-                input(hint = "example@gmail.com") { dialog, text ->
-                    Firebase.auth.sendPasswordResetEmail(text.toString().trim())
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.i("Log", "Email sent.")
-                                Toast.makeText(
-                                    context,
-                                    "Password reset successfully sent",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Password reset not sent",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                }
-                positiveButton(R.string.submit)
-                negativeButton(R.string.cancel)
-            }
-        }
-
 
         //Sign Up button is pressed
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
@@ -246,8 +216,13 @@ class LoginActivity : AppCompatActivity() {
 
     //go to landing activity when called
     fun toLanding() {
-        val intent = Intent(this, LandingPageActivity::class.java)
-        startActivity(intent)
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.compose_view, LandingPage())
+            .commit()
+
+//        val intent = Intent(this, LandingPageActivity::class.java)
+//        startActivity(intent)
         finish()
     }
 
