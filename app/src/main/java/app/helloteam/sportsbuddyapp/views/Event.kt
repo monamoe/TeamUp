@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling
 import app.helloteam.sportsbuddyapp.firebase.TeamHandling
+import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -109,7 +110,7 @@ class event : AppCompatActivity() {
                     db.collection("Location").document(locationID).get()
                         .addOnSuccessListener { loc ->
                             information.setText(loc.get("Location Name").toString())
-                            //EventHandling.setEventPhoto(findViewById(R.id.eventImage),this, loc.get("Lat").toString(), loc.get("Lon").toString())
+                            Glide.with(this).load(loc.get("StreetView").toString()).into(findViewById(R.id.eventImage));
                         }
 
                     val hostID = document.get("hostID").toString()
@@ -259,21 +260,6 @@ class event : AppCompatActivity() {
                             "LOG_TAG",
                             "Event successfully deleted!"
                         )
-
-                        db.collection("Location").document(locationID).collection("Events")
-                            .get()
-                            .addOnSuccessListener { docs ->
-                                if (docs.isEmpty) {
-                                    db.collection("Location").document(locationID)
-                                        .delete()
-                                        .addOnSuccessListener {
-                                            Log.d(
-                                                "LOG_TAG",
-                                                "Location has no remaining events and has been deleted"
-                                            )
-                                        }
-                                }
-                            }
                     }
                     .addOnFailureListener { e -> Log.w("LOG_TAG", "Error deleting Event", e) }
                 Toast.makeText(this, "Successfully cancelled event", Toast.LENGTH_SHORT)
