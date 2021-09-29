@@ -3,10 +3,20 @@ package app.helloteam.sportsbuddyapp.views
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.databinding.DataBindingUtil.setContentView
+import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -26,10 +36,25 @@ private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
 
 
+
 class LoginActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        context = ContextAmbient.current
+        val view = inflater.inflate(R.layout.activity_login, container, false)
+        // inside compose //
+        view.findViewById<ComposeView>(R.id.compose_view).setContent {
+
+            val customView
+        }
+        // outside of compose //
+
+
+        // current context
+
+        super.onCreate(savedInstanceState)
         auth = Firebase.auth
 
         val gso =
@@ -41,10 +66,11 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         //Sign Up button is pressed
-        findViewById<SignInButton>(R.id.googleSignIn).setOnClickListener {//go to sign up activity
-            val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
+        view.findViewById<SignInButton>(R.id.googleSignIn)
+            .setOnClickListener {//go to sign up activity
+                val signInIntent = googleSignInClient.signInIntent
+                startActivityForResult(signInIntent, RC_SIGN_IN)
+            }
         var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         val db = Firebase.firestore
         var testUser = false
@@ -59,16 +85,17 @@ class LoginActivity : AppCompatActivity() {
             }
 
         //Sign Up button is pressed
-        findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-        }
+        view.findViewById<TextView>(R.id.signUpButtonMain)
+            .setOnClickListener {//go to sign up activity
+                val intent = Intent(this, RegisterActivity::class.java)
+                startActivity(intent)
+            }
 
         //login button pressed
-        findViewById<Button>(R.id.LoginButton).setOnClickListener {
+        view.findViewById<Button>(R.id.LoginButton).setOnClickListener {
 
-            val emailTxt = findViewById<TextView>(R.id.emailText).text.toString()
-            val passwordTxt = findViewById<TextView>(R.id.PasswordText).text.toString()
+            val emailTxt = view.findViewById<TextView>(R.id.emailText).text.toString()
+            val passwordTxt = view.findViewById<TextView>(R.id.PasswordText).text.toString()
 
             if (emailTxt.equals("") || passwordTxt.equals("")) {
                 Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
@@ -105,14 +132,23 @@ class LoginActivity : AppCompatActivity() {
                     }
             }
         }
+
+
+        //return inflated view onCreateView
+        return view
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
     }
 
     //go to landing activity when called
     fun toLanding() {
-        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
-            .show()
-//        val intent = Intent(this, LandingPageActivity::class.java)
-//        startActivity(intent)
+//        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
+//            .show()
+        val intent = Intent(this, LandingPage::class.java)
+        startActivity(intent)
         finish()
     }
 
