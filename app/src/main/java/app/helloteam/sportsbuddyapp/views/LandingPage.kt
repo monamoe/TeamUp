@@ -8,6 +8,7 @@ import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.*
@@ -57,24 +58,23 @@ lateinit private var title: String
 
 class LandingPage : Fragment() {
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         insavedInstanceState: Bundle?
     ): View? {
 
+
         // layout inflater
         val view = inflater.inflate(R.layout.fragment_landing_page, container, false)
-        
+
         // username
         val db = Firebase.firestore
         val location = db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
         location.get().addOnSuccessListener { user ->
             username = user.get("username").toString()
         }
-
-
-
 
         view.findViewById<ComposeView>(R.id.compose_view).setContent {
             Navigation()
@@ -83,18 +83,8 @@ class LandingPage : Fragment() {
             }
         }
 
-
-
-
-
-
-
-
-
         return view
     }
-
-
 }
 
 

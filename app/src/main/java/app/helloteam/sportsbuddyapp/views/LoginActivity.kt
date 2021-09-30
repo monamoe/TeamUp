@@ -1,21 +1,27 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent.getActivity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.Fragment
+import app.helloteam.sportsbuddyapp.MainActivity
 import app.helloteam.sportsbuddyapp.R
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.internal.ContextUtils.getActivity
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -24,6 +30,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
+
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var googleSignInClient: GoogleSignInClient
@@ -132,26 +139,40 @@ private lateinit var auth: FirebaseAuth
 //}
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : Fragment() {
+
+
     @SuppressLint("CheckResult")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        insavedInstanceState: Bundle?
+    ): View? {
+
+        // layout inflater
+        val view = inflater.inflate(R.layout.activity_login, container, false)
+
+
+
+
         auth = Firebase.auth
 
         val gso =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // set up google sign in
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(
+                    "840139376516-14h5dujlu51sgqdisv2fak4tccanau65.apps.googleusercontent.com"
+                )
                 .requestEmail()
                 .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient = GoogleSignIn.getClient(activity, gso)
 
         //Sign Up button is pressed
-        findViewById<SignInButton>(R.id.googleSignIn).setOnClickListener {//go to sign up activity
-            val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
+        view.findViewById<SignInButton>(R.id.googleSignIn)
+            .setOnClickListener {//go to sign up activity
+                val signInIntent = googleSignInClient.signInIntent
+                startActivityForResult(signInIntent, RC_SIGN_IN)
+            }
         var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         val db = Firebase.firestore
         var testUser = false
@@ -161,25 +182,27 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 testUser = document.get("testUser").toString().toBoolean()
                 if (user != null && (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true || testUser)) {
-                    toLanding()
+
+
                 }
             }
 
 
         //Sign Up button is pressed
-        findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-        }
+        view.findViewById<TextView>(R.id.signUpButtonMain)
+            .setOnClickListener {//go to sign up activity
+                val intent = Intent(activity, RegisterActivity::class.java)
+                startActivity(intent)
+            }
 
         //login button pressed
-        findViewById<Button>(R.id.LoginButton).setOnClickListener {
+        view.findViewById<Button>(R.id.LoginButton).setOnClickListener {
 
-            val emailTxt = findViewById<TextView>(R.id.emailText).text.toString()
-            val passwordTxt = findViewById<TextView>(R.id.PasswordText).text.toString()
+            val emailTxt = view.findViewById<TextView>(R.id.emailText).text.toString()
+            val passwordTxt = view.findViewById<TextView>(R.id.PasswordText).text.toString()
 
             if (emailTxt.equals("") || passwordTxt.equals("")) {
-                Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Please enter required fields", Toast.LENGTH_SHORT).show()
             } else {
 
                 //login with firebase Auth
@@ -198,7 +221,7 @@ class LoginActivity : AppCompatActivity() {
                                     if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
                                     } else {
-                                        Toast.makeText(this, "Verify Email", Toast.LENGTH_LONG)
+                                        Toast.makeText(activity, "Verify Email", Toast.LENGTH_LONG)
                                             .show()
                                     }
                                 }
@@ -208,24 +231,15 @@ class LoginActivity : AppCompatActivity() {
                             "LOG_TAG",
                             "Login failed: " + it.localizedMessage
                         )
-                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT)
+                        Toast.makeText(activity, "Login Error ${it.message} ", Toast.LENGTH_SHORT)
                             .show()
                     }
             }
         }
+        return view
     }
 
-    //go to landing activity when called
-    fun toLanding() {
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.compose_view, LandingPage())
-            .commit()
-
-//        val intent = Intent(this, LandingPageActivity::class.java)
-//        startActivity(intent)
-        finish()
-    }
 
     override fun onActivityResult(
         requestCode: Int,
@@ -252,7 +266,7 @@ class LoginActivity : AppCompatActivity() {
     private fun firebaseAuthWithGoogle(idToken: String) { //google authentication
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
@@ -290,8 +304,6 @@ class LoginActivity : AppCompatActivity() {
                             }
                             toLanding()
                         }
-
-
                 }
             }
     }

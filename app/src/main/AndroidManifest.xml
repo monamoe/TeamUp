@@ -23,6 +23,12 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.LandingPage"
+            android:exported="true" />
+        <activity
             android:name=".views.ViewMemberProfileActivity"
             android:exported="true" />
         <activity
