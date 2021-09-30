@@ -44,6 +44,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 private const val MY_PERMISSION_FINE_LOCATION: Int = 44
@@ -55,14 +58,38 @@ class LandingPage : Fragment() {
         container: ViewGroup?,
         insavedInstanceState: Bundle?
     ): View? {
+
+       lateinit var username: String
+       lateinit var title: String
+
+
+
+
         val view = inflater.inflate(R.layout.fragment_landing_page, container, false)
 
-        view.findViewById<ComposeView>(R.id.compose_view).setContent {
-            Navigation()
-            TeamUpTheme {
-                LandingPageCompose()
-            }
+        val db = Firebase.firestore
+        val location = db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
+        location.get().addOnSuccessListener { user ->
+            username = user.get("username").toString()
         }
+
+
+
+
+            view.findViewById<ComposeView>(R.id.compose_view).setContent {
+                Navigation()
+                TeamUpTheme {
+                    LandingPageCompose()
+                }
+            }
+
+
+
+
+
+
+
+
 
         return view
     }
@@ -84,7 +111,99 @@ fun LandingPageCompose() {
 
     val navController = rememberNavController()
     Scaffold(
-        bottomBar = {
+        content = {
+            Box(
+                modifier = Modifier
+                    .background(colorResource(id = R.color.primaryDarkColor))
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Column {
+                    GreetingSection("AK")
+            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
+                    CurrentWeather()
+
+//            val title: String,
+//            val id: String,
+//            val imageId: String,
+//            @DrawableRes
+//            val activityIcon: Int,
+//            val lightColor: Color,
+//            val mediumColor: Color,
+//            val darkColor: Color,
+//            val isHosting: Boolean,
+//            val hostName: String,
+                    val eventList = listOf(
+                        Event(
+                            "Title",
+                            "eventID",
+                            "imageID",
+                            R.drawable.common_google_signin_btn_icon_light,
+                            BlueViolet1,
+                            BlueViolet2,
+                            BlueViolet3,
+                            false,
+                            "AK"
+                        ),
+                        Event(
+                            "Title",
+                            "eventID",
+                            "imageID",
+                            R.drawable.common_google_signin_btn_icon_light,
+                            LightGreen1,
+                            LightGreen2,
+                            LightGreen3,
+                            false,
+                            "AK"
+                        ),
+                        Event(
+                            "Title",
+                            "eventID",
+                            "imageID",
+                            R.drawable.common_google_signin_btn_icon_light,
+                            OrangeYellow1,
+                            OrangeYellow2,
+                            OrangeYellow3,
+                            false,
+                            "AK"
+                        ),
+                        Event(
+                            "Title",
+                            "eventID",
+                            "imageID",
+                            R.drawable.common_google_signin_btn_icon_light,
+                            Beige1,
+                            Beige2,
+                            Beige3,
+                            false,
+                            "AK"
+                        ),
+                    )
+                    EventScroll(
+                        events = eventList
+//                navigateToEvent
+                    )
+            RecommendedEventScroll(events = eventList)
+
+                    /* Navigation */
+
+//            NavMenu(
+//                items = listOf(
+//                    NavMenuContent("Home", R.drawable.clipboard),
+//                    NavMenuContent("Messaging", R.drawable.clipboard),
+//                    NavMenuContent("Map", R.drawable.clipboard),
+//                    NavMenuContent(
+//                        "Notifications",
+//                        R.drawable.clipboard
+//                    ),
+//                    NavMenuContent("Profile", R.drawable.clipboard),
+//                )
+//            )
+
+                }
+            }
+        },
+                bottomBar = {
             BottomNavigationBar(
                 items = listOf(
                     NavMenuContent(
@@ -122,10 +241,9 @@ fun LandingPageCompose() {
                 }
             )
         }
-    ) {
-        Navigation(navController = navController)
-    }
+    )
 }
+
 
 
 //            Box(
