@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat.startActivity
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.views.ChatLogActivity
 import app.helloteam.sportsbuddyapp.views.ViewMemberProfileActivity
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -69,7 +70,14 @@ object TeamHandling {
                     }
                     negativeButton(R.string.cancel)
                 }
-            }else {
+            } else if (from == "Chat"){
+                val intent = Intent(context, ChatLogActivity::class.java)
+                val memberID = memberList.get(position).getMemberID()
+                intent.putExtra("member", memberID)
+                intent.putExtra("userName", memberList.get(position).name)
+                context.startActivity(intent)
+            }
+            else {
                 val memberID = memberList.get(position).getMemberID()
                 val teamID = memberList.get(position).getID()
                 val intent = Intent(context, ViewMemberProfileActivity::class.java)

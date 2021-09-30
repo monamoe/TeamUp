@@ -20,4 +20,7 @@
     <item
         android:id="@+id/action_map"
         android:title="Go to Map" />
+    <item
+        android:id="@+id/action_chat"
+        android:title="Chat" />
 </menu>

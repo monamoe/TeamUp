@@ -25,6 +25,15 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".views.ChatLogActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.NewMessageActivity"
+            android:exported="true" />
+        <activity
+            android:name=".views.LatestMessagesActivity"
+            android:exported="true" />
+        <activity
             android:name=".views.EventInviteActivity"
             android:exported="true" />
         <activity

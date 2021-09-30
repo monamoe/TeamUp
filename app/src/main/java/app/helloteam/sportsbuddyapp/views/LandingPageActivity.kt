@@ -121,6 +121,11 @@ class LandingPageActivity : AppCompatActivity() {
             startActivity(intent)
             true
         }
+        R.id.action_chat -> {
+            val intent = Intent(this, LatestMessagesActivity::class.java)
+            startActivity(intent)
+            true
+        }
         else -> {
             super.onOptionsItemSelected(item)
         }
