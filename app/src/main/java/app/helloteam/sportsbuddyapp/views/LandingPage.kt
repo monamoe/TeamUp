@@ -51,6 +51,10 @@ import com.google.firebase.ktx.Firebase
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 private const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
+// Init variables
+lateinit private var username: String
+lateinit private var title: String
+
 class LandingPage : Fragment() {
 
     override fun onCreateView(
@@ -59,14 +63,10 @@ class LandingPage : Fragment() {
         insavedInstanceState: Bundle?
     ): View? {
 
-       lateinit var username: String
-       lateinit var title: String
-
-
-
-
+        // layout inflater
         val view = inflater.inflate(R.layout.fragment_landing_page, container, false)
-
+        
+        // username
         val db = Firebase.firestore
         val location = db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
         location.get().addOnSuccessListener { user ->
@@ -76,12 +76,12 @@ class LandingPage : Fragment() {
 
 
 
-            view.findViewById<ComposeView>(R.id.compose_view).setContent {
-                Navigation()
-                TeamUpTheme {
-                    LandingPageCompose()
-                }
+        view.findViewById<ComposeView>(R.id.compose_view).setContent {
+            Navigation()
+            TeamUpTheme {
+                LandingPageCompose()
             }
+        }
 
 
 
@@ -97,6 +97,12 @@ class LandingPage : Fragment() {
 
 }
 
+
+/**
+ * Composeable Preview
+ *
+ * @param name
+ */
 @Preview
 @Composable
 fun PreviewLandingPage() {
@@ -114,16 +120,16 @@ fun LandingPageCompose() {
         content = {
             Box(
                 modifier = Modifier
-                    .background(colorResource(id = R.color.primaryDarkColor))
+                    .background(colorResource(id = R.color.landingPageBackground))
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
                 Column {
                     GreetingSection("AK")
-            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
-//            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
+//                    ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
                     CurrentWeather()
 
+                    ContentDivider()
 //            val title: String,
 //            val id: String,
 //            val imageId: String,
@@ -135,8 +141,8 @@ fun LandingPageCompose() {
 //            val isHosting: Boolean,
 //            val hostName: String,
                     val eventList = listOf(
-                        Event(
-                            "Title",
+                        EventCard(
+                            "5v5 Soccer",
                             "eventID",
                             "imageID",
                             R.drawable.common_google_signin_btn_icon_light,
@@ -144,46 +150,53 @@ fun LandingPageCompose() {
                             BlueViolet2,
                             BlueViolet3,
                             false,
-                            "AK"
+                            "AK",
+                            "Playing soccer with a couple friends, feel free to join in"
                         ),
-                        Event(
-                            "Title",
+                        EventCard(
+                            "Basket Ball",
                             "eventID",
                             "imageID",
                             R.drawable.common_google_signin_btn_icon_light,
-                            LightGreen1,
-                            LightGreen2,
-                            LightGreen3,
+                            BlueViolet1,
+                            BlueViolet2,
+                            BlueViolet3,
                             false,
-                            "AK"
+                            "Riley Gray",
+                            "Looking for 4 more players so we can play full court basketball"
                         ),
-                        Event(
-                            "Title",
+                        EventCard(
+                            "Ultimate Frisbee Players",
                             "eventID",
                             "imageID",
                             R.drawable.common_google_signin_btn_icon_light,
-                            OrangeYellow1,
-                            OrangeYellow2,
-                            OrangeYellow3,
+                            BlueViolet1,
+                            BlueViolet2,
+                            BlueViolet3,
                             false,
-                            "AK"
+                            "Nathan Hill",
+                            "I got a new frisbee, lets play some games"
                         ),
-                        Event(
-                            "Title",
+                        EventCard(
+                            "Street Hockey",
                             "eventID",
                             "imageID",
                             R.drawable.common_google_signin_btn_icon_light,
-                            Beige1,
-                            Beige2,
-                            Beige3,
+                            BlueViolet1,
+                            BlueViolet2,
+                            BlueViolet3,
                             false,
-                            "AK"
+                            "Riley Gray",
+                            "We are playing Hockey and need more people, bring your own stick!"
                         ),
                     )
+
                     EventScroll(
                         events = eventList
 //                navigateToEvent
                     )
+
+                    ContentDivider()
                     RecommendedEventScroll(events = eventList)
 
 
@@ -255,13 +268,14 @@ fun GreetingSection(
         ) {
             Text(
                 text = "Good morning, $name",
-                style = MaterialTheme.typography.h1
+                style = MaterialTheme.typography.h1,
+                color = colorResource(id = R.color.secondaryTextColor)
             )
         }
         Icon(
             painter = painterResource(id = R.drawable.clipboard),
             contentDescription = "Search",
-            tint = Color.White,
+            tint = colorResource(id = R.color.secondaryTextColor),
             modifier = Modifier.size(24.dp)
         )
     }
@@ -288,7 +302,7 @@ fun ChipSection(
                     )
                     .padding(15.dp)
             ) {
-                Text(text = chips[it], color = TextWhite)
+                Text(text = chips[it], color = colorResource(id = R.color.primaryTextColor))
             }
         }
     }
@@ -302,19 +316,20 @@ fun CurrentWeather() {
         modifier = Modifier
             .padding(15.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(colorResource(R.color.primaryLightColor))
+            .background(colorResource(R.color.secondaryColor))
             .padding(horizontal = 15.dp, vertical = 15.dp)
             .fillMaxWidth()
     ) {
         Column {
             Text(
                 text = "Weather",
-                style = MaterialTheme.typography.h2
+                style = MaterialTheme.typography.h2,
+                color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
                 text = "Mississauga • Ontario",
                 style = MaterialTheme.typography.body1,
-                color = TextWhite
+                color = colorResource(id = R.color.secondaryTextColor)
             )
         }
         Column {
@@ -329,7 +344,7 @@ fun CurrentWeather() {
                 Icon(
                     painter = painterResource(id = R.drawable.common_full_open_on_phone),
                     contentDescription = "Play",
-                    tint = Color.White,
+                    tint = colorResource(id = R.color.primaryDarkColor),
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -347,15 +362,13 @@ fun CurrentWeather() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecommendedEventScroll(
-    events: List<Event>
+    events: List<EventCard>
 ) {
-    Column(
-        modifier = Modifier
-            .background(Color.Blue)
-    ) {
+    Column() {
         Text(
             text = "Recommended Events",
             style = MaterialTheme.typography.h1,
+            color = colorResource(id = R.color.secondaryTextColor),
             modifier = Modifier.padding(15.dp)
         )
         LazyRow(
@@ -384,15 +397,13 @@ fun RecommendedEventScroll(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventScroll(
-    events: List<Event>
+    events: List<EventCard>
 ) {
-    Column(
-        modifier = Modifier
-            .background(Color.Blue)
-    ) {
+    Column() {
         Text(
             text = "Your Events",
             style = MaterialTheme.typography.h1,
+            color = colorResource(id = R.color.secondaryTextColor),
             modifier = Modifier.padding(15.dp)
         )
         LazyRow(
@@ -410,72 +421,74 @@ fun EventScroll(
 
 @Composable
 fun EventCard(
-    event: Event,
+    event: EventCard,
 //    navigateToArticle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.size(280.dp, 240.dp)
+        modifier = modifier
+            .size(280.dp, 240.dp)
+            .background(colorResource(id = R.color.secondaryColor))
     ) {
         BoxWithConstraints(
             modifier = Modifier
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(10.dp))
-                .background(event.darkColor)
+                .background(colorResource(id = R.color.secondaryColor))
         ) {
-            val width = constraints.maxWidth
-            val height = constraints.maxHeight
-
-
-            // Medium colored path
-            val mediumColoredPoint1 = Offset(0f, height * 0.3f)
-            val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
-            val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
-            val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
-            val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
-
-            val mediumColoredPath = Path().apply {
-                moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
-                standardQuadFromTo(mediumColoredPoint1, mediumColoredPoint2)
-                standardQuadFromTo(mediumColoredPoint2, mediumColoredPoint3)
-                standardQuadFromTo(mediumColoredPoint3, mediumColoredPoint4)
-                standardQuadFromTo(mediumColoredPoint4, mediumColoredPoint5)
-                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-                lineTo(-100f, height.toFloat() + 100f)
-                close()
-            }
-
-            // Light colored path
-            val lightPoint1 = Offset(0f, height * 0.35f)
-            val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
-            val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
-            val lightPoint4 = Offset(width * 0.65f, height.toFloat())
-            val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
-
-            val lightColoredPath = Path().apply {
-                moveTo(lightPoint1.x, lightPoint1.y)
-                standardQuadFromTo(lightPoint1, lightPoint2)
-                standardQuadFromTo(lightPoint2, lightPoint3)
-                standardQuadFromTo(lightPoint3, lightPoint4)
-                standardQuadFromTo(lightPoint4, lightPoint5)
-                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-                lineTo(-100f, height.toFloat() + 100f)
-                close()
-            }
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                drawPath(
-                    path = mediumColoredPath,
-                    color = event.mediumColor
-                )
-                drawPath(
-                    path = lightColoredPath,
-                    color = event.lightColor
-                )
-            }
+//            val width = constraints.maxWidth
+//            val height = constraints.maxHeight
+//
+//
+//            // Medium colored path
+//            val mediumColoredPoint1 = Offset(0f, height * 0.3f)
+//            val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
+//            val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
+//            val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
+//            val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
+//
+//            val mediumColoredPath = Path().apply {
+//                moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
+//                standardQuadFromTo(mediumColoredPoint1, mediumColoredPoint2)
+//                standardQuadFromTo(mediumColoredPoint2, mediumColoredPoint3)
+//                standardQuadFromTo(mediumColoredPoint3, mediumColoredPoint4)
+//                standardQuadFromTo(mediumColoredPoint4, mediumColoredPoint5)
+//                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+//                lineTo(-100f, height.toFloat() + 100f)
+//                close()
+//            }
+//
+//            // Light colored path
+//            val lightPoint1 = Offset(0f, height * 0.35f)
+//            val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
+//            val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
+//            val lightPoint4 = Offset(width * 0.65f, height.toFloat())
+//            val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
+//
+//            val lightColoredPath = Path().apply {
+//                moveTo(lightPoint1.x, lightPoint1.y)
+//                standardQuadFromTo(lightPoint1, lightPoint2)
+//                standardQuadFromTo(lightPoint2, lightPoint3)
+//                standardQuadFromTo(lightPoint3, lightPoint4)
+//                standardQuadFromTo(lightPoint4, lightPoint5)
+//                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+//                lineTo(-100f, height.toFloat() + 100f)
+//                close()
+//            }
+//            Canvas(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//            ) {
+//                drawPath(
+//                    path = mediumColoredPath,
+//                    color = event.mediumColor
+//                )
+//                drawPath(
+//                    path = lightColoredPath,
+//                    color = event.lightColor
+//                )
+//            }
 
 
             //        Column(modifier = Modifier.clickable(onClick = { navigateToArticle(event.id) })) {
@@ -505,7 +518,7 @@ fun EventCard(
                         style = MaterialTheme.typography.body2
                     )
                     Text(
-                        text = "YEAH",
+                        text = event.eventDesc,
                         style = MaterialTheme.typography.body2
                     )
                 }
@@ -652,7 +665,8 @@ fun BottomNavigationBar(
 ) {
     val a = navController.currentBackStackEntryAsState()
     BottomNavigation(
-        modifier = modifier.background(Color.DarkGray)
+        backgroundColor = colorResource(id = R.color.primaryDarkColor),
+        modifier = modifier
     ) {
 //        RowScope
         items.forEach { item ->
@@ -660,7 +674,7 @@ fun BottomNavigationBar(
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClicker(item) },
-                selectedContentColor = DeepBlue,
+                selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
                 unselectedContentColor = Color.Gray,
                 icon = {
                     Column(
@@ -697,11 +711,6 @@ fun BottomNavigationBar(
             )
         }
     }
-}
-
-@Composable
-fun HomeScreen() {
-
 }
 
 
