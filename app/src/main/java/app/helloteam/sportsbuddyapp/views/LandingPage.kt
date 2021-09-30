@@ -121,6 +121,7 @@ fun LandingPageCompose() {
                 Column {
                     GreetingSection("AK")
             ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
+//            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
                     CurrentWeather()
 
 //            val title: String,
@@ -183,27 +184,15 @@ fun LandingPageCompose() {
                         events = eventList
 //                navigateToEvent
                     )
-            RecommendedEventScroll(events = eventList)
+                    RecommendedEventScroll(events = eventList)
 
-                    /* Navigation */
-
-//            NavMenu(
-//                items = listOf(
-//                    NavMenuContent("Home", R.drawable.clipboard),
-//                    NavMenuContent("Messaging", R.drawable.clipboard),
-//                    NavMenuContent("Map", R.drawable.clipboard),
-//                    NavMenuContent(
-//                        "Notifications",
-//                        R.drawable.clipboard
-//                    ),
-//                    NavMenuContent("Profile", R.drawable.clipboard),
-//                )
-//            )
 
                 }
             }
+
+
         },
-                bottomBar = {
+        bottomBar = {
             BottomNavigationBar(
                 items = listOf(
                     NavMenuContent(
@@ -244,97 +233,6 @@ fun LandingPageCompose() {
     )
 }
 
-
-
-//            Box(
-//                modifier = Modifier
-//                    .background(colorResource(id = R.color.primaryDarkColor))
-//                    .fillMaxSize()
-//            ) {
-//                Column {
-//                    GreetingSection("AK")
-////            ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
-//                    CurrentWeather()
-//
-////            val title: String,
-////            val id: String,
-////            val imageId: String,
-////            @DrawableRes
-////            val activityIcon: Int,
-////            val lightColor: Color,
-////            val mediumColor: Color,
-////            val darkColor: Color,
-////            val isHosting: Boolean,
-////            val hostName: String,
-//                    val eventList = listOf(
-//                        Event(
-//                            "Title",
-//                            "eventID",
-//                            "imageID",
-//                            R.drawable.common_google_signin_btn_icon_light,
-//                            BlueViolet1,
-//                            BlueViolet2,
-//                            BlueViolet3,
-//                            false,
-//                            "AK"
-//                        ),
-//                        Event(
-//                            "Title",
-//                            "eventID",
-//                            "imageID",
-//                            R.drawable.common_google_signin_btn_icon_light,
-//                            LightGreen1,
-//                            LightGreen2,
-//                            LightGreen3,
-//                            false,
-//                            "AK"
-//                        ),
-//                        Event(
-//                            "Title",
-//                            "eventID",
-//                            "imageID",
-//                            R.drawable.common_google_signin_btn_icon_light,
-//                            OrangeYellow1,
-//                            OrangeYellow2,
-//                            OrangeYellow3,
-//                            false,
-//                            "AK"
-//                        ),
-//                        Event(
-//                            "Title",
-//                            "eventID",
-//                            "imageID",
-//                            R.drawable.common_google_signin_btn_icon_light,
-//                            Beige1,
-//                            Beige2,
-//                            Beige3,
-//                            false,
-//                            "AK"
-//                        ),
-//                    )
-//                    EventScroll(
-//                        events = eventList
-////                navigateToEvent
-//                    )
-////            RecommendedEventScroll(events = eventList)
-//
-//                    /* Navigation */
-//
-////            NavMenu(
-////                items = listOf(
-////                    NavMenuContent("Home", R.drawable.clipboard),
-////                    NavMenuContent("Messaging", R.drawable.clipboard),
-////                    NavMenuContent("Map", R.drawable.clipboard),
-////                    NavMenuContent(
-////                        "Notifications",
-////                        R.drawable.clipboard
-////                    ),
-////                    NavMenuContent("Profile", R.drawable.clipboard),
-////                )
-////            )
-//
-//                }
-//            }
 
 /**
  * Horizontal scrolling cards for Recommended Events
