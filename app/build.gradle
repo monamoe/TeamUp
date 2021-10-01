@@ -69,6 +69,9 @@ dependencies {
     implementation 'com.github.cachapa:ExpandableLayout:2.9.2'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
 
+    // Declare the dependency for the Realtime Database library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-database-ktx'
 }
 
 

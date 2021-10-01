@@ -4,37 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/main_layout">
+    android:id="@+id/main_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
-    <RelativeLayout
-        android:id="@+id/message_layout"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="10dp"
-        android:background="@android:color/white">
+        android:layout_marginTop="4dp"
+        android:gravity="left"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/message_text"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profilepic"
+            android:layout_width="52dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|center_vertical"
+            android:src="@drawable/logoteamupsmall"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp" />
+
+        <RelativeLayout
+            android:id="@+id/message_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="120dp"
-            android:maxWidth="250dp"
-            android:layout_below="@+id/username_text"
-            android:layout_alignParentLeft="true"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:text="Hi" />
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="148dp"
+            android:background="@drawable/bg_send_message"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/date_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/message_text"
-            android:layout_below="@+id/message_text"
-            android:textSize="11sp"
-            android:textColor="#b3b3b3"
-            tools:text="11:34" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:maxWidth="250dp"
+                android:minWidth="120dp"
+                android:text="Hi"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/date_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/message_text"
+                android:layout_alignRight="@+id/message_text"
+                android:textColor="@android:color/black"
+                android:textSize="11sp"
+                tools:text="11:34" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
 </RelativeLayout>
