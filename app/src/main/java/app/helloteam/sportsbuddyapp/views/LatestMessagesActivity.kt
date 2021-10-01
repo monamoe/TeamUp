@@ -49,25 +49,32 @@ class LatestMessagesActivity : AppCompatActivity() {
                 if(otherUser == currentUser.toString()){
                     otherUser = chatMessage?.toId.toString()
                 }
-                    Firebase.firestore.collection("User").document(otherUser.toString())
+                    Firebase.firestore.collection("User").document(otherUser)
                         .get().addOnSuccessListener { user ->
                             var position = 0
                             for (i in 0..messagesList.size-1){
-                                if (messagesList.get(i).id == chatMessage?.id){
+                                Log.i("chatttt", "in if")
+                                if (user.id == messagesList.get(i).memberId){
+                                    Log.i("chatttt", "in if")
                                     position = i
                                 }
                             }
+                            Log.i("chattt", position.toString())
                             if (chatMessage != null) {
                                 messagesList.set(position,
                                     LatestAdapter.MessageDisplayer(
                                         chatMessage.id,
-                                        otherUser.toString(),
+                                        otherUser,
                                         chatMessage.text,
                                         chatMessage.timestamp.toString(),
                                         user.get("userName").toString()
                                     )
                                 )
-
+                                var sorted = messagesList.sortedByDescending { messagesList -> messagesList.time }
+                                messagesList.clear()
+                                for (sort in sorted){
+                                    messagesList.add(sort)
+                                }
                                 var recyclerView = findViewById<RecyclerView>(R.id.myList)
                                 recyclerView.setAdapter(adapter);
                             }
@@ -94,6 +101,11 @@ class LatestMessagesActivity : AppCompatActivity() {
                                     user.get("userName").toString()
                                 )
                             )
+                            var sorted = messagesList.sortedByDescending { messagesList -> messagesList.time }
+                            messagesList.clear()
+                            for (sort in sorted){
+                                messagesList.add(sort)
+                            }
                             var recyclerView = findViewById<RecyclerView>(R.id.myList);
                             recyclerView.setAdapter(adapter);
                         }

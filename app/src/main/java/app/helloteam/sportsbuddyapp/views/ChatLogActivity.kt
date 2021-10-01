@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.models.MessageModel
@@ -22,7 +23,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.text.DateFormat
 
 
 class ChatLogActivity : AppCompatActivity() {
@@ -36,6 +36,8 @@ class ChatLogActivity : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("userName")
         //setupDummyData()
         listenForMessages(this)
+
+
 
         findViewById<Button>(R.id.chatButton).setOnClickListener {
             performSendMessage()
@@ -62,8 +64,9 @@ class ChatLogActivity : AppCompatActivity() {
 
                 }
                 var adapter = CustomAdapter(context, messagesList, intent.getStringExtra("member").toString())
-                var recyclerView = findViewById<RecyclerView>(R.id.recycleChat);
-                recyclerView.setAdapter(adapter);
+                var recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
+                recyclerView.setAdapter(adapter)
+                findViewById<RecyclerView>(R.id.recycleChat).smoothScrollToPosition(messagesList.size);
             }
 
             override fun onCancelled(error: DatabaseError) {
