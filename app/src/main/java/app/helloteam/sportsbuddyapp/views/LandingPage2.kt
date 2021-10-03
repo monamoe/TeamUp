@@ -1,6 +1,9 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -35,13 +40,13 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.EventCard
 import app.helloteam.sportsbuddyapp.helperUI.NavMenuContent
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import app.helloteam.sportsbuddyapp.helperUI.*
 
 class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
-            app.helloteam.sportsbuddyapp.helperUI.Navigation()
             TeamUpTheme() {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -168,7 +173,7 @@ fun LandingPageCompose() {
                     NavMenuContent(
                         title = "Home",
                         route = "home",
-                        icon = Icons.Default.Home
+                        icon = Icons.Default.Home,
                     ),
                     NavMenuContent(
                         title = "Messages",
@@ -190,7 +195,7 @@ fun LandingPageCompose() {
                     ),
                     NavMenuContent(
                         title = "Profile",
-                        route = "settings",
+                        route = "profile",
                         icon = Icons.Default.Person
                     ),
                 ),
@@ -621,7 +626,9 @@ fun BottomNavigationBar(
     onItemClicker: (NavMenuContent) -> Unit
 ) {
     val a = navController.currentBackStackEntryAsState()
+    val currentcontext = LocalContext.current
     BottomNavigation(
+        elevation = 5.dp,
         backgroundColor = colorResource(id = R.color.primaryDarkColor),
         modifier = modifier
     ) {
@@ -630,7 +637,9 @@ fun BottomNavigationBar(
             val selected = item.route == a.value?.destination?.route
             BottomNavigationItem(
                 selected = selected,
-                onClick = { onItemClicker(item) },
+                onClick = {
+                    useIntentOnRoute(currentcontext, item.route)
+                },
                 selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
                 unselectedContentColor = Color.Gray,
                 icon = {
@@ -668,6 +677,21 @@ fun BottomNavigationBar(
             )
         }
     }
+}
+
+fun useIntentOnRoute(context: Context, route: String) {
+    var intent = Intent(context, LandingPage2::class.java)
+    when (route) {
+        "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
+//        "messages" -> intent = Intent(context, messages::class.java)
+        "map" ->intent = Intent(context, map::class.java)
+//        "notifications" -> intent = Intent(context, notifications::class.java)
+        "profile" -> intent = Intent(context, EditProfilePage::class.java)
+        else -> {
+            Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
+        }
+    }
+    context.startActivity(intent)
 }
 
 

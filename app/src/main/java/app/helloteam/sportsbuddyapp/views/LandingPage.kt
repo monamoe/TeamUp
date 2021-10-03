@@ -63,7 +63,6 @@ class LandingPage : AppCompatActivity() {
         }
 
         setContent {
-            Navigation()
             TeamUpTheme {
                 LandingPageCompose()
             }
