@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.views.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
@@ -20,19 +20,19 @@ val gothicA1 = FontFamily(
 
 val Typography = Typography(
     body1 = TextStyle(
-        color = AquaBlue,
+        color = app.helloteam.sportsbuddyapp.views.ui.theme.AquaBlue,
         fontFamily = gothicA1,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp
     ),
     h1 = TextStyle(
-        color = TextWhite,
+        color = app.helloteam.sportsbuddyapp.views.ui.theme.TextWhite,
         fontFamily = gothicA1,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp
     ),
     h2 = TextStyle(
-        color = TextWhite,
+        color = app.helloteam.sportsbuddyapp.views.ui.theme.TextWhite,
         fontFamily = gothicA1,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp

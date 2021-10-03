@@ -3,6 +3,9 @@ package app.helloteam.sportsbuddyapp.helperUI
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.views.ui.theme.BlueViolet1
+import app.helloteam.sportsbuddyapp.views.ui.theme.BlueViolet2
+import app.helloteam.sportsbuddyapp.views.ui.theme.BlueViolet3
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

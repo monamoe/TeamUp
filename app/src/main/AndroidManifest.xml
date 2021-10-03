@@ -22,9 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_key" />
+
         <activity
-            android:name=".MainActivity"
-            android:exported="true" />
+            android:name=".views.LandingPage2"
+            android:exported="true"
+            android:label="@string/title_activity_landing_page2"
+            android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.LandingPage"
             android:exported="true" />
@@ -39,17 +46,14 @@
             android:exported="true" />
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_key" />
-
         <activity android:name=".views.eventslist" />
         <activity android:name=".views.event" />
         <activity android:name=".views.CreateEventActivity" />
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.RegisterActivity" />
+
+
         <activity android:name=".views.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

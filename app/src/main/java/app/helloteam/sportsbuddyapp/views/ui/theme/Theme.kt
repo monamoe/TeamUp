@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.views.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -10,8 +10,8 @@ fun TeamUpTheme(
     content: @Composable() () -> Unit
 ) {
     MaterialTheme(
-        typography = Typography,
-        shapes = Shapes,
+        typography = app.helloteam.sportsbuddyapp.views.ui.theme.Typography,
+        shapes = app.helloteam.sportsbuddyapp.views.ui.theme.Shapes,
         content = content
     )
 }

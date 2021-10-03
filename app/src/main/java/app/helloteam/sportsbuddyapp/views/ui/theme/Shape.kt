@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.views.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
