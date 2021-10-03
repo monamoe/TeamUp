@@ -33,9 +33,6 @@
             android:label="@string/title_activity_landing_page2"
             android:theme="@style/Theme.SportsBuddyApp" />
         <activity
-            android:name=".views.LandingPage"
-            android:exported="true" />
-        <activity
             android:name=".views.ViewMemberProfileActivity"
             android:exported="true" />
         <activity
