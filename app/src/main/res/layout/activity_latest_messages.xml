@@ -7,6 +7,7 @@
     android:background="#C2E89A"
     tools:context=".views.LatestMessagesActivity">
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/newMessage"
         android:layout_width="wrap_content"
@@ -23,12 +24,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/myList"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

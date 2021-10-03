@@ -178,7 +178,7 @@ class LandingPageActivity : AppCompatActivity() {
                     cityName = addresses[0].getLocality()
                 }
                 //render the marker on the users location.
-                weatherTask(icon).execute(cityName, getString(R.string.weather_api)) //gets weather for current location
+                weatherTask(icon).execute(userLocationLat.toString(), userLocationLon.toString(), getString(R.string.weather_api)) //gets weather for current location
             }
         }
         //request permission

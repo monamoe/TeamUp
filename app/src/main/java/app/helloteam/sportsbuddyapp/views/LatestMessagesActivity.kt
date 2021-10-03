@@ -2,7 +2,6 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import app.helloteam.sportsbuddyapp.R
 import com.bumptech.glide.Glide
@@ -22,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+
 class LatestMessagesActivity : AppCompatActivity() {
     var messagesList = ArrayList<LatestAdapter.MessageDisplayer>()
 
@@ -31,17 +34,56 @@ class LatestMessagesActivity : AppCompatActivity() {
         var adapter = LatestAdapter(messagesList, this)
 
         listenForLatestMessages(this, adapter)
-
+        if(messagesList.size > 0) {
+        }
         findViewById<FloatingActionButton>(R.id.newMessage).setOnClickListener {
             val intent = Intent(this, NewMessageActivity::class.java)
             startActivity(intent)
         }
 
+        var recyclerView = findViewById<RecyclerView>(R.id.myList)
+        var context = this
+        val simpleItemTouchCallback: ItemTouchHelper.SimpleCallback = object :
+            ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT or ItemTouchHelper.DOWN or ItemTouchHelper.UP
+            ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+                val position = viewHolder.adapterPosition
+                adapter.notifyDataSetChanged()
+                val ref =  FirebaseDatabase.getInstance()
+                ref.getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}").child(messagesList.get(position).memberId).removeValue()
+                ref.getReference("/user-messages/${FirebaseAuth.getInstance().currentUser?.uid}").child(messagesList.get(position).memberId).removeValue()
+                Firebase.firestore.collection("User_Messages_Archive").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                    .collection("To").document(messagesList.get(position).memberId).collection("archives").get()
+                    .addOnSuccessListener { messages ->
+                        for (message in messages){
+                            Firebase.firestore.collection("User_Messages_Archive").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .collection("To").document(messagesList.get(position).memberId).collection("archives")
+                                .document(message.id).delete()
+                        }
+
+                    }
+                messagesList.removeAt(position)
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     private fun listenForLatestMessages(context: Context, adapter: LatestAdapter){
         val currentUser = FirebaseAuth.getInstance().currentUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$currentUser")
+
         ref.addChildEventListener(object: ChildEventListener{
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
@@ -53,13 +95,10 @@ class LatestMessagesActivity : AppCompatActivity() {
                         .get().addOnSuccessListener { user ->
                             var position = 0
                             for (i in 0..messagesList.size-1){
-                                Log.i("chatttt", "in if")
                                 if (user.id == messagesList.get(i).memberId){
-                                    Log.i("chatttt", "in if")
                                     position = i
                                 }
                             }
-                            Log.i("chattt", position.toString())
                             if (chatMessage != null) {
                                 messagesList.set(position,
                                     LatestAdapter.MessageDisplayer(

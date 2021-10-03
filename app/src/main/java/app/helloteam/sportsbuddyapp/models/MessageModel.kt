@@ -5,4 +5,4 @@ import java.util.*
 
 
 class MessageModel     // Constructor
-    (var message: String, var messageType: Int, var image: Int, var date: Long)
+    (var id: String, var message: String, var messageType: Int, var image: Int, var date: Long)

@@ -36,7 +36,7 @@ public class weatherTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?q="+strings[0]+"&units=metric&appid=" + strings[1]);
+        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?lat="+strings[0]+"&lon="+strings[1]+"&units=metric&appid=" + strings[2]);
         return response;
     }
 
