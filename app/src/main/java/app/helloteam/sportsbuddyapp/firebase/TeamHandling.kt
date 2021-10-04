@@ -54,24 +54,8 @@ object TeamHandling {
                 MaterialDialog(context).show {
                     title(text = "Invite " + memberList.get(position).name + "?")
                     positiveButton(R.string.yes) { dialog ->
-                        val invite = hashMapOf(
-                            "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                            "receiver" to memberList.get(position).getMemberID(),
-                            "inviteType" to "Event",
-                            "eventID" to event,
-                            "locationID" to location
-                        )
-
-                        db.collection("User").document(memberList.get(position).getMemberID())
-                            .collection("Invites")
-                            .add(invite)
-                            .addOnSuccessListener {
-                                Toast.makeText(
-                                    context,
-                                    "Invite Sent",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        InviteHandling.sendEventInvite(event, location, memberList.get(position).getMemberID(),
+                        context)
                     }
                     negativeButton(R.string.cancel)
                 }
