@@ -12,12 +12,14 @@ An app that helps you go outside and play! 🌞
 
 [soussamu](https://github.com/soussamu)
 
-# Libraries & SDKs
+# Libraries, SDKs & APIs
 [Firebase](https://firebase.google.com/)
 
 [Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
 
 [Places SDK for Android](https://developers.google.com/maps/documentation/places/android-sdk/overview)
 
+[Jetpack Compose](https://developer.android.com/jetpack/compose)
 
+[OpenWeather API](https://openweathermap.org/api)
 
