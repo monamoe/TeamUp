@@ -30,17 +30,22 @@ object TeamHandling {
                 for (member in members) {
                     db.collection("User").document(member.get("member").toString())
                         .get().addOnSuccessListener { u ->
-                            val eventObj = TeamDisplayer(
-                                member.id,
-                                member.get("member").toString(),
-                                u.get("userName").toString(),
-                                u.get("favouriteSport").toString(),
-                                u.get("photoUrl").toString()
-                            )
-                            memberList.add(eventObj)
+                            if (u.exists()) {
+                                val eventObj = TeamDisplayer(
+                                    member.id,
+                                    member.get("member").toString(),
+                                    u.get("userName").toString(),
+                                    u.get("favouriteSport").toString(),
+                                    u.get("photoUrl").toString()
+                                )
+                                memberList.add(eventObj)
 
-                            // list view adapter
-                            listview.adapter = TeamListAdapter(context)
+                                // list view adapter
+                                listview.adapter = TeamListAdapter(context)
+                            } else{
+                                db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                    .collection("Team").document(member.id).delete()
+                            }
                         }
                 }
             }

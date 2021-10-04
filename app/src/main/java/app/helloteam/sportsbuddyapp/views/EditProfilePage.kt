@@ -16,6 +16,9 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.firebase.FileHandling
+import app.helloteam.sportsbuddyapp.firebase.TeamHandling
+import app.helloteam.sportsbuddyapp.firebase.UserHandling
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -133,6 +136,16 @@ class EditProfilePage : AppCompatActivity() {
                     distancePosition = min + (total  * p)
                 }
             }
+
+        binding.deleteAccountButton.setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Are you sure you want to delete your account?")
+                positiveButton(R.string.yes) { dialog ->
+                    UserHandling.userDelete(FirebaseAuth.getInstance().currentUser, context)
+                }
+                negativeButton(R.string.cancel)
+            }
+        }
     }
 
     fun onSave(view: View) {

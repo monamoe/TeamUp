@@ -128,25 +128,40 @@ class LatestMessagesActivity : AppCompatActivity() {
                     otherUser = chatMessage?.toId.toString()
                 }
 
-                Firebase.firestore.collection("User").document(otherUser.toString())
+                Firebase.firestore.collection("User").document(otherUser)
                     .get().addOnSuccessListener { user ->
-                        if (chatMessage != null) {
-                            messagesList.add(
-                                LatestAdapter.MessageDisplayer(
-                                    chatMessage.id,
-                                    otherUser.toString(),
-                                    chatMessage.text,
-                                    chatMessage.timestamp.toString(),
-                                    user.get("userName").toString()
+                        if (user.exists()) {
+                            if (chatMessage != null) {
+                                messagesList.add(
+                                    LatestAdapter.MessageDisplayer(
+                                        chatMessage.id,
+                                        otherUser.toString(),
+                                        chatMessage.text,
+                                        chatMessage.timestamp.toString(),
+                                        user.get("userName").toString()
+                                    )
                                 )
-                            )
-                            var sorted = messagesList.sortedByDescending { messagesList -> messagesList.time }
-                            messagesList.clear()
-                            for (sort in sorted){
-                                messagesList.add(sort)
+                                var sorted =
+                                    messagesList.sortedByDescending { messagesList -> messagesList.time }
+                                messagesList.clear()
+                                for (sort in sorted) {
+                                    messagesList.add(sort)
+                                }
+                                var recyclerView = findViewById<RecyclerView>(R.id.myList);
+                                recyclerView.setAdapter(adapter);
                             }
-                            var recyclerView = findViewById<RecyclerView>(R.id.myList);
-                            recyclerView.setAdapter(adapter);
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("/user-messages/${currentUser}").child(otherUser).removeValue()
+                            Firebase.firestore.collection("User_Messages_Archive").document(currentUser.toString())
+                                .collection("To").document(otherUser)
+                                .collection("archives").get().addOnSuccessListener { archives ->
+                                    for(archive in archives){
+                                        Firebase.firestore.collection("User_Messages_Archive").document(currentUser.toString())
+                                            .collection("To").document(otherUser)
+                                            .collection("archives").document(archive.id).delete()
+                                    }
+                                }
+
                         }
                     }
             }

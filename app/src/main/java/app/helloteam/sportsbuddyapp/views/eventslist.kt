@@ -69,7 +69,7 @@ class eventslist : AppCompatActivity() {
                                 event.get("activity").toString(),
                                 address,
                                 eventTime,
-                                userName
+                                if (userName == "null") "No Host" else userName
                             )
                             eventList.add(eventObj)
 

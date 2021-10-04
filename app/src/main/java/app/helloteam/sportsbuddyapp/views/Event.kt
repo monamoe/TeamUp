@@ -13,11 +13,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling
 import app.helloteam.sportsbuddyapp.firebase.TeamHandling
+import app.helloteam.sportsbuddyapp.firebase.UserHandling
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -119,7 +122,7 @@ class event : AppCompatActivity() {
                     if (hostID.equals(uid)) {
                         // the current user is the one who made this event. display appropriate options
                         hosting = true;
-                        attendBtn.text = "Cancel Event"
+                        attendBtn.text = "Leave Event"
                     } else {
                         hosting = false;
 
@@ -145,14 +148,20 @@ class event : AppCompatActivity() {
                     }
 
                     // get host's information to display on event page
-                    db.collection("User").document(hostID)
-                        .get()
-                        .addOnSuccessListener { userDoc ->
-                            // host name and host BIO
-                            hostname.setText(userDoc.get("userName").toString())
-                            var bio = userDoc.get("bio")
-                            if (bio != "null" && bio != null && bio != "") hostbio.setText(bio.toString())
-                        }
+                    if (hostID != "null") {
+                        db.collection("User").document(hostID)
+                            .get()
+                            .addOnSuccessListener { userDoc ->
+                                // host name and host BIO
+                                hostname.setText(userDoc.get("userName").toString())
+                                var bio = userDoc.get("bio")
+                                if (bio != "null" && bio != null && bio != "") hostbio.setText(bio.toString())
+                            }
+                    } else {
+                        hostname.setText("Host: ")
+                        hostbio.setText("This event has no host")
+                        findViewById<LinearLayout>(R.id.becomeHostLayout).visibility = View.VISIBLE
+                    }
 
                 }
             }
@@ -167,11 +176,19 @@ class event : AppCompatActivity() {
             if (!hosting) {
                 if (attending) {
                     removeAttendance()
+                    Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     addAttendance()
                 }
             } else {
-                deleteEvent()
+                MaterialDialog(this).show {
+                    title(text = "Are you sure you want to leave this event as host?")
+                    positiveButton(R.string.yes) { dialog ->
+                        hostLeaveEvent()
+                    }
+                    negativeButton(R.string.cancel)
+                }
             }
         }
         findViewById<LinearLayout>(R.id.inviteLayout).setOnClickListener{
@@ -190,89 +207,48 @@ class event : AppCompatActivity() {
                 findViewById<TextView>(R.id.attendeeText).setText("View Attendees ►")
             }
         }
+
+        findViewById<Button>(R.id.becomeHostButton).setOnClickListener {
+            MaterialDialog(this).show {
+                title(text = "Are you sure you want to become the host? You will be responsible for leading the event.")
+                positiveButton(R.string.yes) { dialog ->
+                    makeHost(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                    removeAttendance()
+                    Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
+                        .show()
+                    val intent = Intent(context, LandingPageActivity::class.java)
+                    startActivity(intent)
+                }
+                negativeButton(R.string.cancel)
+            }
+        }
+
     }
 
-    // delete the eventID from every attendee in the users's Attendee list
-    // delete the eventID from the host's hosting list
-    // remove the event document from the location collection
-    // delete location if the location has no more events at it
-    private fun deleteEvent() {
-        // delete the eventID from every attendee in the event's Attendee list
+
+    private fun hostLeaveEvent() {
         db.collection("Location").document(locationID).collection("Events").document(eventID)
-            .collection("Attendees")
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    var newuid: String = document.get("userID").toString()
-                    db.collection("User").document(newuid).collection("Attending").document(eventID)
-                        .delete()
-                        .addOnSuccessListener {
-                            Log.d(
-                                "LOG_TAG",
-                                "Successfully deleted eventID from attendeelist of $newuid"
-                            )
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(
-                                "LOG_TAG",
-                                "Error deleting eventID from attendeelist of #newuid",
-                                e
-                            )
-                        }
+            .update("hostID", "null")
 
-                    db.collection("Location").document(locationID).collection("Events")
-                        .document(eventID).collection("Attendees").get()
-                        .addOnSuccessListener { docs ->
-                            for (doc in docs) {
-                                db.collection("Location").document(locationID).collection("Events")
-                                    .document(eventID).collection("Attendees")
-                                    .document(doc.get("userID").toString())
-                                    .delete()
-                            }
-                        }
-                }
+    }
 
+    private fun makeHost(newHostID: String) {
+        db.collection("Location").document(locationID).collection("Events").document(eventID)
+            .update("hostID", newHostID)
 
-                // delete the eventID from the host's hosting list
-                db.collection("User").document(uid).collection("Hosting").document(eventID)
-                    .delete()
-                    .addOnSuccessListener {
-                        Log.d(
-                            "LOG_TAG",
-                            "Successfully deleted eventID from userHostingList"
-                        )
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(
-                            "LOG_TAG",
-                            "Error deleting eventID from userHostingList",
-                            e
-                        )
-                    }
+        val hostingHashMap = hashMapOf(
+            "locationID" to locationID,
+            "eventID" to eventID
+        )
 
-
-                // remove the event document from the location collection
-                db.collection("Location").document(locationID).collection("Events")
-                    .document(eventID)
-                    .delete()
-                    .addOnSuccessListener {
-                        Log.d(
-                            "LOG_TAG",
-                            "Event successfully deleted!"
-                        )
-                    }
-                    .addOnFailureListener { e -> Log.w("LOG_TAG", "Error deleting Event", e) }
-                Toast.makeText(this, "Successfully cancelled event", Toast.LENGTH_SHORT)
-                    .show()
-
-
+        // add the hosting data to the user
+        db.collection("User")
+            .document(FirebaseAuth.getInstance().uid.toString())
+            .collection("Hosting").document(eventID)
+            .set(hostingHashMap, SetOptions.merge())
+            .addOnSuccessListener {
                 val intent = Intent(this, LandingPageActivity::class.java)
                 startActivity(intent)
-
-
-            }
-            .addOnFailureListener { exception ->
-                Log.w("LOG_TAG", "Error getting documents: ", exception)
             }
     }
 
@@ -371,8 +347,7 @@ class event : AppCompatActivity() {
             .document(FirebaseAuth.getInstance().uid.toString())
             .delete()
             .addOnSuccessListener {
-                Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
-                    .show()
+
             }
             .addOnFailureListener { e ->
                 Log.w(

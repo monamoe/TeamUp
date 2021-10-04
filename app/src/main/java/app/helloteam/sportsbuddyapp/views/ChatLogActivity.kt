@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +36,13 @@ class ChatLogActivity : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("userName")
         listenForMessages(this)
 
+        Firebase.firestore.collection("User").document(intent.getStringExtra("member").toString())
+            .get().addOnSuccessListener {
+                if(!it.exists()){
+                    findViewById<Button>(R.id.chatButton).isClickable = false
+                    Toast.makeText(this, "This user no longer exists", Toast.LENGTH_SHORT).show()
+                }
+            }
 
 
         findViewById<Button>(R.id.chatButton).setOnClickListener {

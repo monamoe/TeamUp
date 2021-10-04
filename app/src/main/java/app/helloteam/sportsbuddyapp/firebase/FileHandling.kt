@@ -86,4 +86,8 @@ object FileHandling {
             })
     }
 
+    fun deleteProfilePhoto(userID: String){
+       storageRef.child("users/${userID}/ProfilePic.jpg").delete()
+    }
+
 }

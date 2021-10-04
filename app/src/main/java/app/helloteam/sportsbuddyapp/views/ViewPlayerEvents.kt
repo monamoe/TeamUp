@@ -75,7 +75,7 @@ class ViewPlayerEvents : AppCompatActivity() {
                                                     event.get("activity").toString(),
                                                     address,
                                                     eventTime.toString(),
-                                                    hostname
+                                                    if (hostname == "null") "No Host" else hostname
                                                 )
                                                 eventList.add(ED);
 
