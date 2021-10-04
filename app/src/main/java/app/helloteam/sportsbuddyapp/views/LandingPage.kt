@@ -560,7 +560,7 @@ fun useIntentOnRoute(context: Context, route: String) {
         "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
         "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
         "map" -> intent = Intent(context, map::class.java)
-//        "notifications" -> intent = Intent(context, notifications::class.java)
+        "teams" -> intent = Intent(context, TeamsActivity::class.java)
         "profile" -> intent = Intent(context, ProfilePage::class.java)
         else -> {
             Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")

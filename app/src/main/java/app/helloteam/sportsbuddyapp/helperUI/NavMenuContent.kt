@@ -70,10 +70,9 @@ private val items = listOf(
         icon = Icons.Default.Favorite,
     ),
     NavMenuContent(
-        title = "Notifications",
-        route = "notifications",
-        icon = Icons.Default.Notifications,
-        badgeCount = 4
+        title = "Teams",
+        route = "teams",
+        icon = Icons.Default.Notifications
     ),
     NavMenuContent(
         title = "Profile",
