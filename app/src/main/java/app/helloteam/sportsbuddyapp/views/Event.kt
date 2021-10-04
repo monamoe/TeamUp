@@ -33,8 +33,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-
-
 class event : AppCompatActivity() {
 
     var userId: String = "0000000"
@@ -60,7 +58,7 @@ class event : AppCompatActivity() {
         // get id for the event selected
         eventID = intent.getStringExtra("eventID").toString()
         locationID = intent.getStringExtra("locationID").toString()
-        TeamHandling.getTeam(listview,this, "Event", eventID, locationID)
+        TeamHandling.getTeam(listview, this, "Event", eventID, locationID)
         EventHandling.getAttendees(listViewAttendees, this, locationID, eventID)
         // ui fields to data from the event database
         val attendBtn = findViewById<Button>(R.id.attendBtn)
@@ -87,7 +85,7 @@ class event : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (!document.exists()) {
-                    val intent = Intent(this, LandingPageActivity::class.java)
+                    val intent = Intent(this, LandingPage2::class.java)
                     startActivity(intent)
                     Toast.makeText(this, "Event No Longer Exsists", Toast.LENGTH_SHORT).show()
                 } else {
@@ -113,7 +111,8 @@ class event : AppCompatActivity() {
                     db.collection("Location").document(locationID).get()
                         .addOnSuccessListener { loc ->
                             information.setText(loc.get("Location Name").toString())
-                            Glide.with(this).load(loc.get("StreetView").toString()).into(findViewById(R.id.eventImage));
+                            Glide.with(this).load(loc.get("StreetView").toString())
+                                .into(findViewById(R.id.eventImage));
                         }
 
                     val hostID = document.get("hostID").toString()
@@ -191,17 +190,17 @@ class event : AppCompatActivity() {
                 }
             }
         }
-        findViewById<LinearLayout>(R.id.inviteLayout).setOnClickListener{
+        findViewById<LinearLayout>(R.id.inviteLayout).setOnClickListener {
             findViewById<ExpandableLayout>(R.id.expandable_layout).toggle()
-            if(findViewById<ExpandableLayout>(R.id.expandable_layout).isExpanded){
+            if (findViewById<ExpandableLayout>(R.id.expandable_layout).isExpanded) {
                 findViewById<TextView>(R.id.inviteText).setText("Invite Team Members ▼")
             } else {
                 findViewById<TextView>(R.id.inviteText).setText("Invite Team Members ►")
             }
         }
-        findViewById<LinearLayout>(R.id.attendeeLayout).setOnClickListener{
+        findViewById<LinearLayout>(R.id.attendeeLayout).setOnClickListener {
             findViewById<ExpandableLayout>(R.id.expandable_layout_attendees).toggle()
-            if(findViewById<ExpandableLayout>(R.id.expandable_layout_attendees).isExpanded){
+            if (findViewById<ExpandableLayout>(R.id.expandable_layout_attendees).isExpanded) {
                 findViewById<TextView>(R.id.attendeeText).setText("View Attendees ▼")
             } else {
                 findViewById<TextView>(R.id.attendeeText).setText("View Attendees ►")
@@ -216,7 +215,8 @@ class event : AppCompatActivity() {
                     removeAttendance()
                     Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
                         .show()
-                    val intent = Intent(context, LandingPageActivity::class.java)
+
+                    val intent = Intent(context, LandingPage2::class.java)
                     startActivity(intent)
                 }
                 negativeButton(R.string.cancel)

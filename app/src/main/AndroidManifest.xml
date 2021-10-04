@@ -30,7 +30,7 @@
         <activity
             android:name=".views.LandingPage2"
             android:exported="true"
-            android:label="@string/title_activity_landing_page2"
+            android:label="LandingPage"
             android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.ChatLogActivity"

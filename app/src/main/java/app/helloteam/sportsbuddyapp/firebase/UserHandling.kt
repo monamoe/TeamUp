@@ -3,9 +3,7 @@ package app.helloteam.sportsbuddyapp.firebase
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import app.helloteam.sportsbuddyapp.views.LandingPageActivity
 import app.helloteam.sportsbuddyapp.views.LoginActivity
-import app.helloteam.sportsbuddyapp.views.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -52,15 +50,18 @@ object UserHandling {
     }
 
     fun userDelete(currentUser: FirebaseUser?, context: Context) {
-        val ref =  FirebaseDatabase.getInstance()
+        val ref = FirebaseDatabase.getInstance()
         val db = Firebase.firestore
-        ref.getReference("/latest-messages").child(currentUser?.uid.toString()).removeValue()//delete messages
-        ref.getReference("/user-messages").child(currentUser?.uid.toString()).removeValue()//delete messages
-        db.collection("User_Messages_Archive").document(currentUser?.uid.toString()).delete()//delete message archives
+        ref.getReference("/latest-messages").child(currentUser?.uid.toString())
+            .removeValue()//delete messages
+        ref.getReference("/user-messages").child(currentUser?.uid.toString())
+            .removeValue()//delete messages
+        db.collection("User_Messages_Archive").document(currentUser?.uid.toString())
+            .delete()//delete message archives
         FileHandling.deleteProfilePhoto(currentUser?.uid.toString())//delete user profile image
         db.collection("User").document(currentUser?.uid.toString()).collection("Hosting")
             .get().addOnSuccessListener { hosts ->
-                for(host in hosts){
+                for (host in hosts) {
                     db.collection("Location").document(host.get("locationID").toString())
                         .collection("Events").document(host.get("eventID").toString())
                         .update("hostID", "null")
@@ -72,25 +73,32 @@ object UserHandling {
 
                 db.collection("User").document(currentUser?.uid.toString()).collection("FriendCode")
                     .get().addOnSuccessListener { friends ->
-                        for(friend in friends){
-                            db.collection("User").document(currentUser?.uid.toString()).collection("FriendCode")
+                        for (friend in friends) {
+                            db.collection("User").document(currentUser?.uid.toString())
+                                .collection("FriendCode")
                                 .document(friend.id).delete()
                         }
 
-                        db.collection("User").document(currentUser?.uid.toString()).collection("Attendees")
+                        db.collection("User").document(currentUser?.uid.toString())
+                            .collection("Attendees")
                             .get().addOnSuccessListener { attends ->
-                                for (attend in attends){
-                                    db.collection("User").document(currentUser?.uid.toString()).collection("Attendees")
+                                for (attend in attends) {
+                                    db.collection("User").document(currentUser?.uid.toString())
+                                        .collection("Attendees")
                                         .document(attend.id).delete()
                                 }
-                                db.collection("User").document(currentUser?.uid.toString()).collection("Team")
+                                db.collection("User").document(currentUser?.uid.toString())
+                                    .collection("Team")
                                     .get().addOnSuccessListener { teams ->
-                                        for (team in teams){
-                                            db.collection("User").document(currentUser?.uid.toString()).collection("Team")
+                                        for (team in teams) {
+                                            db.collection("User")
+                                                .document(currentUser?.uid.toString())
+                                                .collection("Team")
                                                 .document(team.id).delete()
                                         }
                                     }
-                                db.collection("User").document(currentUser?.uid.toString()).delete()//delete user from user table
+                                db.collection("User").document(currentUser?.uid.toString())
+                                    .delete()//delete user from user table
                             }
                     }
             }

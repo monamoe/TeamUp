@@ -657,7 +657,7 @@ fun useIntentOnRoute(context: Context, route: String) {
 //    }
 //}
 
-//
+// DONT DELETE THIS YET WE NEED THIS TO ADD INFORMATION ONTO THE LANDING PAGE - AK
 //class LandingPageActivity() : Fragment(), Parcelable {
 //
 //    override fun onCreate(
@@ -853,11 +853,3 @@ fun useIntentOnRoute(context: Context, route: String) {
 //        return arrayOfNulls(size)
 //    }
 //}
-
-
-
-
-
-
-
-
