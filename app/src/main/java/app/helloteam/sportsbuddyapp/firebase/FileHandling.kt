@@ -32,28 +32,29 @@ object FileHandling {
     fun getStorageRef(): StorageReference {
         return storageRef
     }
-    fun uploadProfileImage(imageUri: Uri, context: Context){
+
+    fun uploadProfileImage(imageUri: Uri, context: Context) {
         val user = FirebaseAuth.getInstance().currentUser
 
-                val fileRef = storageRef.child("users/${user?.uid}/ProfilePic.jpg")
-                fileRef.putFile(imageUri).addOnSuccessListener {
-                    Log.i("Image", "Uploaded")
-                    fileRef.downloadUrl.addOnCompleteListener {
-                        val profileUpdates = UserProfileChangeRequest.Builder()
-                            .setPhotoUri(it.result)
-                            .build()
+        val fileRef = storageRef.child("users/${user?.uid}/ProfilePic.jpg")
+        fileRef.putFile(imageUri).addOnSuccessListener {
+            Log.i("Image", "Uploaded")
+            fileRef.downloadUrl.addOnCompleteListener {
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setPhotoUri(it.result)
+                    .build()
 
-                        user!!.updateProfile(profileUpdates)
-                            .addOnCompleteListener { task ->
-                                db.collection("User").document(user.uid).update(
-                                    mapOf(
-                                        "photoUrl" to it.result.toString()
-                                    )
-                                )
-                                Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show()
-                            }
+                user!!.updateProfile(profileUpdates)
+                    .addOnCompleteListener { task ->
+                        db.collection("User").document(user.uid).update(
+                            mapOf(
+                                "photoUrl" to it.result.toString()
+                            )
+                        )
+                        Toast.makeText(context, "Updated", Toast.LENGTH_SHORT).show()
                     }
-                }
+            }
+        }
     }
 
     fun uploadEventImage(context: Context, lat: String, long: String, locationID: String){

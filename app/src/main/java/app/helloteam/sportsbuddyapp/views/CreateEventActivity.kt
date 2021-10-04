@@ -231,7 +231,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                                     .collection("Hosting").document(eventID)
                                     .set(hostingHashMap, SetOptions.merge())
                                     .addOnSuccessListener {
-                                        val intent = Intent(this, LandingPageActivity::class.java)
+                                        val intent = Intent(this, LandingPage2::class.java)
                                         startActivity(intent)
                                     }
                             }

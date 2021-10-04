@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -24,6 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_key" />
+
+        <activity
+            android:name=".views.LandingPage2"
+            android:exported="true"
+            android:label="@string/title_activity_landing_page2"
+            android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.ChatLogActivity"
             android:exported="true" />
@@ -47,18 +55,14 @@
             android:exported="true" />
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_key" />
-
         <activity android:name=".views.eventslist" />
         <activity android:name=".views.event" />
         <activity android:name=".views.CreateEventActivity" />
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.RegisterActivity" />
-        <activity android:name=".views.LandingPageActivity" />
+
+
         <activity android:name=".views.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

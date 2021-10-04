@@ -247,7 +247,7 @@ class event : AppCompatActivity() {
             .collection("Hosting").document(eventID)
             .set(hostingHashMap, SetOptions.merge())
             .addOnSuccessListener {
-                val intent = Intent(this, LandingPageActivity::class.java)
+                val intent = Intent(this, LandingPage2::class.java)
                 startActivity(intent)
             }
     }
@@ -308,8 +308,7 @@ class event : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-
-                    val intent = Intent(this, LandingPageActivity::class.java)
+                    val intent = Intent(this, LandingPage2::class.java)
                     startActivity(intent)
 
                 } else {
@@ -369,7 +368,7 @@ class event : AppCompatActivity() {
                 )
             }
 
-        val intent = Intent(this, LandingPageActivity::class.java)
+        val intent = Intent(this, LandingPage2::class.java)
         startActivity(intent)
     }
 }

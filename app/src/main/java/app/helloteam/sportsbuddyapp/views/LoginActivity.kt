@@ -4,10 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -25,8 +29,112 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
+
+@SuppressLint("StaticFieldLeak")
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
+
+//
+//class LoginActivity : AppCompatActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            TeamUpTheme {
+//                LoginPage()
+//            }
+//        }
+//    }
+//}
+//
+//
+//@Preview
+//@Composable
+//fun LoginScreenPreview() {
+//    TeamUpTheme {
+//        LoginPage()
+//    }
+//}
+//
+//
+//@Composable
+//fun LoginPage() {
+//    val logo = painterResource(id = R.drawable.logoteamupsmall)
+//    val emailValue = remember { mutableStateOf("") }
+//    val passwordValue = remember { mutableStateOf("") }
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.Black),
+//        contentAlignment = Alignment.TopCenter
+//    ) {
+//        Image(logo, null)
+//    }
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(Color.Black)
+//    )
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .fillMaxHeight()
+//    ) {
+//        Text(
+//            text = "Sign In",
+//            style = MaterialTheme.typography.h2,
+//            color = Color.Black
+//        )
+//        Spacer(modifier = Modifier.padding(20.dp))
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            OutlinedTextField(
+//                value = emailValue.value,
+//                onValueChange = { emailValue.value = it },
+//                label = { Text(text = "Email Address") },
+//                placeholder = { Text(text = "Email Address") },
+//                singleLine = true,
+//                modifier = Modifier.fillMaxWidth(9f)
+//            )
+//
+//            OutlinedTextField(
+//                value = passwordValue.value,
+//                onValueChange = { passwordValue.value = it },
+//                visualTransformation = PasswordVisualTransformation(),
+//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+//                label = { Text(text = "Password") },
+//                placeholder = { Text(text = "Password") },
+//                singleLine = true,
+//                modifier = Modifier.fillMaxWidth(9f)
+//            )
+//
+//            Spacer(modifier = Modifier.padding(10.dp))
+//            Button(
+//                onClick = {},
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(50.dp)
+//            ) {
+//                Text(text = "Sign In", style = MaterialTheme.typography.h1)
+//            }
+//
+//            Spacer(modifier = Modifier.padding(20.dp))
+//            Text(text = "Create an Account", modifier = Modifier.clickable { })
+//            Spacer(modifier = Modifier.padding(20.dp))
+//
+//            Button(
+//                onClick = {},
+//                modifier = Modifier
+//                    .padding(10.dp)
+//                    .height(30.dp)
+//            ) {
+//                Text(text = "Sign In With Google", color = Color.Black)
+//            }
+//        }
+//    }
+//}
 
 
 class LoginActivity : AppCompatActivity() {
@@ -38,7 +146,9 @@ class LoginActivity : AppCompatActivity() {
 
         val gso =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // set up google sign in
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(
+                    R.string.googlesigninoptionsrequestidtoken.toString()
+                )
                 .requestEmail()
                 .build()
 
@@ -129,7 +239,8 @@ class LoginActivity : AppCompatActivity() {
                             "LOG_TAG",
                             "Login failed: " + it.localizedMessage
                         )
-                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Login Error ${it.message} ", Toast.LENGTH_SHORT)
+                            .show()
                     }
             }
         }
@@ -137,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
 
     //go to landing activity when called
     fun toLanding() {
-        val intent = Intent(this, LandingPageActivity::class.java)
+        val intent = Intent(this, LandingPage2::class.java)
         startActivity(intent)
         finish()
     }
@@ -181,7 +292,8 @@ class LoginActivity : AppCompatActivity() {
                         "distance" to 20
                     )
                     Firebase.firestore.collection("User")
-                        .document(FirebaseAuth.getInstance().uid.toString()).get().addOnSuccessListener { x ->
+                        .document(FirebaseAuth.getInstance().uid.toString()).get()
+                        .addOnSuccessListener { x ->
                             if (!x.exists()) {
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())

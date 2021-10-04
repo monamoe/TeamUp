@@ -21,14 +21,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import app.helloteam.sportsbuddyapp.views.LandingPageActivity;
 
 public class weatherTask extends AsyncTask<String, Void, String> {
 
     public ImageView x;
-    public weatherTask(ImageView im){
+
+    public weatherTask(ImageView im) {
         x = im;
     }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -59,13 +60,13 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
 
-
-            getTemp().setText(temperature + "°C");
-            getForecast().setText(cast.toUpperCase());
+//
+//            getTemp().setText(temperature + "°C");
+//            getForecast().setText(cast.toUpperCase());
 
             Picasso.get().load(iconUrl).into(x);
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
