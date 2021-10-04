@@ -221,14 +221,8 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                                     .collection("Hosting").document(eventID)
                                     .set(hostingHashMap, SetOptions.merge())
                                     .addOnSuccessListener {
-                                        Toast.makeText(
-                                            this,
-                                            "GOES TO LANDING PAGE",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-//                                        val intent = Intent(this, LandingPageActivity::class.java)
-//                                        startActivity(intent)
+                                        val intent = Intent(this, LandingPage2::class.java)
+                                        startActivity(intent)
                                     }
                             }
                             .addOnFailureListener { e ->

@@ -238,10 +238,8 @@ class event : AppCompatActivity() {
 
 
 
-                Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
-                    .show()
-//                val intent = Intent(this, LandingPageActivity::class.java)
-//                startActivity(intent)
+                val intent = Intent(this, LandingPage2::class.java)
+                startActivity(intent)
 
 
             }
@@ -306,10 +304,8 @@ class event : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
-                        .show()
-//                    val intent = Intent(this, LandingPageActivity::class.java)
-//                    startActivity(intent)
+                    val intent = Intent(this, LandingPage2::class.java)
+                    startActivity(intent)
 
                 } else {
                     Toast.makeText(
@@ -369,9 +365,7 @@ class event : AppCompatActivity() {
                 )
             }
 
-        Toast.makeText(this, "GOES TO LANDING PAGE", Toast.LENGTH_SHORT)
-            .show()
-//        val intent = Intent(this, LandingPageActivity::class.java)
-//        startActivity(intent)
+        val intent = Intent(this, LandingPage2::class.java)
+        startActivity(intent)
     }
 }

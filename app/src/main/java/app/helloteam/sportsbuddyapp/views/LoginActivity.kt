@@ -147,7 +147,7 @@ class LoginActivity : AppCompatActivity() {
         val gso =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // set up google sign in
                 .requestIdToken(
-                    "840139376516-14h5dujlu51sgqdisv2fak4tccanau65.apps.googleusercontent.com"
+                    R.string.googlesigninoptionsrequestidtoken.toString()
                 )
                 .requestEmail()
                 .build()

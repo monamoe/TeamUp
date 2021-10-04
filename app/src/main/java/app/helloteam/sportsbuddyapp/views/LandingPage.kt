@@ -169,36 +169,6 @@ fun LandingPageCompose() {
         },
         bottomBar = {
             BottomNavigationBar(
-                items = listOf(
-                    NavMenuContent(
-                        title = "Home",
-                        route = "home",
-                        icon = Icons.Default.Home,
-                    ),
-                    NavMenuContent(
-                        title = "Messages",
-                        route = "chat",
-                        icon = Icons.Default.Email,
-                        badgeCount = 5
-
-                    ),
-                    NavMenuContent(
-                        title = "Map",
-                        route = "map",
-                        icon = Icons.Default.Favorite,
-                    ),
-                    NavMenuContent(
-                        title = "Notifications",
-                        route = "notifications",
-                        icon = Icons.Default.Notifications,
-                        badgeCount = 4
-                    ),
-                    NavMenuContent(
-                        title = "Profile",
-                        route = "profile",
-                        icon = Icons.Default.Person
-                    ),
-                ),
                 navController = navController,
                 onItemClicker = {
                     navController.navigate(it.route)
@@ -593,91 +563,6 @@ private fun ContentDivider() {
     )
 }
 
-
-@Composable
-fun Navigation(
-    navController: NavHostController
-) {
-    NavHost(navController = navController, startDestination = "home") {
-        composable(route = "home") {
-
-        }
-        composable(route = "messaging") {
-
-        }
-        composable(route = "map") {
-
-        }
-        composable(route = "notifications") {
-
-        }
-        composable(route = "profile") {
-
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun BottomNavigationBar(
-    items: List<NavMenuContent>,
-    navController: NavController,
-    modifier: Modifier = Modifier,
-    onItemClicker: (NavMenuContent) -> Unit
-) {
-    val a = navController.currentBackStackEntryAsState()
-    val currentcontext = LocalContext.current
-    BottomNavigation(
-        elevation = 5.dp,
-        backgroundColor = colorResource(id = R.color.primaryDarkColor),
-        modifier = modifier
-    ) {
-//        RowScope
-        items.forEach { item ->
-            val selected = item.route == a.value?.destination?.route
-            BottomNavigationItem(
-                selected = selected,
-                onClick = {
-                    useIntentOnRoute(currentcontext, item.route)
-                },
-                selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
-                unselectedContentColor = Color.Gray,
-                icon = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (item.badgeCount > 0) {
-                            BadgeBox(
-                                badgeContent = {
-                                    Text(
-                                        text = item.badgeCount.toString()
-                                    )
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.title
-                                )
-                            }
-                        } else {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.title
-                            )
-                        }
-                        if (selected) {
-                            Text(
-                                text = item.title,
-                                textAlign = TextAlign.Center,
-                                fontSize = 10.sp
-                            )
-                        }
-                    }
-                }
-            )
-        }
-    }
-}
 
 fun useIntentOnRoute(context: Context, route: String) {
     var intent = Intent(context, LandingPage2::class.java)
