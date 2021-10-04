@@ -13,34 +13,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.EventCard
-import app.helloteam.sportsbuddyapp.helperUI.NavMenuContent
-import app.helloteam.sportsbuddyapp.views.ui.theme.*
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.views.ui.theme.*
 
 class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -563,15 +550,18 @@ private fun ContentDivider() {
     )
 }
 
-
+/**
+ * Intent Navigation Router
+ * @param name
+ */
 fun useIntentOnRoute(context: Context, route: String) {
     var intent = Intent(context, LandingPage2::class.java)
     when (route) {
         "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
-//        "messages" -> intent = Intent(context, messages::class.java)
+        "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
         "map" -> intent = Intent(context, map::class.java)
 //        "notifications" -> intent = Intent(context, notifications::class.java)
-        "profile" -> intent = Intent(context, EditProfilePage::class.java)
+        "profile" -> intent = Intent(context, ProfilePage::class.java)
         else -> {
             Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
         }

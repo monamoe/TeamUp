@@ -28,10 +28,15 @@ import com.google.firebase.ktx.Firebase
 class LatestMessagesActivity : AppCompatActivity() {
     var messagesList = ArrayList<LatestAdapter.MessageDisplayer>()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
         var adapter = LatestAdapter(messagesList, this)
+
+
+        Log.i("LOG_TAG", "INSIDE LATEST MESSAGE ACTIVITY")
+
 
         listenForLatestMessages(this, adapter)
         if(messagesList.size > 0) {
