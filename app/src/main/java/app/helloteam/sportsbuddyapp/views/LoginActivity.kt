@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.NotificationHandling
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -169,6 +170,7 @@ class LoginActivity : AppCompatActivity() {
                 testUser = document.get("testUser").toString().toBoolean()
                 if (user != null && (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true || testUser)) {
                     toLanding()
+                    NotificationHandling.getCurrentToken(this)
                 }
             }
 
@@ -228,6 +230,7 @@ class LoginActivity : AppCompatActivity() {
                                     testUser = document.get("testUser").toString().toBoolean()
                                     if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
+                                        NotificationHandling.getCurrentToken(this)
                                     } else {
                                         Toast.makeText(this, "Verify Email", Toast.LENGTH_LONG)
                                             .show()
@@ -315,6 +318,7 @@ class LoginActivity : AppCompatActivity() {
                                     }
                             }
                             toLanding()
+                            NotificationHandling.getCurrentToken(this)
                         }
 
 
