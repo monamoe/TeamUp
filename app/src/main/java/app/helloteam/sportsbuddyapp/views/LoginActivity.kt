@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.InviteHandling
 import app.helloteam.sportsbuddyapp.firebase.NotificationHandling
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -171,6 +172,7 @@ class LoginActivity : AppCompatActivity() {
                 if (user != null && (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true || testUser)) {
                     toLanding()
                     NotificationHandling.getCurrentToken(this)
+                    //InviteHandling.listenForInvites(this)
                 }
             }
 
@@ -231,6 +233,7 @@ class LoginActivity : AppCompatActivity() {
                                     if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
                                         NotificationHandling.getCurrentToken(this)
+                                       // InviteHandling.listenForInvites(this)
                                     } else {
                                         Toast.makeText(this, "Verify Email", Toast.LENGTH_LONG)
                                             .show()
@@ -319,6 +322,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                             toLanding()
                             NotificationHandling.getCurrentToken(this)
+                            //InviteHandling.listenForInvites(this)
                         }
 
 
