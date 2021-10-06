@@ -1,12 +1,16 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,24 +23,59 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
+import kotlinx.coroutines.*
+import java.util.concurrent.TimeUnit
+
+//context
+@SuppressLint("StaticFieldLeak")
+lateinit private var currentcontext: Context
+
+lateinit private var username: String
+
+lateinit private var userLocation: String
+lateinit private var weatherIcon: Icon
+lateinit private var weatherString: Icon
+
+private lateinit var hostingAttendingEventList: List<EventCard>
 
 class LandingPage2 : ComponentActivity() {
+
+
+    private val viewModel: LandingPageViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        hostingAttendingEventList = viewModel.eventList.value
+//        for (event in hostingAttendingEventList) {
+//            Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
+//        }
+
         setContent {
 
+
+            currentcontext = LocalContext.current
+
+            // compose UI
             TeamUpTheme() {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -67,7 +106,9 @@ fun DefaultPreview() {
 @Composable
 fun LandingPageCompose() {
 
+
     val navController = rememberNavController()
+
     Scaffold(
         content = {
             Box(
@@ -77,85 +118,40 @@ fun LandingPageCompose() {
                     .verticalScroll(rememberScrollState())
             ) {
                 Column {
-                    GreetingSection("AK")
+                    // greeting
+                    GreetingSection()
 //                    ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
                     CurrentWeather()
 
                     ContentDivider()
-//            val title: String,
-//            val id: String,
-//            val imageId: String,
-//            @DrawableRes
-//            val activityIcon: Int,
-//            val lightColor: Color,
-//            val mediumColor: Color,
-//            val darkColor: Color,
-//            val isHosting: Boolean,
-//            val hostName: String,
-                    val eventList = listOf(
-                        EventCard(
-                            "5v5 Soccer",
-                            "eventID",
-                            "imageID",
-                            R.drawable.common_google_signin_btn_icon_light,
-                            BlueViolet1,
-                            BlueViolet2,
-                            BlueViolet3,
-                            false,
-                            "AK",
-                            "Playing soccer with a couple friends, feel free to join in"
-                        ),
-                        EventCard(
-                            "Basket Ball",
-                            "eventID",
-                            "imageID",
-                            R.drawable.common_google_signin_btn_icon_light,
-                            BlueViolet1,
-                            BlueViolet2,
-                            BlueViolet3,
-                            false,
-                            "Riley Gray",
-                            "Looking for 4 more players so we can play full court basketball"
-                        ),
-                        EventCard(
-                            "Ultimate Frisbee Players",
-                            "eventID",
-                            "imageID",
-                            R.drawable.common_google_signin_btn_icon_light,
-                            BlueViolet1,
-                            BlueViolet2,
-                            BlueViolet3,
-                            false,
-                            "Nathan Hill",
-                            "I got a new frisbee, lets play some games"
-                        ),
-                        EventCard(
-                            "Street Hockey",
-                            "eventID",
-                            "imageID",
-                            R.drawable.common_google_signin_btn_icon_light,
-                            BlueViolet1,
-                            BlueViolet2,
-                            BlueViolet3,
-                            false,
-                            "Riley Gray",
-                            "We are playing Hockey and need more people, bring your own stick!"
-                        ),
+
+
+                    // your events section
+                    ContentDivider()
+                    EventScroll()
+
+                    // content divider
+                    ContentDivider()
+                    RecommendedEventScroll(
+                        listOf(
+                            EventCard(
+                                "Title",
+                                "eventid",
+                                "imageId",
+                                true,
+                                "Host Name",
+                                "HAHAHAH",
+                                3,
+                                2,
+                            )
+                        )
                     )
 
-                    EventScroll(
-                        events = eventList
-//                navigateToEvent
-                    )
 
                     ContentDivider()
-                    RecommendedEventScroll(events = eventList)
-
-
+                    CreateEventButton()
                 }
             }
-
-
         },
         bottomBar = {
             BottomNavigationBar(
@@ -166,6 +162,32 @@ fun LandingPageCompose() {
             )
         }
     )
+}
+
+@Composable
+fun CreateEventButton() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    var intent = Intent(currentcontext, CreateEventActivity::class.java)
+                    currentcontext.startActivity(intent)
+                }, colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Blue
+                )
+            ) {
+                Text("Create Event")
+            }
+        }
+    }
 }
 
 
@@ -308,6 +330,13 @@ fun RecommendedEventScroll(
     }
 }
 
+// state hoisting
+//@Composable
+//fun HelloScreen() {
+//    events: List<EventCard>,
+//
+//}
+
 
 /**
  * Horizontal scrolling cards for your events
@@ -318,22 +347,22 @@ fun RecommendedEventScroll(
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EventScroll(
-    events: List<EventCard>
-) {
+fun EventScroll() {
     Column() {
         Text(
             text = "Your Events",
             style = MaterialTheme.typography.h1,
             color = colorResource(id = R.color.secondaryTextColor),
-            modifier = Modifier.padding(15.dp)
+            modifier = Modifier.padding(15.dp),
         )
-        LazyRow(
-        ) {
-            items(events) { state ->
+        LazyRow() {
+
+
+
+
+            items(hostingAttendingEventList) { event ->
                 EventCard(
-                    state,
-//                    navigateToEvent,
+                    event,
                     Modifier.padding(start = 16.dp, bottom = 16.dp)
                 )
             }
@@ -344,7 +373,6 @@ fun EventScroll(
 @Composable
 fun EventCard(
     event: EventCard,
-//    navigateToArticle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -359,61 +387,7 @@ fun EventCard(
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.secondaryColor))
         ) {
-//            val width = constraints.maxWidth
-//            val height = constraints.maxHeight
-//
-//
-//            // Medium colored path
-//            val mediumColoredPoint1 = Offset(0f, height * 0.3f)
-//            val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
-//            val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
-//            val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
-//            val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
-//
-//            val mediumColoredPath = Path().apply {
-//                moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
-//                standardQuadFromTo(mediumColoredPoint1, mediumColoredPoint2)
-//                standardQuadFromTo(mediumColoredPoint2, mediumColoredPoint3)
-//                standardQuadFromTo(mediumColoredPoint3, mediumColoredPoint4)
-//                standardQuadFromTo(mediumColoredPoint4, mediumColoredPoint5)
-//                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-//                lineTo(-100f, height.toFloat() + 100f)
-//                close()
-//            }
-//
-//            // Light colored path
-//            val lightPoint1 = Offset(0f, height * 0.35f)
-//            val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
-//            val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
-//            val lightPoint4 = Offset(width * 0.65f, height.toFloat())
-//            val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
-//
-//            val lightColoredPath = Path().apply {
-//                moveTo(lightPoint1.x, lightPoint1.y)
-//                standardQuadFromTo(lightPoint1, lightPoint2)
-//                standardQuadFromTo(lightPoint2, lightPoint3)
-//                standardQuadFromTo(lightPoint3, lightPoint4)
-//                standardQuadFromTo(lightPoint4, lightPoint5)
-//                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-//                lineTo(-100f, height.toFloat() + 100f)
-//                close()
-//            }
-//            Canvas(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//            ) {
-//                drawPath(
-//                    path = mediumColoredPath,
-//                    color = event.mediumColor
-//                )
-//                drawPath(
-//                    path = lightColoredPath,
-//                    color = event.lightColor
-//                )
-//            }
 
-
-            //        Column(modifier = Modifier.clickable(onClick = { navigateToArticle(event.id) })) {
             Column(modifier = Modifier.clickable(onClick = { })) {
 
                 // banner image TO DO GET THIS TO WORK
@@ -448,97 +422,6 @@ fun EventCard(
         }
     }
 
-//    BoxWithConstraints(
-//        modifier = Modifier
-//            .padding(7.5.dp)
-//            .aspectRatio(1f)
-//            .clip(RoundedCornerShape(10.dp))
-//            .background(event.darkColor)
-//    ) {
-//        // draw path
-//        val width = constraints.maxWidth
-//        val height = constraints.maxHeight
-//
-//        //create a point generation function
-//
-//        // dark path
-//        val darkColoredPoint1 = Offset(0f, height * 0.3f)
-//        val darkColoredPoint2 = Offset(width * 0.1f, height * 0.35f)
-//        val darkColoredPoint3 = Offset(width * 0.4f, height * 0.05f)
-//        val darkColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
-//        val darkColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
-//
-//        val mediumColoredPath = Path().apply {
-//            moveTo(darkColoredPoint1.x, darkColoredPoint1.y)
-//            standardQuadFromTo(darkColoredPoint1, darkColoredPoint2)
-//            standardQuadFromTo(darkColoredPoint2, darkColoredPoint3)
-//            standardQuadFromTo(darkColoredPoint3, darkColoredPoint4)
-//            standardQuadFromTo(darkColoredPoint4, darkColoredPoint5)
-//            //out of box points
-//            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-//            lineTo(-100f, height.toFloat() + 100f)
-//            close()
-//        }
-//
-//        val lightPoint1 = Offset(0f, height * 0.35f)
-//        val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
-//        val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
-//        val lightPoint4 = Offset(width * 0.65f, height.toFloat())
-//        val lightPoint5 = Offset(width * 1.4f, -height.toFloat() / 3f)
-//
-//        val lightColoredPath = Path().apply {
-//            moveTo(lightPoint1.x, lightPoint1.y)
-//            standardQuadFromTo(lightPoint1, lightPoint2)
-//            standardQuadFromTo(lightPoint2, lightPoint3)
-//            standardQuadFromTo(lightPoint3, lightPoint4)
-//            standardQuadFromTo(lightPoint4, lightPoint5)
-//            lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
-//            lineTo(-100f, height.toFloat() + 100f)
-//            close()
-//        }
-//        Canvas(modifier = Modifier.fillMaxSize()) {
-//            drawPath(
-//                path = mediumColoredPath,
-//                color = event.mediumColor
-//            )
-//            drawPath(
-//                path = lightColoredPath,
-//                color = event.lightColor
-//            )
-//        }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(15.dp)
-//        ) {
-//            Text(
-//                text = event.title,
-//                style = MaterialTheme.typography.h2,
-//                lineHeight = 26.sp,
-//                modifier = Modifier.align(Alignment.TopStart)
-//            )
-////                Icon(
-////                    painter = painterResource(id = feature.IconID),
-////                    contentDescription = feature.title,
-////                    tint = Color.White,
-////                    modifier = Modifier.align(Alignment.BottomStart),
-////                )
-//            Text(
-//                text = "Start",
-//                color = TextWhite,
-//                fontSize = 14.sp,
-//                fontWeight = FontWeight.Bold,
-//                modifier = Modifier
-//                    .clickable {
-//                        // go to event view
-//                    }
-//                    .align(Alignment.BottomEnd)
-//                    .clip(RoundedCornerShape(10.dp))
-//                    .background(ButtonBlue)
-//                    .padding(vertical = 6.dp, horizontal = 15.dp)
-//            )
-//        }
-//    }
 }
 
 
@@ -845,4 +728,101 @@ fun useIntentOnRoute(context: Context, route: String) {
 //    override fun newArray(size: Int): Array<LandingPageActivity?> {
 //        return arrayOfNulls(size)
 //    }
+//}
+//
+//
+//fun getHostingAttendingList(userID: String): List<EventCard> {
+//    var eventList: List<EventCard> = emptyList()
+//
+//    var hostingDone: Boolean = false
+//    var attendingDone: Boolean = false
+//
+//    // current user information
+//    db.collection("User").document(userID)
+//        .get()
+//        .addOnSuccessListener { users ->
+//
+//            // hosting
+//            db.collection("User").document(userID).collection("Hosting")
+//                .get()
+//                .addOnSuccessListener { hosting ->
+//                    for (host in hosting) {
+//                        db.collection("Location").document(host.get("locationID").toString())
+//                            .collection("Events").document(host.get("eventID").toString())
+//                            .get()
+//                            .addOnSuccessListener { event ->
+//
+//                                if (users != null) {
+//                                    db.collection("Location")
+//                                        .document(host.get("locationID").toString())
+//                                        .get()
+//                                        .addOnSuccessListener { loc ->
+//
+//                                            eventList +=
+//                                                EventCard(
+//                                                    event.get("title").toString(),
+//                                                    host.get("eventID").toString(),
+//                                                    loc.get("StreetView").toString(),
+//                                                    true,
+//                                                    users.get("userName").toString(),
+//                                                    "Playing soccer with a couple friends, feel free to join in",
+//                                                    event.get("eventSpace").toString().toInt(),
+//                                                    event.get("currentlyAttending").toString()
+//                                                        .toInt(),
+//                                                )
+//                                        }
+//                                }
+//                            }
+//                    }
+//                    hostingDone = true
+//                    Log.i("LOG_TAG", "EVENT DISPLAY: HOSTING DONE ${eventList.toString()}")
+//
+//                }
+//
+//
+//            // attending
+//            db.collection("User").document(userID).collection("Attending")
+//                .get()
+//                .addOnSuccessListener { hosting ->
+//                    for (host in hosting) {
+//                        db.collection("Location")
+//                            .document(host.get("locationID").toString())
+//                            .collection("Events")
+//                            .document(host.get("eventID").toString())
+//                            .get()
+//                            .addOnSuccessListener { event ->
+//
+//                                db.collection("Location")
+//                                    .document(host.get("locationID").toString())
+//                                    .get()
+//                                    .addOnSuccessListener { loc ->
+//                                        eventList +=
+//                                            EventCard(
+//                                                event.get("title").toString(),
+//                                                host.get("eventID").toString(),
+//                                                loc.get("StreetView").toString(),
+//                                                false,
+//                                                users.get("userName").toString(),
+//                                                "Playing soccer with a couple friends, feel free to join in",
+//                                                event.get("eventSpace").toString()
+//                                                    .toInt(),
+//                                                event.get("currentlyAttending")
+//                                                    .toString()
+//                                                    .toInt(),
+//                                            )
+//                                    }
+//                            }
+//                    }
+//                    attendingDone = true
+//                    Log.i("LOG_TAG", "EVENT DISPLAY: ATTENDING DONE ${eventList.toString()}")
+//                }
+//        }
+//
+//    while (true) {
+//        Log.i("LOG_TAG", "EVENT DISPLAY : IN LOOP")
+//        if (!hostingDone && !attendingDone)
+//            break
+//    }
+//
+//    return eventList
 //}
