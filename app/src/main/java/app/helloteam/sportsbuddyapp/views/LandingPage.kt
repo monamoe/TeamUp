@@ -1,6 +1,7 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,10 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import com.google.firebase.auth.FirebaseAuth
 
 class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -764,7 +767,7 @@ fun useIntentOnRoute(context: Context, route: String) {
 //        super.onOptionsItemSelected(item)
 //    }
 //}
-//
+
 //override fun onRequestPermissionsResult(
 //    requestCode: Int,
 //    permissions: Array<out String>,

@@ -80,6 +80,27 @@ class ProfilePage : AppCompatActivity() {
                 if (maxDistance != null) binding.maxDistanceEdit.text = maxDistance.toString() + "KM"
             }
 
+
+        findViewById<Button>(R.id.logoutButton).setOnClickListener {
+            val dialogBuilder = AlertDialog.Builder(this)
+            dialogBuilder.setMessage("Do you want to log out?")
+                .setCancelable(false)
+                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
+                    FirebaseAuth.getInstance().signOut()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.cancel()
+                })
+            val alert = dialogBuilder.create()
+            alert.setTitle("Logout")
+            alert.show()
+            true
+        }
+
+
+
         findViewById<Button>(R.id.editProfileButton).setOnClickListener {
             finish()
             val intent = Intent(this, EditProfilePage::class.java)
