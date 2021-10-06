@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityViewMemberProfileBinding
+import app.helloteam.sportsbuddyapp.firebase.InviteHandling
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -138,30 +139,8 @@ class ViewMemberProfileActivity : AppCompatActivity() {
         }
 
         binding.sendButton.setOnClickListener {
-            val invite = hashMapOf(
-                "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                "receiver" to user,
-                "inviteType" to "Team"
-            )
-
-            db.collection("User").document(user)
-                .collection("Invites")
-                .add(invite)
-                .addOnSuccessListener {
-                    finish()
-                    Toast.makeText(
-                        this,
-                        "Invite Sent",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                .addOnFailureListener {
-                    Toast.makeText(
-                        this,
-                        "Invite Failed",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            finish()
+            InviteHandling.sendTeamInviteFromEvent(user, this)
         }
     }
 }

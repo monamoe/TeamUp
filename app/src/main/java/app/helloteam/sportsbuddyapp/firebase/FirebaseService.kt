@@ -20,24 +20,24 @@ private const val CHANNEL_ID = "my_channel"
 
 class FirebaseService : FirebaseMessagingService(){
 
-    override fun onMessageReceived(message: RemoteMessage){
+    override fun onMessageReceived(message: RemoteMessage){// when user get notif
         super.onMessageReceived(message)
 
-        val intent = Intent(this, TeamInvites::class.java)
+        val intent = Intent(this, TeamInvites::class.java)// set intent that notification will take user too
         val notificationManger = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){ // if phone is at least oreo we need to make a notif channel
             createNotificationChannel(notificationManger)
         }
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)//clear other open intents
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, FLAG_ONE_SHOT)
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(message.data["title"])
-            .setContentText(message.data["message"])
-            .setSmallIcon(R.drawable.ic_android_black)
+            .setContentTitle(message.data["title"]) // set notif title
+            .setContentText(message.data["message"]) //set notif body
+            .setSmallIcon(R.drawable.logoteamupsmall) //set notif image
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .build()

@@ -17,7 +17,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 class NotificationHandling : FirebaseMessagingService() {
 
     companion object{
-        fun getCurrentToken(context: Context) {
+        fun getCurrentToken(context: Context) { //save user tokens to send notifs
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w("Notif", "Fetching FCM registration token failed", task.exception)

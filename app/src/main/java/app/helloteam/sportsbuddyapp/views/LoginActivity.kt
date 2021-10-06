@@ -172,7 +172,6 @@ class LoginActivity : AppCompatActivity() {
                 if (user != null && (FirebaseAuth.getInstance().currentUser?.isEmailVerified == true || testUser)) {
                     toLanding()
                     NotificationHandling.getCurrentToken(this)
-                    //InviteHandling.listenForInvites(this)
                 }
             }
 
@@ -233,7 +232,6 @@ class LoginActivity : AppCompatActivity() {
                                     if (Firebase.auth.currentUser?.isEmailVerified == true || testUser) {
                                         toLanding()
                                         NotificationHandling.getCurrentToken(this)
-                                       // InviteHandling.listenForInvites(this)
                                     } else {
                                         Toast.makeText(this, "Verify Email", Toast.LENGTH_LONG)
                                             .show()
@@ -322,7 +320,6 @@ class LoginActivity : AppCompatActivity() {
                             }
                             toLanding()
                             NotificationHandling.getCurrentToken(this)
-                            //InviteHandling.listenForInvites(this)
                         }
 
 
