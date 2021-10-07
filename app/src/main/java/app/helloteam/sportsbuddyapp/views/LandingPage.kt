@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.os.Handler
 import android.os.SystemClock
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -53,7 +54,7 @@ lateinit private var userLocation: String
 lateinit private var weatherIcon: Icon
 lateinit private var weatherString: Icon
 
-private lateinit var hostingAttendingEventList: List<EventCard>
+private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 
 class LandingPage2 : ComponentActivity() {
 
@@ -63,27 +64,93 @@ class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        hostingAttendingEventList = viewModel.eventList.value
-        for (event in hostingAttendingEventList) {
-            Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
-        }
 
-        setContent {
+        val userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        // event list
+        db.collection("User").document(userID)
+            .get()
+            .addOnSuccessListener { users ->
+
+                // hosting
+                db.collection("User").document(userID).collection("Hosting")
+                    .get()
+                    .addOnSuccessListener { hosting ->
+                        for (host in hosting) {
+                            Log.i("LOG_TAG", "EVENT DISPLAY: THIS USER IS HOSTING AN EVENT:")
+
+                            db.collection("Location")
+                                .document(host.get("locationID").toString())
+                                .collection("Events")
+                                .document(host.get("eventID").toString())
+                                .get()
+                                .addOnSuccessListener { event ->
+                                    if (users != null) {
+                                        db.collection("Location")
+                                            .document(
+                                                host.get("locationID")
+                                                    .toString()
+                                            )
+                                            .get()
+                                            .addOnSuccessListener { loc ->
+                                                Log.i(
+                                                    "LOG_TAG",
+                                                    "EVENT DISPLAY: \t\t Adding event to list"
+                                                )
+                                                hostingAttendingEventList.add(
+                                                    EventCard(
+                                                        event.get("title")
+                                                            .toString(),
+                                                        host.get("eventID")
+                                                            .toString(),
+                                                        loc.get("StreetView")
+                                                            .toString(),
+                                                        true,
+                                                        users.get("userName")
+                                                            .toString(),
+                                                        "Playing soccer with a couple friends, feel free to join in",
+                                                        event.get("eventSpace")
+                                                            .toString()
+                                                            .toInt(),
+                                                        event.get("currentlyAttending")
+                                                            .toString()
+                                                            .toInt(),
+                                                    )
+                                                )
+                                                Log.i("TESTTTT", hostingAttendingEventList.size.toString())
+
+                                            }
+                                    }
+                                }
+                        }
+                    }
+            }
+
+        val handler = Handler()
+        handler.postDelayed({
+            for (event in hostingAttendingEventList) {
+                Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
+            }
+            setContent {
 
 
-            currentcontext = LocalContext.current
+                currentcontext = LocalContext.current
 
-            // compose UI
-            TeamUpTheme() {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    LandingPageCompose()
+                // compose UI
+                TeamUpTheme() {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colors.background
+                    ) {
+                        LandingPageCompose()
+                    }
                 }
             }
-        }
+        }, 1000)
+
+
+
     }
 }
 
