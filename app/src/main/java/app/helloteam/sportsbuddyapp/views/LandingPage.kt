@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import com.google.firebase.auth.FirebaseAuth
 
 
 lateinit private var currentcontext: Context
@@ -83,7 +84,7 @@ fun LandingPageCompose() {
                     .verticalScroll(rememberScrollState())
             ) {
                 Column {
-                    GreetingSection("AK")
+                    GreetingSection(FirebaseAuth.getInstance().currentUser?.displayName.toString())
 //                    ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
                     CurrentWeather()
 
