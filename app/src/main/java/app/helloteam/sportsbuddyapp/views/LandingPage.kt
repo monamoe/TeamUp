@@ -49,8 +49,6 @@ import java.util.concurrent.TimeUnit
 @SuppressLint("StaticFieldLeak")
 lateinit private var currentcontext: Context
 
-lateinit private var username: String
-
 lateinit private var userLocation: String
 lateinit private var weatherIcon: Icon
 lateinit private var weatherString: Icon
@@ -65,10 +63,10 @@ class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        hostingAttendingEventList = viewModel.eventList.value
-//        for (event in hostingAttendingEventList) {
-//            Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
-//        }
+        hostingAttendingEventList = viewModel.eventList.value
+        for (event in hostingAttendingEventList) {
+            Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
+        }
 
         setContent {
 
@@ -356,10 +354,6 @@ fun EventScroll() {
             modifier = Modifier.padding(15.dp),
         )
         LazyRow() {
-
-
-
-
             items(hostingAttendingEventList) { event ->
                 EventCard(
                     event,
