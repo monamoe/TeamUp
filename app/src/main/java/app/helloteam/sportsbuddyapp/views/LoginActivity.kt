@@ -1,12 +1,18 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import app.helloteam.sportsbuddyapp.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,6 +27,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
+
 
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
@@ -39,6 +46,42 @@ class LoginActivity : AppCompatActivity() {
                 .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        //Notif test
+        /*
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val channelId = "10"
+        val channelName: CharSequence = "Channel1"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val notificationChannel = NotificationChannel(channelId, channelName, importance)
+        notificationChannel.enableLights(true)
+        notificationChannel.lightColor = Color.RED
+        notificationChannel.enableVibration(true)
+        notificationChannel.vibrationPattern =
+            longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+        notificationManager.createNotificationChannel(notificationChannel)
+
+        var builder = NotificationCompat.Builder(this, "10")
+            .setSmallIcon(R.drawable.notifbell)
+            .setContentTitle("test title")
+            .setContentText("this is a test context")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+
+        findViewById<Button>(R.id.notifTest).setOnClickListener {// test notifs
+
+            with(NotificationManagerCompat.from(this)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(10, builder.build())
+            }
+
+        }
+
+        */
+
+
 
         //Sign Up button is pressed
         findViewById<SignInButton>(R.id.googleSignIn).setOnClickListener {//go to sign up activity
@@ -168,4 +211,6 @@ class LoginActivity : AppCompatActivity() {
         private const val TAG = "GoogleActivity"
         private const val RC_SIGN_IN = 9001
     }
+
+
 }

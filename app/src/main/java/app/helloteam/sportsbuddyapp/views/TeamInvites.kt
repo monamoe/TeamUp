@@ -29,6 +29,7 @@ class TeamInvites : AppCompatActivity() {
         // populate array list with events that match the location ID of the marker selected
         Log.i("Teamssss", "i just wanna test")
 
+
         // FIREBASE MIGRATION //
         val db = Firebase.firestore
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -47,6 +48,8 @@ class TeamInvites : AppCompatActivity() {
 
                             // list view adapter
                             listview.adapter = TeamListAdapter(this)
+
+
                         }
                 }
             }

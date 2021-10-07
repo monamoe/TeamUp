@@ -1,9 +1,13 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Address
 import android.os.Bundle
 import android.view.Menu
@@ -20,11 +24,15 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 import android.location.Geocoder
+import android.util.Log
 import android.widget.ImageView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+lateinit private var inviteList: ArrayList<TeamInvites.InviteDisplayer>
 
 const val weatherAPI = "f00bd5c2f24390ab1393b5a7c5459b01"
 var forecast: TextView? = null
@@ -65,6 +73,61 @@ class LandingPageActivity : AppCompatActivity() {
         icon = findViewById(R.id.conIcon)
 
         getUserCity()
+
+        //temp notif call
+
+        inviteList = ArrayList()
+
+        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+            .collection("Invites").whereEqualTo("inviteType", "Team")
+            .get().addOnSuccessListener { invites ->
+                for (invite in invites){
+                    db.collection("User").document(invite.get("sender").toString())
+                        .get().addOnSuccessListener { user ->
+                            val eventObj = TeamInvites.InviteDisplayer(
+                                user.id,
+                                invite.id,
+                                user.get("userName").toString(),
+                                user.get("photoUrl").toString()
+                            )
+                            inviteList.add(eventObj)
+
+                            Log.i("Test", eventObj.toString())
+
+                            val notificationManager =
+                                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                            val channelId = "10"
+                            val channelName: CharSequence = "Channel1"
+                            val importance = NotificationManager.IMPORTANCE_HIGH
+                            val notificationChannel = NotificationChannel(channelId, channelName, importance)
+                            notificationChannel.enableLights(true)
+                            notificationChannel.lightColor = Color.RED
+                            notificationChannel.enableVibration(true)
+                            notificationChannel.vibrationPattern =
+                                longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+                            notificationManager.createNotificationChannel(notificationChannel)
+
+                            var builder = NotificationCompat.Builder(this, "10")
+                                .setSmallIcon(R.drawable.notifbell)
+                                .setContentTitle("You have a team invite!")
+                                .setContentText("Check your invitations to accept them!")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                            if(!inviteList.isEmpty()){
+                                with(NotificationManagerCompat.from(this)) {
+                                    // notificationId is a unique int for each notification that you must define
+                                    notify(10, builder.build())
+                                }
+                            }
+
+
+                        }
+                }
+            }
+
+
+
 
     }
 
