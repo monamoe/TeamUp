@@ -1,17 +1,24 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
-import android.os.SystemClock
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,43 +36,73 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModel
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
-import com.bumptech.glide.Glide
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
+import java.util.*
 
 //context
 @SuppressLint("StaticFieldLeak")
-lateinit private var currentcontext: Context
+private lateinit var currentcontext: Context
+const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
-lateinit private var userLocation: String
-lateinit private var weatherIcon: Icon
-lateinit private var weatherString: Icon
+private var username: String = "user"
+
+private lateinit var userLocation: String
+private lateinit var weatherIcon: Icon
+private lateinit var weatherString: Icon
+
+
+const val weatherAPI = R.string.weather_api
+lateinit var forecast: String
+lateinit var temp: String
+lateinit var icon: String
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 
 class LandingPage2 : ComponentActivity() {
 
 
-    private val viewModel: LandingPageViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //empty the list
+        hostingAttendingEventList.clear()
 
 
+        // is the user isnt logged in
+        val db = Firebase.firestore
         val userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        if (userID == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
+
+        // getting the user name
+        db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
+            .get()
+            .addOnSuccessListener { user ->
+                username = user.get("userName").toString()
+            }
+
 
         // event list
         db.collection("User").document(userID)
@@ -99,26 +136,56 @@ class LandingPage2 : ComponentActivity() {
                                                 )
                                                 hostingAttendingEventList.add(
                                                     EventCard(
-                                                        event.get("title")
-                                                            .toString(),
-                                                        host.get("eventID")
-                                                            .toString(),
-                                                        loc.get("StreetView")
-                                                            .toString(),
+                                                        event.get("title").toString(),
+                                                        host.get("eventID").toString(),
+                                                        loc.get("StreetView").toString(),
                                                         true,
-                                                        users.get("userName")
-                                                            .toString(),
+                                                        users.get("userName").toString(),
                                                         "Playing soccer with a couple friends, feel free to join in",
-                                                        event.get("eventSpace")
-                                                            .toString()
-                                                            .toInt(),
-                                                        event.get("currentlyAttending")
-                                                            .toString()
+                                                        event.get("eventSpace").toString().toInt(),
+                                                        event.get("currentlyAttending").toString()
                                                             .toInt(),
                                                     )
                                                 )
-                                                Log.i("TESTTTT", hostingAttendingEventList.size.toString())
+                                            }
+                                    }
+                                }
+                        }
+                    }
 
+                //attending
+                // hosting
+                db.collection("User").document(userID).collection("Attending")
+                    .get()
+                    .addOnSuccessListener { hosting ->
+                        for (host in hosting) {
+                            db.collection("Location")
+                                .document(host.get("locationID").toString())
+                                .collection("Events")
+                                .document(host.get("eventID").toString())
+                                .get()
+                                .addOnSuccessListener { event ->
+                                    if (users != null) {
+                                        db.collection("Location")
+                                            .document(
+                                                host.get("locationID")
+                                                    .toString()
+                                            )
+                                            .get()
+                                            .addOnSuccessListener { loc ->
+                                                hostingAttendingEventList.add(
+                                                    EventCard(
+                                                        event.get("title").toString(),
+                                                        host.get("eventID").toString(),
+                                                        loc.get("StreetView").toString(),
+                                                        false,
+                                                        users.get("userName").toString(),
+                                                        "Playing soccer with a couple friends, feel free to join in",
+                                                        event.get("eventSpace").toString().toInt(),
+                                                        event.get("currentlyAttending").toString()
+                                                            .toInt(),
+                                                    )
+                                                )
                                             }
                                     }
                                 }
@@ -150,8 +217,75 @@ class LandingPage2 : ComponentActivity() {
         }, 1000)
 
 
-
+        getUserCity()
     }
+
+
+    // LANDING PAGE STUFF FROM OLD CODE
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            MY_PERMISSION_FINE_LOCATION ->
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getUserCity()
+                } else {
+                    //permission denied
+                    Toast.makeText(
+                        applicationContext,
+                        "App requires location permission to be granted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
+        }
+    }
+
+    fun getUserCity() {
+        var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        var userLocationLat = 0.0
+        var userLocationLon = 0.0
+        var cityName = ""
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                //program has permission
+                    location ->
+
+                if (location != null) {
+                    //update user interface
+                    userLocationLat = location.latitude
+                    userLocationLon = location.longitude
+
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses: List<Address> =
+                        geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
+                    cityName = addresses[0].getLocality()
+                }
+                //render the marker on the users location.
+//                weatherTask(icon).execute(
+//                    cityName,
+//                    getString(R.string.weather_api)
+//                )
+                //gets weather for current location
+            }
+        }
+        //request permission
+        else {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MY_PERMISSION_FINE_LOCATION
+            )
+        }
+    }
+
+
 }
 
 /**
@@ -184,12 +318,12 @@ fun LandingPageCompose() {
             ) {
                 Column {
                     // greeting
-                    GreetingSection()
-//                    ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
+                    GreetingSection(username)
                     CurrentWeather()
-
                     ContentDivider()
 
+                    ContentDivider()
+                    CreateEventButton()
 
                     // your events section
                     ContentDivider()
@@ -206,7 +340,7 @@ fun LandingPageCompose() {
                                 true,
                                 "Host Name",
                                 "HAHAHAH",
-                                3,
+                                4,
                                 2,
                             )
                         )
@@ -232,7 +366,7 @@ fun LandingPageCompose() {
 @Composable
 fun CreateEventButton() {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
@@ -246,10 +380,14 @@ fun CreateEventButton() {
                     var intent = Intent(currentcontext, CreateEventActivity::class.java)
                     currentcontext.startActivity(intent)
                 }, colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = Color.Blue
+                    backgroundColor = colorResource(id = R.color.primaryDarkColor)
                 )
             ) {
-                Text("Create Event")
+                Text(
+                    text = "Create Event",
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    style = MaterialTheme.typography.h2,
+                )
             }
         }
     }
@@ -273,11 +411,17 @@ fun GreetingSection(
             .padding(15.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = "Good morning, $name",
                 style = MaterialTheme.typography.h1,
+                color = colorResource(id = R.color.secondaryTextColor)
+            )
+            Text(
+                text = "Thursday October 31st 2021",
+                style = MaterialTheme.typography.body1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
         }
@@ -331,12 +475,12 @@ fun CurrentWeather() {
     ) {
         Column {
             Text(
-                text = "Weather",
+                text = "Mississauga • Ontario",
                 style = MaterialTheme.typography.h2,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
-                text = "Mississauga • Ontario",
+                text = "18°C Partly Cloudy",
                 style = MaterialTheme.typography.body1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
@@ -374,12 +518,25 @@ fun RecommendedEventScroll(
     events: List<EventCard>
 ) {
     Column() {
-        Text(
-            text = "Recommended Events",
-            style = MaterialTheme.typography.h1,
-            color = colorResource(id = R.color.secondaryTextColor),
-            modifier = Modifier.padding(15.dp)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Recommended Events",
+                style = MaterialTheme.typography.h2,
+                color = colorResource(id = R.color.secondaryTextColor),
+                modifier = Modifier.padding(15.dp)
+            )
+            Text(
+                text = "See More",
+                style = MaterialTheme.typography.h4,
+                color = colorResource(id = R.color.secondaryTextColor),
+                modifier = Modifier.padding(15.dp),
+            )
+        }
+
         LazyRow(
             modifier = Modifier
                 .fillMaxHeight()
@@ -387,20 +544,12 @@ fun RecommendedEventScroll(
             items(events) { state ->
                 EventCard(
                     state,
-//                    navigateToEvent,
                     Modifier.padding(start = 16.dp, bottom = 16.dp)
                 )
             }
         }
     }
 }
-
-// state hoisting
-//@Composable
-//fun HelloScreen() {
-//    events: List<EventCard>,
-//
-//}
 
 
 /**
@@ -413,13 +562,28 @@ fun RecommendedEventScroll(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventScroll() {
-    Column() {
-        Text(
-            text = "Your Events",
-            style = MaterialTheme.typography.h1,
-            color = colorResource(id = R.color.secondaryTextColor),
-            modifier = Modifier.padding(15.dp),
-        )
+    Column(
+//        Modifier.background(color = colorResource(id = R.color.landingCardBackgroundColor))
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Your Events",
+                style = MaterialTheme.typography.h2,
+                color = colorResource(id = R.color.secondaryTextColor),
+                modifier = Modifier.padding(15.dp),
+            )
+            Text(
+                text = "See More",
+                style = MaterialTheme.typography.h4,
+                color = colorResource(id = R.color.secondaryTextColor),
+                modifier = Modifier.padding(15.dp),
+            )
+        }
+
         LazyRow() {
             items(hostingAttendingEventList) { event ->
                 EventCard(
@@ -462,14 +626,31 @@ fun EventCard(
                 )
 
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = event.title,
-                        style = MaterialTheme.typography.h6,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     )
+                    {
+                        Text(
+                            text = event.title,
+                            style = MaterialTheme.typography.h3,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = "Space: " + event.currentlyAttending.toString() + "/" + event.space.toString(),
+                            style = MaterialTheme.typography.h6,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+
+
+                    var eventhostline =
+                        if (event.isHosting) "Hosted By You" else "Hosted by: " + event.hostName
                     Text(
-                        text = event.hostName,
+                        text = eventhostline,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2
@@ -515,375 +696,3 @@ fun useIntentOnRoute(context: Context, route: String) {
     }
     context.startActivity(intent)
 }
-
-
-//@Composable
-//fun NavMenu(
-//    items: List<NavMenuContent>,
-//    mod: Modifier = Modifier,
-//    activeHighlightColor: Color = ButtonBlue,
-//    activeTextColor: Color = Color.White,
-//    inactiveTextColor: Color = Color.Blue,
-//    initialSelectedItemIndex: Int = 0
-//) {
-//    var selectedItemIndex by remember {
-//        mutableStateOf(initialSelectedItemIndex)
-//    }
-//    Row(
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = mod
-//            .fillMaxWidth()
-//            .background(DeepBlue)
-//            .padding(15.dp)
-//    ) {
-//        items.forEachIndexed { index, item ->
-//            NavMenuItem(
-//                item = item,
-//                isSelected = true,
-//                activeHighlightColor = activeHighlightColor,
-//                activeTextColor = activeTextColor,
-//                inactiveTextColor = inactiveTextColor,
-//            ) {
-//                selectedItemIndex = index
-//            }
-//        }
-//    }
-//}
-
-
-//
-//@Composable
-//fun NavMenuItem(
-//    item: NavMenuContent,
-//    isSelected: Boolean = false,
-//    activeHighlightColor: Color = ButtonBlue,
-//    activeTextColor: Color = Color.White,
-//    inactiveTextColor: Color = Color.Blue,
-//    onItemClick: () -> Unit
-//) {
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center,
-//        modifier = Modifier.clickable {
-//            onItemClick()
-//        }
-//    ) {
-//        Box(
-//            contentAlignment = Alignment.Center,
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(10.dp))
-//                .background(
-//                    if (isSelected)
-//                        activeHighlightColor
-//                    else
-//                        Color.Transparent
-//                )
-//        ) {
-//            Icon(
-//                painter = painterResource(id = item.icon),
-//                contentDescription = item.title,
-//                tint = if (isSelected) activeTextColor else inactiveTextColor,
-//                modifier = Modifier.size(30.dp)
-//            )
-//        }
-//        Text(
-//            text = item.title,
-//            color = if (isSelected) activeTextColor else inactiveTextColor
-//        )
-//    }
-//}
-
-// DONT DELETE THIS YET WE NEED THIS TO ADD INFORMATION ONTO THE LANDING PAGE - AK
-//class LandingPageActivity() : Fragment(), Parcelable {
-//
-//    override fun onCreate(
-//        inflater: LayoutInflater,
-//        container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//
-//
-//        val binding = DataBindingUtil.inflate<ActivityLandingPageBinding>(
-//            inflater, R.layout.activity_landing_page, container, false
-//        )
-//        binding.apply {
-//            composeView.setContent {
-//                MaterialTheme {
-//                    Text("HELLO COMPOSABLE")
-//                }
-//            }
-//        }
-//
-//        setHasOptionsMenu(true)
-//        return binding.root
-//    }
-//
-//    // is the user logged in
-//    val uid = FirebaseAuth.getInstance().uid
-//
-//    constructor(parcel: Parcel) : this() {
-//    }
-
-
-//        if (uid == null) {
-//            // clear activity stack, go to login page
-//            val intent = Intent(this, LoginActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(intent)
-//        }
-//        val db = Firebase.firestore
-//
-//        val location = db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
-//        location.get().addOnSuccessListener { user ->
-//            findViewById<TextView>(R.id.ShowUsername).text =
-//                "Welcome " + user.get("userName")
-//        }
-//
-//        //create event button
-//        findViewById<Button>(R.id.CreateEventBtn).setOnClickListener {
-//            val intent = Intent(this, CreateEventActivity::class.java)
-//            startActivity(intent)
-//        }
-//
-//        temp = findViewById(R.id.temp)
-//        forecast = findViewById(R.id.forecast)
-//        icon = findViewById(R.id.conIcon)
-//
-//        getUserCity()
-
-
-//fun afterLogout() {//method to go back to login screen after logout
-//    finish()
-//    val intent = Intent(this, LoginActivity::class.java)
-//    startActivity(intent)
-//}
-//
-//override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//    val inflater = menuInflater
-//    inflater.inflate(R.menu.menu, menu)
-//    return true
-//}
-//
-//override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-//    R.id.action_profile -> {
-//        val intent = Intent(this, ProfilePage::class.java)
-//        startActivity(intent)
-//        true
-//    }
-//    R.id.action_events -> {
-//        val intent = Intent(this, ViewPlayerEvents::class.java)
-//        startActivity(intent)
-//        true
-//    }
-//    R.id.action_hosted -> {
-//        val intent = Intent(this, HostEvents::class.java)
-//        startActivity(intent)
-//        true
-//    }
-//    R.id.action_logout -> {
-//        val dialogBuilder = AlertDialog.Builder(this)
-//        dialogBuilder.setMessage("Do you want to log out?")
-//            .setCancelable(false)
-//            .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
-//                FirebaseAuth.getInstance().signOut()
-//                afterLogout()
-//            })
-//            .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
-//                dialog.cancel()
-//            })
-//        val alert = dialogBuilder.create()
-//        alert.setTitle("Logout")
-//        alert.show()
-//        true
-//    }
-//    R.id.action_map -> {
-//        val intent = Intent(this, map::class.java)
-//        startActivity(intent)
-//        true
-//    }
-//    R.id.action_team -> {
-//        val intent = Intent(this, TeamsActivity::class.java)
-//        startActivity(intent)
-//        true
-//    }
-//    else -> {
-//        super.onOptionsItemSelected(item)
-//    }
-//}
-
-//override fun onRequestPermissionsResult(
-//    requestCode: Int,
-//    permissions: Array<out String>,
-//    grantResults: IntArray
-//) {
-//    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//    when (requestCode) {
-//        MY_PERMISSION_FINE_LOCATION ->
-//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                getUserCity()
-//            } else {
-//                //permission denied
-//                Toast.makeText(
-//                    applicationContext,
-//                    "App requires location permission to be granted",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//                finish()
-//            }
-//    }
-//}
-//
-//fun getUserCity() {
-//    var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-//    var userLocationLat = 0.0
-//    var userLocationLon = 0.0
-//    var cityName = ""
-//    if (ActivityCompat.checkSelfPermission(
-//            this,
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED
-//    ) {
-//        //this event only runs when the onMapReady funtion is finished running
-//        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-//            //program has permission
-//                location ->
-//
-//            if (location != null) {
-//                //update user interface
-//                userLocationLat = location.latitude
-//                userLocationLon = location.longitude
-//
-//                val geocoder = Geocoder(this, Locale.getDefault())
-//                val addresses: List<Address> =
-//                    geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
-//                cityName = addresses[0].getLocality()
-//            }
-//            //render the marker on the users location.
-//            weatherTask(icon).execute(
-//                cityName,
-//                getString(R.string.weather_api)
-//            ) //gets weather for current location
-//        }
-//    }
-//    //request permission
-//    else {
-//        requestPermissions(
-//            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-//            MY_PERMISSION_FINE_LOCATION
-//        )
-//    }
-//override fun writeToParcel(parcel: Parcel, flags: Int) {
-//
-//}
-//
-//override fun describeContents(): Int {
-//    return 0
-//}
-//
-//companion object CREATOR : Parcelable.Creator<LandingPageActivity> {
-//    override fun createFromParcel(parcel: Parcel): LandingPageActivity {
-//        return LandingPageActivity(parcel)
-//    }
-//
-//    override fun newArray(size: Int): Array<LandingPageActivity?> {
-//        return arrayOfNulls(size)
-//    }
-//}
-//
-//
-//fun getHostingAttendingList(userID: String): List<EventCard> {
-//    var eventList: List<EventCard> = emptyList()
-//
-//    var hostingDone: Boolean = false
-//    var attendingDone: Boolean = false
-//
-//    // current user information
-//    db.collection("User").document(userID)
-//        .get()
-//        .addOnSuccessListener { users ->
-//
-//            // hosting
-//            db.collection("User").document(userID).collection("Hosting")
-//                .get()
-//                .addOnSuccessListener { hosting ->
-//                    for (host in hosting) {
-//                        db.collection("Location").document(host.get("locationID").toString())
-//                            .collection("Events").document(host.get("eventID").toString())
-//                            .get()
-//                            .addOnSuccessListener { event ->
-//
-//                                if (users != null) {
-//                                    db.collection("Location")
-//                                        .document(host.get("locationID").toString())
-//                                        .get()
-//                                        .addOnSuccessListener { loc ->
-//
-//                                            eventList +=
-//                                                EventCard(
-//                                                    event.get("title").toString(),
-//                                                    host.get("eventID").toString(),
-//                                                    loc.get("StreetView").toString(),
-//                                                    true,
-//                                                    users.get("userName").toString(),
-//                                                    "Playing soccer with a couple friends, feel free to join in",
-//                                                    event.get("eventSpace").toString().toInt(),
-//                                                    event.get("currentlyAttending").toString()
-//                                                        .toInt(),
-//                                                )
-//                                        }
-//                                }
-//                            }
-//                    }
-//                    hostingDone = true
-//                    Log.i("LOG_TAG", "EVENT DISPLAY: HOSTING DONE ${eventList.toString()}")
-//
-//                }
-//
-//
-//            // attending
-//            db.collection("User").document(userID).collection("Attending")
-//                .get()
-//                .addOnSuccessListener { hosting ->
-//                    for (host in hosting) {
-//                        db.collection("Location")
-//                            .document(host.get("locationID").toString())
-//                            .collection("Events")
-//                            .document(host.get("eventID").toString())
-//                            .get()
-//                            .addOnSuccessListener { event ->
-//
-//                                db.collection("Location")
-//                                    .document(host.get("locationID").toString())
-//                                    .get()
-//                                    .addOnSuccessListener { loc ->
-//                                        eventList +=
-//                                            EventCard(
-//                                                event.get("title").toString(),
-//                                                host.get("eventID").toString(),
-//                                                loc.get("StreetView").toString(),
-//                                                false,
-//                                                users.get("userName").toString(),
-//                                                "Playing soccer with a couple friends, feel free to join in",
-//                                                event.get("eventSpace").toString()
-//                                                    .toInt(),
-//                                                event.get("currentlyAttending")
-//                                                    .toString()
-//                                                    .toInt(),
-//                                            )
-//                                    }
-//                            }
-//                    }
-//                    attendingDone = true
-//                    Log.i("LOG_TAG", "EVENT DISPLAY: ATTENDING DONE ${eventList.toString()}")
-//                }
-//        }
-//
-//    while (true) {
-//        Log.i("LOG_TAG", "EVENT DISPLAY : IN LOOP")
-//        if (!hostingDone && !attendingDone)
-//            break
-//    }
-//
-//    return eventList
-//}

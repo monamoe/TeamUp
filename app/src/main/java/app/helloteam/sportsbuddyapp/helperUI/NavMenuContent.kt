@@ -110,7 +110,7 @@ fun BottomNavigationBar(
                     useIntentOnRoute(currentcontext, item.route)
                 },
                 selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
-                unselectedContentColor = Color.Gray,
+                unselectedContentColor = Color.White,
                 icon = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
