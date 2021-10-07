@@ -22,3 +22,4 @@ functions/node_modules
 .idea/inspectionProfiles/Project_Default.xml
 .idea/misc.xml
 app/src/main/java/app/helloteam/sportsbuddyapp/data/Constants.kt
+app/src/main/java/app/helloteam/sportsbuddyapp/data/NotificationAPI.kt

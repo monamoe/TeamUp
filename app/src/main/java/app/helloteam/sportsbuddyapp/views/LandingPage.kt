@@ -18,7 +18,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,10 +31,17 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
 
+
+lateinit private var currentcontext: Context
+
+
 class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
+
+            currentcontext = LocalContext.current
 
             TeamUpTheme() {
                 // A surface container using the 'background' color from the theme
@@ -78,17 +87,11 @@ fun LandingPageCompose() {
 //                    ChipSection(chips = listOf("Soccer", "BasketBall", "Tennis"))
                     CurrentWeather()
 
+
                     ContentDivider()
-//            val title: String,
-//            val id: String,
-//            val imageId: String,
-//            @DrawableRes
-//            val activityIcon: Int,
-//            val lightColor: Color,
-//            val mediumColor: Color,
-//            val darkColor: Color,
-//            val isHosting: Boolean,
-//            val hostName: String,
+                    CreateEventButton()
+
+                    ContentDivider()
                     val eventList = listOf(
                         EventCard(
                             "5v5 Soccer",
@@ -142,7 +145,6 @@ fun LandingPageCompose() {
 
                     EventScroll(
                         events = eventList
-//                navigateToEvent
                     )
 
                     ContentDivider()
@@ -163,6 +165,37 @@ fun LandingPageCompose() {
             )
         }
     )
+}
+
+
+@Composable
+fun CreateEventButton() {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
+            Button(
+                onClick = {
+                    var intent = Intent(currentcontext, CreateEventActivity::class.java)
+                    currentcontext.startActivity(intent)
+                }, colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Blue
+                )
+            ) {
+                Text(
+                    text = "Create Event",
+                    color = Color.White,
+                    style = MaterialTheme.typography.h1,
+                )
+            }
+        }
+    }
 }
 
 
