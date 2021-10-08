@@ -26,9 +26,12 @@ data class NavMenuContent(
     val icon: ImageVector,
     val route: String,
     val badgeCount: Int = 0
-)
+) {
 
-private val items = listOf(
+}
+
+
+val items = listOf(
     NavMenuContent(
         title = "Home",
         route = "home",

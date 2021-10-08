@@ -120,14 +120,116 @@ class LandingPage2 : ComponentActivity() {
                     }
                 }
             }
-        }, 1000)
+        }, 5000)
 
 
         getUserCity()
     }
 
-    private fun recommendedEventsListData() {
+    // Composable Preview
+    @Preview(showBackground = true)
+    @Composable
+    fun DefaultPreview() {
+        TeamUpTheme() {
+            LandingPageCompose()
+        }
+    }
 
+    // Scaffold View
+    @Composable
+    fun LandingPageCompose() {
+        val navController = rememberNavController()
+        Scaffold(
+            content = {
+                Box(
+                    modifier = Modifier
+                        .background(colorResource(id = R.color.landingPageBackground))
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Column {
+                        // greeting
+                        GreetingSection(username)
+                        CurrentWeather()
+                        ContentDivider()
+
+                        ContentDivider()
+                        CreateEventButton()
+
+                        // your events
+//                        ContentDivider()
+//                        EventScroll()
+                        // recommended events
+                        ContentDivider()
+                        RecommendedEventScroll()
+
+                        ContentDivider()
+                    }
+                }
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    onItemClicker = {
+                        navController.navigate(it.route)
+                    }
+                )
+            }
+        )
+    }
+
+    // finds recommended events and add them to the recommendedEvents list
+    private fun recommendedEventsListData() {
+        var currentlyAdded = 0;
+        val maxAdded = 5;
+        db.collection("User").document(userID).get()
+            .addOnSuccessListener { user ->
+                val favouriteSport = user.get("favouriteSport")
+                if (favouriteSport != "") {
+
+                    Log.i("LOG_TAG", "RECOMMENDED LIST: inside userID")
+                    db.collection("Location").get().addOnSuccessListener { location ->
+                        for (loc in location) {
+                            Log.i("LOG_TAG", "RECOMMENDED LIST: inside location")
+                            if (currentlyAdded < maxAdded) {
+                                db.collection("Location").document(loc.get("locationID").toString())
+                                    .collection("Event").get().addOnSuccessListener { events ->
+                                        for (event in events) {
+                                            Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
+                                            if (currentlyAdded < maxAdded) {
+                                                if (event.get("activity")
+                                                        .toString() == favouriteSport
+                                                ) {
+
+                                                    val hostName =
+                                                        user.get("userName").toString()
+                                                    Log.i("LOG_TAG", "RECOMMENDED LIST: adding event")
+                                                    if (currentlyAdded < maxAdded) {
+                                                        recommendedEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.get("eventID").toString(),
+                                                                loc.get("StreetView").toString(),
+                                                                false,
+                                                                hostName,
+                                                                "Playing soccer with a couple friends, feel free to join in",
+                                                                event.get("eventSpace").toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
     }
 
     private fun yourEventListData() {
@@ -163,7 +265,7 @@ class LandingPage2 : ComponentActivity() {
                                                 hostingAttendingEventList.add(
                                                     EventCard(
                                                         event.get("title").toString(),
-                                                        host.get("eventID").toString(),
+                                                        event.get("eventID").toString(),
                                                         loc.get("StreetView").toString(),
                                                         true,
                                                         users.get("userName").toString(),
@@ -199,19 +301,27 @@ class LandingPage2 : ComponentActivity() {
                                             )
                                             .get()
                                             .addOnSuccessListener { loc ->
-                                                hostingAttendingEventList.add(
-                                                    EventCard(
-                                                        event.get("title").toString(),
-                                                        host.get("eventID").toString(),
-                                                        loc.get("StreetView").toString(),
-                                                        false,
-                                                        users.get("userName").toString(),
-                                                        "Playing soccer with a couple friends, feel free to join in",
-                                                        event.get("eventSpace").toString().toInt(),
-                                                        event.get("currentlyAttending").toString()
-                                                            .toInt(),
-                                                    )
-                                                )
+                                                db.collection("User")
+                                                    .document(event.get("hostID").toString())
+                                                    .get().addOnSuccessListener { user ->
+                                                        val hostName =
+                                                            user.get("userName").toString()
+                                                        hostingAttendingEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.get("eventID").toString(),
+                                                                loc.get("StreetView").toString(),
+                                                                false,
+                                                                hostName,
+                                                                "Playing soccer with a couple friends, feel free to join in",
+                                                                event.get("eventSpace").toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                            )
+                                                        )
+                                                    }
                                             }
                                     }
                                 }
@@ -284,67 +394,8 @@ class LandingPage2 : ComponentActivity() {
             )
         }
     }
-
-
 }
 
-/**
- * Composeable Preview
- * @param name
- */
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TeamUpTheme() {
-        LandingPageCompose()
-    }
-}
-
-
-// COMPOSE //
-@Composable
-fun LandingPageCompose() {
-    val navController = rememberNavController()
-
-    Scaffold(
-        content = {
-            Box(
-                modifier = Modifier
-                    .background(colorResource(id = R.color.landingPageBackground))
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Column {
-                    // greeting
-                    GreetingSection(username)
-                    CurrentWeather()
-                    ContentDivider()
-
-                    ContentDivider()
-                    CreateEventButton()
-
-                    // your events section
-                    ContentDivider()
-                    EventScroll()
-
-                    // content divider
-                    ContentDivider()
-                    RecommendedEventScroll()
-
-                    ContentDivider()
-                }
-            }
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                navController = navController,
-                onItemClicker = {
-                    navController.navigate(it.route)
-                }
-            )
-        }
-    )
-}
 
 @Composable
 fun CreateEventButton() {
@@ -409,7 +460,7 @@ fun GreetingSection(
             )
         }
         Icon(
-            painter = painterResource(id = R.drawable.clipboard),
+            painter = painterResource(id = R.drawable.android_notification_bell_icon_2),
             contentDescription = "Search",
             tint = colorResource(id = R.color.secondaryTextColor),
             modifier = Modifier.size(24.dp)
@@ -635,19 +686,25 @@ private fun ContentDivider() {
 
 /**
  * Intent Navigation Router
- * @param name
+ * @param context current context
+ * @param route decides on navigation
  */
 fun useIntentOnRoute(context: Context, route: String) {
-    var intent = Intent(context, LandingPage2::class.java)
-    when (route) {
-        "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
-        "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
-        "map" -> intent = Intent(context, map::class.java)
-        "teams" -> intent = Intent(context, TeamsActivity::class.java)
-        "profile" -> intent = Intent(context, ProfilePage::class.java)
-        else -> {
-            Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
+    Log.i("LOG_tAG", "CURRENT CONTEXT: $context")
+    Log.i("LOG_tAG", "CURRENT CONTEXT: ${context.applicationContext}")
+    if (route != "home") {
+
+        var intent = Intent(context, LandingPage2::class.java)
+        when (route) {
+            "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
+            "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
+            "map" -> intent = Intent(context, map::class.java)
+            "teams" -> intent = Intent(context, TeamsActivity::class.java)
+            "profile" -> intent = Intent(context, ProfilePage::class.java)
+            else -> {
+                Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
+            }
         }
+        context.startActivity(intent)
     }
-    context.startActivity(intent)
 }
