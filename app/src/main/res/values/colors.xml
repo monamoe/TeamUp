@@ -21,11 +21,19 @@
     <color name="secondaryTextColor">#000000</color>
 
 
-    <color name="landingPageBackground">#84B9FD</color>
+    <color name="landingPageBackground">#FBFBFB</color>
     <color name="landingCardColor">#002AC2</color>
     <color name="landingCardBackgroundColor">#264EDF</color>
 
-    <color name="secondaryColor">#6D87E4</color>
+    <color name="secondaryColor">#84B9FD</color>
+
+
+
+<!--    <color name="landingPageBackground">#84B9FD</color>-->
+<!--    <color name="landingCardColor">#002AC2</color>-->
+<!--    <color name="landingCardBackgroundColor">#264EDF</color>-->
+
+<!--    <color name="secondaryColor">#6D87E4</color>-->
 
 
 </resources>

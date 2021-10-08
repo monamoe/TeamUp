@@ -1,8 +1,6 @@
 package app.helloteam.sportsbuddyapp.helperUI
 
-import android.content.Context
-import android.content.Intent
-import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -20,28 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.views.EditProfilePage
-import app.helloteam.sportsbuddyapp.views.LandingPage2
-import app.helloteam.sportsbuddyapp.views.map
 import app.helloteam.sportsbuddyapp.views.useIntentOnRoute
-
-
-// each view needs to have this function inside it
-//fun useIntentOnRoute(context: Context, route: String) {
-//    var intent = Intent(context, LandingPage2::class.java)
-//    when (route) {
-//        "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
-////        "messages" -> intent = Intent(context, messages::class.java)
-//        "map" -> intent = Intent(context, map::class.java)
-////        "notifications" -> intent = Intent(context, notifications::class.java)
-//        "profile" -> intent = Intent(context, EditProfilePage::class.java)
-//        else -> {
-//            Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
-//        }
-//    }
-//    context.startActivity(intent)
-//}
-
 
 
 data class NavMenuContent(
@@ -67,7 +44,7 @@ private val items = listOf(
     NavMenuContent(
         title = "Map",
         route = "map",
-        icon = Icons.Default.Favorite,
+        icon = Icons.Default.Star
     ),
     NavMenuContent(
         title = "Teams",

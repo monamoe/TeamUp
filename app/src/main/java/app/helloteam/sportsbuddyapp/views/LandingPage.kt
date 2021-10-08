@@ -10,12 +10,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcel
-import android.os.Parcelable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,24 +26,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import app.helloteam.sportsbuddyapp.helperUI.*
-import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
@@ -63,6 +52,7 @@ import java.util.*
 private lateinit var currentcontext: Context
 const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
+private var userID: String = "1"
 private var username: String = "user"
 
 private lateinit var userLocation: String
@@ -76,6 +66,7 @@ lateinit var temp: String
 lateinit var icon: String
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
+private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 
 class LandingPage2 : ComponentActivity() {
 
@@ -84,12 +75,13 @@ class LandingPage2 : ComponentActivity() {
         super.onCreate(savedInstanceState)
         //empty the list
         hostingAttendingEventList.clear()
+        recommendedEventList.clear()
 
 
         // is the user isnt logged in
         val db = Firebase.firestore
-        val userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        if (userID == null) {
+        userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        if (userID.equals(null)) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -105,6 +97,40 @@ class LandingPage2 : ComponentActivity() {
 
 
         // event list
+        yourEventListData()
+        recommendedEventsListData()
+
+
+        val handler = Handler()
+        handler.postDelayed({
+            for (event in hostingAttendingEventList) {
+                Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
+            }
+            setContent {
+                currentcontext = LocalContext.current
+
+                // compose UI
+                TeamUpTheme() {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colors.background
+                    ) {
+                        LandingPageCompose()
+                    }
+                }
+            }
+        }, 1000)
+
+
+        getUserCity()
+    }
+
+    private fun recommendedEventsListData() {
+
+    }
+
+    private fun yourEventListData() {
         db.collection("User").document(userID)
             .get()
             .addOnSuccessListener { users ->
@@ -192,32 +218,6 @@ class LandingPage2 : ComponentActivity() {
                         }
                     }
             }
-
-        val handler = Handler()
-        handler.postDelayed({
-            for (event in hostingAttendingEventList) {
-                Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
-            }
-            setContent {
-
-
-                currentcontext = LocalContext.current
-
-                // compose UI
-                TeamUpTheme() {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.background
-                    ) {
-                        LandingPageCompose()
-                    }
-                }
-            }
-        }, 1000)
-
-
-        getUserCity()
     }
 
 
@@ -304,8 +304,6 @@ fun DefaultPreview() {
 // COMPOSE //
 @Composable
 fun LandingPageCompose() {
-
-
     val navController = rememberNavController()
 
     Scaffold(
@@ -331,24 +329,9 @@ fun LandingPageCompose() {
 
                     // content divider
                     ContentDivider()
-                    RecommendedEventScroll(
-                        listOf(
-                            EventCard(
-                                "Title",
-                                "eventid",
-                                "imageId",
-                                true,
-                                "Host Name",
-                                "HAHAHAH",
-                                4,
-                                2,
-                            )
-                        )
-                    )
-
+                    RecommendedEventScroll()
 
                     ContentDivider()
-                    CreateEventButton()
                 }
             }
         },
@@ -380,7 +363,7 @@ fun CreateEventButton() {
                     var intent = Intent(currentcontext, CreateEventActivity::class.java)
                     currentcontext.startActivity(intent)
                 }, colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = colorResource(id = R.color.primaryDarkColor)
+                    backgroundColor = colorResource(id = R.color.secondaryColor)
                 )
             ) {
                 Text(
@@ -431,33 +414,6 @@ fun GreetingSection(
             tint = colorResource(id = R.color.secondaryTextColor),
             modifier = Modifier.size(24.dp)
         )
-    }
-}
-
-@Composable
-fun ChipSection(
-    chips: List<String>
-) {
-    var selectedChipIndex by remember {
-        mutableStateOf(0)
-    }
-    LazyRow {
-        items(chips.size) {
-            Box(
-                modifier = Modifier
-                    .padding(start = 15.dp, top = 15.dp, bottom = 15.dp)
-                    .clickable { selectedChipIndex = it }
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        if (selectedChipIndex == it)
-                            ButtonBlue
-                        else DarkerButtonBlue
-                    )
-                    .padding(15.dp)
-            ) {
-                Text(text = chips[it], color = colorResource(id = R.color.primaryTextColor))
-            }
-        }
     }
 }
 
@@ -514,9 +470,7 @@ fun CurrentWeather() {
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RecommendedEventScroll(
-    events: List<EventCard>
-) {
+fun RecommendedEventScroll() {
     Column() {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -541,7 +495,7 @@ fun RecommendedEventScroll(
             modifier = Modifier
                 .fillMaxHeight()
         ) {
-            items(events) { state ->
+            items(recommendedEventList) { state ->
                 EventCard(
                     state,
                     Modifier.padding(start = 16.dp, bottom = 16.dp)
@@ -605,11 +559,12 @@ fun EventCard(
         modifier = modifier
             .size(280.dp, 240.dp)
             .background(colorResource(id = R.color.secondaryColor))
+            .clip(RoundedCornerShape(20.dp))
     ) {
         BoxWithConstraints(
             modifier = Modifier
                 .aspectRatio(1f)
-                .clip(RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(20.dp))
                 .background(colorResource(id = R.color.secondaryColor))
         ) {
 
@@ -634,13 +589,13 @@ fun EventCard(
                     {
                         Text(
                             text = event.title,
-                            style = MaterialTheme.typography.h3,
+                            style = MaterialTheme.typography.h5,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             text = "Space: " + event.currentlyAttending.toString() + "/" + event.space.toString(),
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.h3,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
