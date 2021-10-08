@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.drawable.Icon
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -38,14 +37,19 @@ import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import coil.compose.rememberImagePainter
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
+
 
 //context
 @SuppressLint("StaticFieldLeak")
@@ -55,18 +59,18 @@ const val MY_PERMISSION_FINE_LOCATION: Int = 44
 private var userID: String = "1"
 private var username: String = "user"
 
-private lateinit var userLocation: String
-private lateinit var weatherIcon: Icon
-private lateinit var weatherString: Icon
-
-
-const val weatherAPI = R.string.weather_api
+var userLocationLat = 0.0
+var userLocationLon = 0.0
+var weatherIcon = ""
+var cityName = ""
+var prov = ""
 lateinit var forecast: String
 lateinit var temp: String
 lateinit var icon: String
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
+lateinit var todayWithZeroTime: LocalDate
 
 class LandingPage2 : ComponentActivity() {
 
@@ -77,6 +81,7 @@ class LandingPage2 : ComponentActivity() {
         hostingAttendingEventList.clear()
         recommendedEventList.clear()
 
+        todayWithZeroTime = LocalDate.now()
 
         // is the user isnt logged in
         val db = Firebase.firestore
@@ -356,9 +361,7 @@ class LandingPage2 : ComponentActivity() {
 
     fun getUserCity() {
         var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        var userLocationLat = 0.0
-        var userLocationLon = 0.0
-        var cityName = ""
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -377,12 +380,14 @@ class LandingPage2 : ComponentActivity() {
                     val addresses: List<Address> =
                         geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
                     cityName = addresses[0].getLocality()
+                    prov = addresses[0].adminArea
                 }
                 //render the marker on the users location.
-//                weatherTask(icon).execute(
-//                    cityName,
-//                    getString(R.string.weather_api)
-//                )
+                weatherTask().execute(
+                    userLocationLat.toString(),
+                    userLocationLon.toString(),
+                    getString(R.string.weather_api)
+                )
                 //gets weather for current location
             }
         }
@@ -435,7 +440,7 @@ fun CreateEventButton() {
  */
 @Composable
 fun GreetingSection(
-    name: String = "User"
+    name: String = "User",
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -454,7 +459,7 @@ fun GreetingSection(
                 color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
-                text = "Thursday October 31st 2021",
+                text = todayWithZeroTime.toString(),
                 style = MaterialTheme.typography.body1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
@@ -482,12 +487,12 @@ fun CurrentWeather() {
     ) {
         Column {
             Text(
-                text = "Mississauga • Ontario",
+                text = "$cityName • $prov",
                 style = MaterialTheme.typography.h2,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
-                text = "18°C Partly Cloudy",
+                text = "$temp $forecast",
                 style = MaterialTheme.typography.body1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
@@ -496,16 +501,15 @@ fun CurrentWeather() {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
                     .background(ButtonBlue)
                     .padding(10.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.common_full_open_on_phone),
-                    contentDescription = "Play",
-                    tint = colorResource(id = R.color.primaryDarkColor),
-                    modifier = Modifier.size(16.dp)
+                Image(
+                    painter = rememberImagePainter(weatherIcon),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
                 )
             }
         }

@@ -14,18 +14,13 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import app.helloteam.sportsbuddyapp.views.LandingPageKt;
 
 
 public class weatherTask extends AsyncTask<String, Void, String> {
 
-    public ImageView x;
 
-    public weatherTask(ImageView im) {
-        x = im;
+    public weatherTask() {
     }
 
     @Override
@@ -58,11 +53,10 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
 
-//
-//            getTemp().setText(temperature + "°C");
-//            getForecast().setText(cast.toUpperCase());
 
-            Picasso.get().load(iconUrl).into(x);
+            LandingPageKt.setTemp(temperature + "°C");
+            LandingPageKt.setForecast(cast.toUpperCase());
+            LandingPageKt.setWeatherIcon(iconUrl);
 
         } catch (Exception ignored) {
 
