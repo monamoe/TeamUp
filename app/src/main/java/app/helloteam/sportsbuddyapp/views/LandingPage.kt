@@ -1,16 +1,10 @@
 package app.helloteam.sportsbuddyapp.views
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -32,18 +26,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
-import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
 import coil.compose.rememberImagePainter
-import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.util.*
@@ -102,7 +90,6 @@ class LandingPage2 : ComponentActivity() {
                     }
                 }
             }
-
     }
 
     // Composable Preview
