@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
@@ -46,7 +45,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
 
@@ -57,16 +55,16 @@ private lateinit var currentcontext: Context
 const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
 private var userID: String = "1"
-private var username: String = "user"
+var username: String = "user"
 
 var userLocationLat = 0.0
 var userLocationLon = 0.0
 var weatherIcon = ""
 var cityName = ""
 var prov = ""
-lateinit var forecast: String
-lateinit var temp: String
-lateinit var icon: String
+var forecast: String = "Weather error"
+var temp: String = ""
+var icon: String = ""
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
@@ -74,17 +72,14 @@ lateinit var todayWithZeroTime: LocalDate
 
 class LandingPage2 : ComponentActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //empty the list
-        hostingAttendingEventList.clear()
-        recommendedEventList.clear()
 
+        hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
+        recommendedEventList = LoadingEvent.recommendedEventList
         todayWithZeroTime = LocalDate.now()
 
         // is the user isnt logged in
-        val db = Firebase.firestore
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
         if (userID.equals(null)) {
             val intent = Intent(this, LoginActivity::class.java)
@@ -93,24 +88,6 @@ class LandingPage2 : ComponentActivity() {
         }
 
 
-        // getting the user name
-        db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
-            .get()
-            .addOnSuccessListener { user ->
-                username = user.get("userName").toString()
-            }
-
-
-        // event list
-        yourEventListData()
-        recommendedEventsListData()
-
-
-        val handler = Handler()
-        handler.postDelayed({
-            for (event in hostingAttendingEventList) {
-                Log.i("LOG_TAG", "onCreateView EventList: ${event.title}")
-            }
             setContent {
                 currentcontext = LocalContext.current
 
@@ -125,10 +102,7 @@ class LandingPage2 : ComponentActivity() {
                     }
                 }
             }
-        }, 5000)
 
-
-        getUserCity()
     }
 
     // Composable Preview
@@ -162,8 +136,8 @@ class LandingPage2 : ComponentActivity() {
                         CreateEventButton()
 
                         // your events
-//                        ContentDivider()
-//                        EventScroll()
+                        ContentDivider()
+                        EventScroll()
                         // recommended events
                         ContentDivider()
                         RecommendedEventScroll()
@@ -181,223 +155,6 @@ class LandingPage2 : ComponentActivity() {
                 )
             }
         )
-    }
-
-    // finds recommended events and add them to the recommendedEvents list
-    private fun recommendedEventsListData() {
-        var currentlyAdded = 0;
-        val maxAdded = 5;
-        db.collection("User").document(userID).get()
-            .addOnSuccessListener { user ->
-                val favouriteSport = user.get("favouriteSport")
-                if (favouriteSport != "") {
-
-                    Log.i("LOG_TAG", "RECOMMENDED LIST: inside userID")
-                    db.collection("Location").get().addOnSuccessListener { location ->
-                        for (loc in location) {
-                            Log.i("LOG_TAG", "RECOMMENDED LIST: inside location")
-                            if (currentlyAdded < maxAdded) {
-                                db.collection("Location").document(loc.get("locationID").toString())
-                                    .collection("Event").get().addOnSuccessListener { events ->
-                                        for (event in events) {
-                                            Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
-                                            if (currentlyAdded < maxAdded) {
-                                                if (event.get("activity")
-                                                        .toString() == favouriteSport
-                                                ) {
-
-                                                    val hostName =
-                                                        user.get("userName").toString()
-                                                    Log.i("LOG_TAG", "RECOMMENDED LIST: adding event")
-                                                    if (currentlyAdded < maxAdded) {
-                                                        recommendedEventList.add(
-                                                            EventCard(
-                                                                event.get("title").toString(),
-                                                                event.get("eventID").toString(),
-                                                                loc.get("StreetView").toString(),
-                                                                false,
-                                                                hostName,
-                                                                "Playing soccer with a couple friends, feel free to join in",
-                                                                event.get("eventSpace").toString()
-                                                                    .toInt(),
-                                                                event.get("currentlyAttending")
-                                                                    .toString()
-                                                                    .toInt(),
-                                                            )
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                            }
-                        }
-                    }
-                }
-            }
-    }
-
-    private fun yourEventListData() {
-        db.collection("User").document(userID)
-            .get()
-            .addOnSuccessListener { users ->
-
-                // hosting
-                db.collection("User").document(userID).collection("Hosting")
-                    .get()
-                    .addOnSuccessListener { hosting ->
-                        for (host in hosting) {
-                            Log.i("LOG_TAG", "EVENT DISPLAY: THIS USER IS HOSTING AN EVENT:")
-
-                            db.collection("Location")
-                                .document(host.get("locationID").toString())
-                                .collection("Events")
-                                .document(host.get("eventID").toString())
-                                .get()
-                                .addOnSuccessListener { event ->
-                                    if (users != null) {
-                                        db.collection("Location")
-                                            .document(
-                                                host.get("locationID")
-                                                    .toString()
-                                            )
-                                            .get()
-                                            .addOnSuccessListener { loc ->
-                                                Log.i(
-                                                    "LOG_TAG",
-                                                    "EVENT DISPLAY: \t\t Adding event to list"
-                                                )
-                                                hostingAttendingEventList.add(
-                                                    EventCard(
-                                                        event.get("title").toString(),
-                                                        event.get("eventID").toString(),
-                                                        loc.get("StreetView").toString(),
-                                                        true,
-                                                        users.get("userName").toString(),
-                                                        "Playing soccer with a couple friends, feel free to join in",
-                                                        event.get("eventSpace").toString().toInt(),
-                                                        event.get("currentlyAttending").toString()
-                                                            .toInt(),
-                                                    )
-                                                )
-                                            }
-                                    }
-                                }
-                        }
-                    }
-
-                //attending
-                // hosting
-                db.collection("User").document(userID).collection("Attending")
-                    .get()
-                    .addOnSuccessListener { hosting ->
-                        for (host in hosting) {
-                            db.collection("Location")
-                                .document(host.get("locationID").toString())
-                                .collection("Events")
-                                .document(host.get("eventID").toString())
-                                .get()
-                                .addOnSuccessListener { event ->
-                                    if (users != null) {
-                                        db.collection("Location")
-                                            .document(
-                                                host.get("locationID")
-                                                    .toString()
-                                            )
-                                            .get()
-                                            .addOnSuccessListener { loc ->
-                                                db.collection("User")
-                                                    .document(event.get("hostID").toString())
-                                                    .get().addOnSuccessListener { user ->
-                                                        val hostName =
-                                                            user.get("userName").toString()
-                                                        hostingAttendingEventList.add(
-                                                            EventCard(
-                                                                event.get("title").toString(),
-                                                                event.get("eventID").toString(),
-                                                                loc.get("StreetView").toString(),
-                                                                false,
-                                                                hostName,
-                                                                "Playing soccer with a couple friends, feel free to join in",
-                                                                event.get("eventSpace").toString()
-                                                                    .toInt(),
-                                                                event.get("currentlyAttending")
-                                                                    .toString()
-                                                                    .toInt(),
-                                                            )
-                                                        )
-                                                    }
-                                            }
-                                    }
-                                }
-                        }
-                    }
-            }
-    }
-
-
-    // LANDING PAGE STUFF FROM OLD CODE
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            MY_PERMISSION_FINE_LOCATION ->
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getUserCity()
-                } else {
-                    //permission denied
-                    Toast.makeText(
-                        applicationContext,
-                        "App requires location permission to be granted",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                }
-        }
-    }
-
-    fun getUserCity() {
-        var fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                //program has permission
-                    location ->
-
-                if (location != null) {
-                    //update user interface
-                    userLocationLat = location.latitude
-                    userLocationLon = location.longitude
-
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val addresses: List<Address> =
-                        geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
-                    cityName = addresses[0].getLocality()
-                    prov = addresses[0].adminArea
-                }
-                //render the marker on the users location.
-                weatherTask().execute(
-                    userLocationLat.toString(),
-                    userLocationLon.toString(),
-                    getString(R.string.weather_api)
-                )
-                //gets weather for current location
-            }
-        }
-        //request permission
-        else {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_FINE_LOCATION
-            )
-        }
     }
 }
 

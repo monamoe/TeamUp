@@ -248,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
 
     //go to landing activity when called
     fun toLanding() {
-        val intent = Intent(this, LandingPage2::class.java)
+        val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
         finish()
     }

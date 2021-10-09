@@ -85,7 +85,7 @@ class event : AppCompatActivity() {
             .get()
             .addOnSuccessListener { document ->
                 if (!document.exists()) {
-                    val intent = Intent(this, LandingPage2::class.java)
+                    val intent = Intent(this, SplashActivity::class.java)
                     startActivity(intent)
                     Toast.makeText(this, "Event No Longer Exsists", Toast.LENGTH_SHORT).show()
                 } else {
@@ -216,7 +216,7 @@ class event : AppCompatActivity() {
                     Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
                         .show()
 
-                    val intent = Intent(context, LandingPage2::class.java)
+                    val intent = Intent(context, SplashActivity::class.java)
                     startActivity(intent)
                 }
                 negativeButton(R.string.cancel)
@@ -247,7 +247,7 @@ class event : AppCompatActivity() {
             .collection("Hosting").document(eventID)
             .set(hostingHashMap, SetOptions.merge())
             .addOnSuccessListener {
-                val intent = Intent(this, LandingPage2::class.java)
+                val intent = Intent(this, SplashActivity::class.java)
                 startActivity(intent)
             }
     }
@@ -308,7 +308,7 @@ class event : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    val intent = Intent(this, LandingPage2::class.java)
+                    val intent = Intent(this, SplashActivity::class.java)
                     startActivity(intent)
 
                 } else {
@@ -368,7 +368,7 @@ class event : AppCompatActivity() {
                 )
             }
 
-        val intent = Intent(this, LandingPage2::class.java)
+        val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
     }
 }

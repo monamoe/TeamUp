@@ -44,11 +44,11 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             JSONObject main = jsonObj.getJSONObject("main");
             JSONObject weather = jsonObj.getJSONArray("weather").getJSONObject(0);
             Log.i("weather", weather.toString());
-            JSONObject sys = jsonObj.getJSONObject("sys");
-            String city_name = jsonObj.getString("name");
+           // JSONObject sys = jsonObj.getJSONObject("sys");
+           // String city_name = jsonObj.getString("name");
             Log.i("weather", "hi2");
 
-            String countryname = sys.getString("country");
+           // String countryname = sys.getString("country");
             String temperature = main.getString("temp");
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
