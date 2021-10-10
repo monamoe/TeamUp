@@ -58,16 +58,20 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
     private var eventSpace = 0
 
     private val context: Context = this
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+
         val api: String = getString(R.string.google_key)
+
         // Initialize the SDK
         Places.initialize(applicationContext, api)
 
         // Create a new PlacesClient instance
         val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
+
 
         //sport type
         val activityType: Spinner = findViewById<Spinner>(R.id.spinner)
@@ -201,10 +205,10 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     .addOnSuccessListener {
                         db.collection("Location").document(locationID)
                             .get().addOnSuccessListener { loc ->
-                                if(loc.get("StreetView") == null){
+                                if (loc.get("StreetView") == null) {
                                     Log.i("Helloooooooo", "making picture")
                                     //FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
-                                 }
+                                }
                             }
 
 

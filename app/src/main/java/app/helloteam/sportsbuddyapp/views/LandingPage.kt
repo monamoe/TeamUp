@@ -65,7 +65,7 @@ class LandingPage2 : ComponentActivity() {
 
         hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
         recommendedEventList = LoadingEvent.recommendedEventList
-        todayWithZeroTime = LocalDate.now()
+        todayWithZeroTime  = LocalDate.now()
 
         // is the user isnt logged in
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
