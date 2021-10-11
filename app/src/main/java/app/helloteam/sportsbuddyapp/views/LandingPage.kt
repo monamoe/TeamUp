@@ -41,6 +41,7 @@ import java.util.*
 //context
 @SuppressLint("StaticFieldLeak")
 private lateinit var currentcontext: Context
+
 const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
 private var userID: String = "1"
@@ -78,20 +79,19 @@ class LandingPage2 : ComponentActivity() {
         }
 
 
-            setContent {
-                currentcontext = LocalContext.current
+        setContent {
+            currentcontext = LocalContext.current
 
-                // compose UI
-                TeamUpTheme() {
-                    // A surface container using the 'background' color from the theme
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.background
-                    ) {
-                        LandingPageCompose()
-                    }
+            // compose UI
+            TeamUpTheme() {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
+                    LandingPageCompose()
                 }
             }
+        }
     }
 
     // Composable Preview

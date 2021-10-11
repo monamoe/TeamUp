@@ -34,8 +34,9 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        viewBinding true
-        dataBinding true
+        //noinspection DataBindingWithoutKapt
+        dataBinding = true
+        viewBinding = true
         compose true
     }
     composeOptions {

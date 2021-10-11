@@ -13,7 +13,6 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
-import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -29,35 +28,34 @@ import java.io.IOException
 import java.util.*
 
 class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
-    private val AUTOCOMPLETE_REQUEST_CODE = 1
 
 
     //time attributes
-    private var hour: Int = 0
-    private var min: Int = 0
-    private var endHour: Int = 0
-    private var endMin: Int = 0
-    private var endTimeBool: Boolean = false
-    private var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
-    private var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH))
-    private var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    var hour: Int = 0
+    var min: Int = 0
+    var endHour: Int = 0
+    var endMin: Int = 0
+    var endTimeBool: Boolean = false
+    var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
+    var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH))
+    var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
     // sports attributes
-    private var activitySelection: String? = ""
+    var activitySelection: String? = ""
 
     // location attributes
-    private var locationPlaceId: String = "" // place id for the location
-    private var locationname: String = "" // the name of the park, (not the address to the park)
-    private var address: String = ""
-    private var lat: Double = 0.0
-    private var long: Double = 0.0
+    var locationPlaceId: String = "" // place id for the location
+    var locationname: String = "" // the name of the park, (not the address to the park)
+    var address: String = ""
+    var lat: Double = 0.0
+    var long: Double = 0.0
 
     //additional information
-    private var addionalInformation = ""
-    private var eventTitle = ""
-    private var eventSpace = 0
+    var addionalInformation = ""
+    var eventTitle = ""
+    var eventSpace = 0
 
-    private val context: Context = this
+    val context: Context = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -289,6 +287,5 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         }
         return place
     }
-
 }
 
