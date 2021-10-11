@@ -33,6 +33,7 @@ import app.helloteam.sportsbuddyapp.views.ui.theme.*
 import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
+import org.joda.time.DateTime
 import java.time.LocalDate
 import java.util.*
 
@@ -56,16 +57,17 @@ var icon: String = ""
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
-lateinit var todayWithZeroTime: LocalDate
+lateinit var todayWithZeroTime: String
 
 class LandingPage2 : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dt = DateTime()
 
         hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
         recommendedEventList = LoadingEvent.recommendedEventList
-        todayWithZeroTime  = LocalDate.now()
+        todayWithZeroTime  = dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
 
         // is the user isnt logged in
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
