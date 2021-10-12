@@ -233,7 +233,7 @@ fun GreetingSection(
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "Good morning, $name",
+                text = "$welcomeMessage, $name",
                 style = MaterialTheme.typography.h1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
