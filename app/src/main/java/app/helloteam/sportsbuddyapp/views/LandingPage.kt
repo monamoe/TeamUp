@@ -37,6 +37,7 @@ import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
+import org.joda.time.LocalTime
 import java.time.LocalDate
 import java.util.*
 
@@ -58,6 +59,7 @@ var prov = ""
 var forecast: String = "Weather error"
 var temp: String = ""
 var icon: String = ""
+var welcomeMessage = "Hello"
 
 private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
@@ -80,6 +82,16 @@ class LandingPage2 : ComponentActivity() {
 
         todayWithZeroTime =
             dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
+
+        val lt = LocalTime()
+
+        if(lt< lt.withHourOfDay(12)){
+            welcomeMessage = "Good Morning"
+        } else if (lt > lt.withHourOfDay(12) && lt > lt.withHourOfDay(17)){
+            welcomeMessage = "Good Afternoon"
+        } else if (lt >= lt.withHourOfDay(17)){
+            welcomeMessage = "Good Evening"
+        }
 
         // is the user isnt logged in
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()

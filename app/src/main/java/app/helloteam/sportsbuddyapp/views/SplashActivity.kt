@@ -45,6 +45,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
+import org.joda.time.DateTime
+import org.joda.time.LocalTime
 import java.util.*
 
 var loggedIn = false
@@ -67,10 +69,8 @@ class SplashActivity : ComponentActivity() {
 
             }
         context = this
-        Log.i("helloooo", user.toString())
         if(user == "null" || user == null){
                 context.startActivity(Intent(context, LoginActivity::class.java))
-
         }
         setContent {
             Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
@@ -111,15 +111,20 @@ class SplashActivity : ComponentActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Log.i("hellooooo", "h empty")
+
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 //program has permission
                     location ->
+                Log.i("hellooooo", "l empty")
 
                 if (location != null) {
+                    Log.i("hellooooo", "l not empty")
+
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-
+                    Log.i("hellooooo", "lat: $userLocationLat ,  Long: $userLocationLon")
                     val geocoder = Geocoder(this, Locale.getDefault())
                     val addresses: List<Address> =
                         geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
@@ -143,6 +148,16 @@ class SplashActivity : ComponentActivity() {
                 getUserName()
                 //gets weather for current location
             }
+            fusedLocationProviderClient.lastLocation.addOnFailureListener {
+                Log.i("hellooooo", it.toString())
+                Toast.makeText(
+                    applicationContext,
+                    "Can not find Location",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
+            }
+
         }
         //request permission
         else {
