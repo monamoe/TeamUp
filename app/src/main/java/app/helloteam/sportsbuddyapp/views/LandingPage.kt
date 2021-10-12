@@ -136,15 +136,14 @@ class LandingPage2 : ComponentActivity() {
 
                         // your events
                         ContentDivider()
-                        EventScroll(
-                            selectedEvent = eventViewModel.selectedEvent,
-                            onSelectEvent = eventViewModel::onSelectedEvent
-                        )
+                        EventScroll()
                         // recommended events
                         ContentDivider()
                         RecommendedEventScroll()
 
                         ContentDivider()
+
+                        ExtraPadding()
                     }
                 }
             },
@@ -156,6 +155,15 @@ class LandingPage2 : ComponentActivity() {
                     }
                 )
             }
+        )
+    }
+
+    private @Composable
+    fun ExtraPadding() {
+        Box(
+            modifier = Modifier
+                .padding(50.dp)
+                .fillMaxWidth()
         )
     }
 }
@@ -305,14 +313,33 @@ fun RecommendedEventScroll() {
             )
         }
 
+        if (recommendedEventList.size == 0){
+            Box(modifier = Modifier)
+        }
         LazyRow(
             modifier = Modifier
                 .fillMaxHeight()
         ) {
-            items(recommendedEventList) { state ->
+            items(recommendedEventList) { e ->
                 EventCard(
-                    state,
-                    Modifier.padding(start = 16.dp, bottom = 16.dp)
+                    e,
+                    Modifier
+                        .padding(start = 16.dp, bottom = 16.dp)
+                        .clickable {
+                            Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
+                            val intent = Intent(context, ViewEvent::class.java)
+                            Log.i(
+                                "LOG_TAG",
+                                "VIEW EVENT: BEFORE: eventID ${e.eventID}"
+                            )
+                            intent.putExtra("eventID", e.eventID)
+                            intent.putExtra("locationID", e.locationID)
+                            Log.i(
+                                "LOG_TAG",
+                                "VIEW EVENT: BEFORE: locationID ${e.locationID}"
+                            )
+                            context.startActivity(intent)
+                        }
                 )
             }
         }
@@ -329,10 +356,7 @@ fun RecommendedEventScroll() {
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EventScroll(
-    selectedEvent: EventCard,
-    onSelectEvent: (event: EventCard) -> Unit
-) {
+fun EventScroll() {
     Column(
     ) {
         Row(
@@ -364,8 +388,6 @@ fun EventScroll(
                             // updates current event in view model (doesnt use viewmodel for intent but im keeping it here)
                             // navigates to the event page
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            onSelectEvent(e)
-
                             val intent = Intent(context, ViewEvent::class.java)
                             Log.i(
                                 "LOG_TAG",
@@ -385,9 +407,6 @@ fun EventScroll(
     }
 }
 
-fun changeIntent(context: Context) {
-
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

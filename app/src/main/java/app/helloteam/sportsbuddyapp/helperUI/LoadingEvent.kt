@@ -16,16 +16,17 @@ class LoadingEvent {
         var yourEventsDone = false
         var yourHostDone = false
 
+        // Recommended Events lazy row card's data for landing page
         fun recommendedEventsListData(userID: String) {
             recEventsDone = false
-            var currentlyAdded = 0;
-            val maxAdded = 5;
+            var currentlyAdded = 0
+            val maxAdded = 5
             val db = Firebase.firestore
             db.collection("User").document(userID).get()
                 .addOnSuccessListener { user ->
                     val favouriteSport = user.get("favouriteSport")
-                    if (favouriteSport != "") {
 
+                    if (favouriteSport != "") {
                         Log.i("LOG_TAG", "RECOMMENDED LIST: inside userID")
                         db.collection("Location").get().addOnSuccessListener { location ->
                             for (loc in location) {
@@ -35,46 +36,60 @@ class LoadingEvent {
                                 )
                                 if (currentlyAdded < maxAdded) {
                                     db.collection("Location")
-                                        .document(loc.get("locationID").toString())
-                                        .collection("Event").get().addOnSuccessListener { events ->
+                                        .document(loc.id)
+                                        .collection("Events").get().addOnSuccessListener { events ->
                                             for (event in events) {
                                                 Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
                                                 if (currentlyAdded < maxAdded) {
                                                     if (event.get("activity")
                                                             .toString() == favouriteSport
                                                     ) {
-
-                                                        val hostName =
-                                                            user.get("userName").toString()
                                                         Log.i(
                                                             "LOG_TAG",
-                                                            "RECOMMENDED LIST: adding event"
+                                                            "RECOMMENDED LIST: --------------------found matching activities!"
                                                         )
-                                                        if (currentlyAdded < maxAdded) {
-                                                            recommendedEventList.add(
-                                                                EventCard(
-                                                                    event.get("title").toString(),
-                                                                    event.get("eventID").toString(),
-                                                                    loc.get("locationID")
-                                                                        .toString(),
-                                                                    loc.get("StreetView")
-                                                                        .toString(),
-                                                                    false,
-                                                                    hostName,
-                                                                    "Playing soccer with a couple friends, feel free to join in",
-                                                                    event.get("eventSpace")
-                                                                        .toString()
-                                                                        .toInt(),
-                                                                    event.get("currentlyAttending")
-                                                                        .toString()
-                                                                        .toInt(),
-                                                                )
-                                                            )
+                                                        val hostName =
+                                                            user.get("userName").toString()
+
+
+                                                        // TO DO ADD A CHECK IF THE USER IS WITHIN THE KILOMETER RANGE SPECIFIED
+                                                        // if the current user is not the host
+                                                        if (hostName != event.get("hostID")
+                                                                .toString()
+                                                        ) {
+                                                            var hostName2: String
+                                                            db.collection("User").document(
+                                                                event.get("hostID").toString()
+                                                            ).get().addOnSuccessListener { u ->
+                                                                hostName2 =
+                                                                    u.get("userName").toString()
+                                                                if (currentlyAdded < maxAdded) {
+                                                                    currentlyAdded++
+                                                                    recommendedEventList.add(
+                                                                        EventCard(
+                                                                            event.get("title")
+                                                                                .toString(),
+                                                                            event.id,
+                                                                            loc.id,
+                                                                            loc.get("StreetView")
+                                                                                .toString(),
+                                                                            false,
+                                                                            if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
+                                                                            "Playing soccer with a couple friends, feel free to join in",
+                                                                            event.get("eventSpace")
+                                                                                .toString()
+                                                                                .toInt(),
+                                                                            event.get("currentlyAttending")
+                                                                                .toString()
+                                                                                .toInt(),
+                                                                        )
+                                                                    )
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
-
                                         }
                                 }
                             }
@@ -87,6 +102,7 @@ class LoadingEvent {
             }
         }
 
+        // Your Events lazy row card's data for landing page
         fun yourEventListData(userID: String) {
             yourHostDone = false
             val db = Firebase.firestore
