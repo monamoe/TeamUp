@@ -310,12 +310,6 @@ fun RecommendedEventScroll() {
                 color = colorResource(id = R.color.secondaryTextColor),
                 modifier = Modifier.padding(15.dp)
             )
-            Text(
-                text = "See More",
-                style = MaterialTheme.typography.h4,
-                color = colorResource(id = R.color.secondaryTextColor),
-                modifier = Modifier.padding(15.dp),
-            )
         }
 
         if (recommendedEventList.size == 0) {
@@ -397,12 +391,6 @@ fun EventScroll() {
                 color = colorResource(id = R.color.secondaryTextColor),
                 modifier = Modifier.padding(15.dp),
             )
-            Text(
-                text = "See More",
-                style = MaterialTheme.typography.h6,
-                color = colorResource(id = R.color.secondaryTextColor),
-                modifier = Modifier.padding(15.dp),
-            )
         }
 
         LazyRow {
@@ -473,9 +461,11 @@ fun EventCard(
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
+                            .padding(20.dp)
                             .height(100.dp)
                             .fillMaxWidth()
                             .fillMaxHeight()
+                            .padding(20.dp)
                     )
                 }
                 Column(modifier = Modifier.padding(16.dp)) {
