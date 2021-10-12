@@ -457,15 +457,27 @@ fun EventCard(
             Column {
 
                 // banner image TO DO GET THIS TO WORK
-                Image(
-                    painter = painterResource(R.drawable.clipboard),
-                    contentDescription = null, // decorative
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth()
-                )
+                if(event.imageId != "null" && event.imageId != "") {
 
+                    Image(
+                        painter = rememberImagePainter(event.imageId),
+                        contentDescription = null, // decorative
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                    )
+                }else{
+                    Image(
+                        painter = painterResource(R.drawable.ic_baseline_broken_image_24),
+                        contentDescription = null, // decorative
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                    )
+                }
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
