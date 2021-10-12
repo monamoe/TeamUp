@@ -1,131 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#C2E89A"
     tools:context=".views.CreateEventActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#C2E89A">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:editable="false" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/eventTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:editable="true"
+            android:hint="EventTitle" />
+
+        <EditText
+            android:id="@+id/eventSpace"
+            android:layout_width="400px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:editable="true"
+            android:ems="10"
+            android:hint="Space Avilable"
+            android:inputType="number" />
+
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="200px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:editable="false"
+            android:text="Location" />
+
+        <fragment
+            android:id="@+id/autocomplete_fragment"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteY="233dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:editable="false" />
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/eventTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:editable="true"
-                android:hint="EventTitle" />
-
-            <EditText
-                android:id="@+id/eventSpace"
-                android:layout_width="400px"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:editable="true"
-                android:ems="10"
-                android:hint="Space Avilable"
-                android:inputType="number" />
-
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="200px"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:editable="false"
-                android:text="Location" />
-
-            <fragment
-                android:id="@+id/autocomplete_fragment"
-                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layout_editor_absoluteY="233dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/TimeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select Start Time"
-                    tools:layout_editor_absoluteX="122dp"
-                    tools:layout_editor_absoluteY="491dp" />
-
-                <Button
-                    android:id="@+id/endTimeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Select End Time"
-                    tools:layout_editor_absoluteX="131dp"
-                    tools:layout_editor_absoluteY="564dp" />
-            </LinearLayout>
-
-            <DatePicker
-                android:id="@+id/datePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:calendarViewShown="false"
-                android:datePickerMode="spinner"
-                tools:layout_editor_absoluteX="81dp"
-                tools:layout_editor_absoluteY="267dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:editable="false"
-                    android:text="Select Activity"
-                    tools:layout_editor_absoluteX="159dp"
-                    tools:layout_editor_absoluteY="76dp" />
-
-                <Spinner
-                    android:id="@+id/spinner"
-                    android:layout_width="156dp"
-                    android:layout_height="match_parent"
-                    tools:layout_editor_absoluteY="131dp" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/additionalInformation"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:editable="true"
-                android:hint="Addional Information" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
             <Button
-                android:id="@+id/CreateBtn"
+                android:id="@+id/TimeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create Event"
-                tools:layout_editor_absoluteX="161dp"
-                tools:layout_editor_absoluteY="648dp" />
+                android:text="Select Start Time"
+                tools:layout_editor_absoluteX="122dp"
+                tools:layout_editor_absoluteY="491dp" />
+
+            <Button
+                android:id="@+id/endTimeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select End Time"
+                tools:layout_editor_absoluteX="131dp"
+                tools:layout_editor_absoluteY="564dp" />
         </LinearLayout>
 
-    </ScrollView>
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            tools:layout_editor_absoluteX="81dp"
+            tools:layout_editor_absoluteY="267dp" />
 
-</layout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:text="Select Activity"
+                tools:layout_editor_absoluteX="159dp"
+                tools:layout_editor_absoluteY="76dp" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="156dp"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteY="131dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/additionalInformation"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:editable="true"
+            android:hint="Addional Information" />
+
+        <Button
+            android:id="@+id/CreateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Event"
+            tools:layout_editor_absoluteX="161dp"
+            tools:layout_editor_absoluteY="648dp" />
+    </LinearLayout>
+
+</ScrollView>

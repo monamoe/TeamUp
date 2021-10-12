@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling
 import app.helloteam.sportsbuddyapp.firebase.TeamHandling
-import app.helloteam.sportsbuddyapp.firebase.UserHandling
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
@@ -33,7 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class event : AppCompatActivity() {
+class ViewEvent : AppCompatActivity() {
 
     var userId: String = "0000000"
     var eventID: String = "0000000"
@@ -58,6 +57,10 @@ class event : AppCompatActivity() {
         // get id for the event selected
         eventID = intent.getStringExtra("eventID").toString()
         locationID = intent.getStringExtra("locationID").toString()
+        Log.i("LOG_TAG", "VIEW EVENT: eventID $eventID")
+        Log.i("LOG_TAG", "VIEW EVENT: locationID $locationID")
+
+
         TeamHandling.getTeam(listview, this, "Event", eventID, locationID)
         EventHandling.getAttendees(listViewAttendees, this, locationID, eventID)
         // ui fields to data from the event database
@@ -81,9 +84,11 @@ class event : AppCompatActivity() {
         db = Firebase.firestore
         uid = FirebaseAuth.getInstance().uid.toString()
 
+
         db.collection("Location").document(locationID).collection("Events").document(eventID)
             .get()
             .addOnSuccessListener { document ->
+                Log.i("LOG_TAG", "VIEW EVENT: $document")
                 if (!document.exists()) {
                     val intent = Intent(this, SplashActivity::class.java)
                     startActivity(intent)

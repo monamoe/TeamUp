@@ -1,16 +1,10 @@
 package app.helloteam.sportsbuddyapp.models;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.androdocs.httprequest.HttpRequest;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 

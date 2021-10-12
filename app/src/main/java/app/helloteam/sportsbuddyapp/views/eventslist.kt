@@ -83,7 +83,7 @@ class eventslist : AppCompatActivity() {
 
         listview.setOnItemClickListener { parent, view, position, id ->
             val eventID = eventList.get(position).getID()
-            val intent = Intent(this, event::class.java)
+            val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("locationID", locationID)
             intent.putExtra("eventID", eventID)
             startActivity(intent)

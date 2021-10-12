@@ -44,7 +44,7 @@ class EventInviteActivity : AppCompatActivity() {
 
 
         listview.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(this, event::class.java)
+            val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("locationID", eventList.get(position).locationID)
             intent.putExtra("eventID", eventList.get(position).eventID)
             startActivity(intent)

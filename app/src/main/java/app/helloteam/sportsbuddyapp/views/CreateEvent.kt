@@ -64,7 +64,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import androidx.compose.ui.viewinterop.AndroidViewBinding
+
 
 
 
@@ -118,7 +118,7 @@ class CreateEvent : ComponentActivity() {
                         .verticalScroll(rememberScrollState())
                 ) {
                     Text("XML VIEW")
-                    CustomView()
+//                    CustomView()
                 }
             },
             bottomBar = {
@@ -143,11 +143,11 @@ class CreateEvent : ComponentActivity() {
     }
 
 
-    @Composable
-    fun CustomView() {
-        ActivityCreateEventBinding(CreateEventActivity::inflate) {
-        }
-    }
+//    @Composable
+//    fun CustomView() {
+//        ActivityCreateEventBinding(CreateEventActivity::inflate) {
+//        }
+//    }
 
 
 }

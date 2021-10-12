@@ -17,6 +17,7 @@ package app.helloteam.sportsbuddyapp.helperUI
 data class EventCard(
     val title: String,
     val eventID: String,
+    val locationID: String,
     val imageId: String,
     val isHosting: Boolean,
     val hostName: String,

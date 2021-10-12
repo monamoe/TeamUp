@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -26,9 +27,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.models.EventViewModel
 import app.helloteam.sportsbuddyapp.views.ui.theme.*
 import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
@@ -60,15 +63,23 @@ private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<Ev
 private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 lateinit var todayWithZeroTime: String
 
+
 class LandingPage2 : ComponentActivity() {
+
+    private val eventViewModel by viewModels<EventViewModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val dt = DateTime()
+
 
         hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
         recommendedEventList = LoadingEvent.recommendedEventList
-        todayWithZeroTime  = dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
+
+        todayWithZeroTime =
+            dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
 
         // is the user isnt logged in
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
@@ -82,7 +93,6 @@ class LandingPage2 : ComponentActivity() {
         setContent {
             currentcontext = LocalContext.current
 
-            // compose UI
             TeamUpTheme() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -126,7 +136,10 @@ class LandingPage2 : ComponentActivity() {
 
                         // your events
                         ContentDivider()
-                        EventScroll()
+                        EventScroll(
+                            selectedEvent = eventViewModel.selectedEvent,
+                            onSelectEvent = eventViewModel::onSelectedEvent
+                        )
                         // recommended events
                         ContentDivider()
                         RecommendedEventScroll()
@@ -316,9 +329,11 @@ fun RecommendedEventScroll() {
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EventScroll() {
+fun EventScroll(
+    selectedEvent: EventCard,
+    onSelectEvent: (event: EventCard) -> Unit
+) {
     Column(
-//        Modifier.background(color = colorResource(id = R.color.landingCardBackgroundColor))
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -339,17 +354,42 @@ fun EventScroll() {
             )
         }
 
-        LazyRow() {
-            items(hostingAttendingEventList) { event ->
+        LazyRow {
+            items(hostingAttendingEventList) { e ->
                 EventCard(
-                    event,
-                    Modifier.padding(start = 16.dp, bottom = 16.dp)
+                    e,
+                    Modifier
+                        .padding(start = 16.dp, bottom = 16.dp)
+                        .clickable {
+                            // updates current event in view model (doesnt use viewmodel for intent but im keeping it here)
+                            // navigates to the event page
+                            Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
+                            onSelectEvent(e)
+
+                            val intent = Intent(context, ViewEvent::class.java)
+                            Log.i(
+                                "LOG_TAG",
+                                "VIEW EVENT: BEFORE: eventID ${e.eventID}"
+                            )
+                            intent.putExtra("eventID", e.eventID)
+                            intent.putExtra("locationID", e.locationID)
+                            Log.i(
+                                "LOG_TAG",
+                                "VIEW EVENT: BEFORE: locationID ${e.locationID}"
+                            )
+                            context.startActivity(intent)
+                        }
                 )
             }
         }
     }
 }
 
+fun changeIntent(context: Context) {
+
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventCard(
     event: EventCard,
@@ -368,8 +408,7 @@ fun EventCard(
                 .clip(RoundedCornerShape(20.dp))
                 .background(colorResource(id = R.color.secondaryColor))
         ) {
-
-            Column(modifier = Modifier.clickable(onClick = { })) {
+            Column {
 
                 // banner image TO DO GET THIS TO WORK
                 Image(
@@ -439,6 +478,7 @@ private fun ContentDivider() {
  * @param context current context
  * @param route decides on navigation
  */
+// TO DO : change routing to compare values NavContent and Context to determine weather or not to switch the view
 fun useIntentOnRoute(context: Context, route: String) {
     Log.i("LOG_tAG", "CURRENT CONTEXT: $context")
     Log.i("LOG_tAG", "CURRENT CONTEXT: ${context.applicationContext}")
