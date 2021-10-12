@@ -88,7 +88,7 @@ class LandingPage2 : ComponentActivity() {
 
         if(lt< lt.withHourOfDay(12)){
             welcomeMessage = "Good Morning"
-        } else if (lt > lt.withHourOfDay(12) && lt > lt.withHourOfDay(17)){
+        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)){
             welcomeMessage = "Good Afternoon"
         } else if (lt >= lt.withHourOfDay(17)){
             welcomeMessage = "Good Evening"
@@ -244,12 +244,6 @@ fun GreetingSection(
                 color = colorResource(id = R.color.secondaryTextColor)
             )
         }
-        Icon(
-            painter = painterResource(id = R.drawable.android_notification_bell_icon_2),
-            contentDescription = "Search",
-            tint = colorResource(id = R.color.secondaryTextColor),
-            modifier = Modifier.size(24.dp)
-        )
     }
 }
 
