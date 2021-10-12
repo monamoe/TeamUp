@@ -10,8 +10,8 @@ fun TeamUpTheme(
     content: @Composable() () -> Unit
 ) {
     MaterialTheme(
-        typography = app.helloteam.sportsbuddyapp.views.ui.theme.Typography,
-        shapes = app.helloteam.sportsbuddyapp.views.ui.theme.Shapes,
+        typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

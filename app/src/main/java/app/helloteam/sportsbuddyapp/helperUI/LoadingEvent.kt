@@ -2,11 +2,15 @@ package app.helloteam.sportsbuddyapp.helperUI
 
 
 import android.content.Intent
+import android.location.Location
 import android.util.Log
 import app.helloteam.sportsbuddyapp.views.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
+var locationA: Location = Location("point A")
+var locationB = Location("point B")
 
 class LoadingEvent {
     companion object {
@@ -53,37 +57,56 @@ class LoadingEvent {
 
 
                                                         // TO DO ADD A CHECK IF THE USER IS WITHIN THE KILOMETER RANGE SPECIFIED
-                                                        // if the current user is not the host
-                                                        if (hostName != event.get("hostID")
-                                                                .toString()
-                                                        ) {
-                                                            var hostName2: String
-                                                            db.collection("User").document(
-                                                                event.get("hostID").toString()
-                                                            ).get().addOnSuccessListener { u ->
-                                                                hostName2 =
-                                                                    u.get("userName").toString()
-                                                                if (currentlyAdded < maxAdded) {
-                                                                    currentlyAdded++
-                                                                    recommendedEventList.add(
-                                                                        EventCard(
-                                                                            event.get("title")
-                                                                                .toString(),
-                                                                            event.id,
-                                                                            loc.id,
-                                                                            loc.get("StreetView")
-                                                                                .toString(),
-                                                                            false,
-                                                                            if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
-                                                                            "Playing soccer with a couple friends, feel free to join in",
-                                                                            event.get("eventSpace")
-                                                                                .toString()
-                                                                                .toInt(),
-                                                                            event.get("currentlyAttending")
-                                                                                .toString()
-                                                                                .toInt(),
+
+
+                                                        locationB.latitude =
+                                                            loc.get("Lat").toString()
+                                                                .toDouble()
+                                                        locationB.longitude =
+                                                            loc.get("Lon").toString()
+                                                                .toDouble()
+                                                        val distance =
+                                                            locationA.distanceTo(locationB)
+                                                        var maxDistance =
+                                                            user.get("distance").toString().toInt()
+
+                                                        if (maxDistance == null) {
+                                                            maxDistance = 20000
+                                                        }
+                                                        if (distance <= maxDistance) {
+
+                                                            // if the current user is not the host
+                                                            if (hostName != event.get("hostID")
+                                                                    .toString()
+                                                            ) {
+                                                                var hostName2: String
+                                                                db.collection("User").document(
+                                                                    event.get("hostID").toString()
+                                                                ).get().addOnSuccessListener { u ->
+                                                                    hostName2 =
+                                                                        u.get("userName").toString()
+                                                                    if (currentlyAdded < maxAdded) {
+                                                                        currentlyAdded++
+                                                                        recommendedEventList.add(
+                                                                            EventCard(
+                                                                                event.get("title")
+                                                                                    .toString(),
+                                                                                event.id,
+                                                                                loc.id,
+                                                                                loc.get("StreetView")
+                                                                                    .toString(),
+                                                                                false,
+                                                                                if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
+                                                                                "Playing soccer with a couple friends, feel free to join in",
+                                                                                event.get("eventSpace")
+                                                                                    .toString()
+                                                                                    .toInt(),
+                                                                                event.get("currentlyAttending")
+                                                                                    .toString()
+                                                                                    .toInt(),
+                                                                            )
                                                                         )
-                                                                    )
+                                                                    }
                                                                 }
                                                             }
                                                         }

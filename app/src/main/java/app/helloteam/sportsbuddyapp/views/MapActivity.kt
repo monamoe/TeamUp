@@ -78,7 +78,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             val locationUI: String? = PLM.getName()
             val locationComp = inputView.findViewById<TextView>(R.id.location)
             if (locationUI != null) {
-                locationComp.text = locationUI;
+                locationComp.text = locationUI
             } else {
                 locationComp.text = "Null"
             }
@@ -158,8 +158,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-                    locationA.latitude = userLocationLat;
-                    locationA.longitude = userLocationLon;
+                    locationA.latitude = userLocationLat
+                    locationA.longitude = userLocationLon
                     //checking accuracy
                     // idk why we need this, yet
                     if (location.hasAccuracy()) {
@@ -201,14 +201,13 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                             location.get("Lon").toString().toDouble()
                                         )
                                         locationB.latitude =
-                                            location.get("Lat").toString().toDouble();
+                                            location.get("Lat").toString().toDouble()
                                         locationB.longitude =
-                                            location.get("Lon").toString().toDouble();
+                                            location.get("Lon").toString().toDouble()
                                         val distance = locationA.distanceTo(locationB)
                                         var maxDistance = user.get("distance")
                                         if (maxDistance == null) {
-                                            if (distance <= 20000
-                                            ) {
+                                            if (distance <= 20000) {
                                                 parklocations.add(park1)
                                             }
                                         } else {

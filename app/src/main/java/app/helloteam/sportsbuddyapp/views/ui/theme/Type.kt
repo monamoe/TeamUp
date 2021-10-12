@@ -44,9 +44,19 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp
     ),
+    h4= TextStyle(
+        color = Color.Black,
+        fontFamily = gothicA1,
+        fontSize = 14.sp
+    ),
+    h5 = TextStyle(
+        color = Color.Black,
+        fontFamily = gothicA1,
+        fontSize = 12.sp
+    ),
 
     // see more
-    h4 = TextStyle(
+    h6 = TextStyle(
         color = Color.Black,
         fontFamily = gothicA1,
         fontSize = 14.sp

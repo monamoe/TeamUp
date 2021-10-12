@@ -15,8 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,15 +26,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
+import app.helloteam.sportsbuddyapp.helperUI.EventCard
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
 import app.helloteam.sportsbuddyapp.models.EventViewModel
-import app.helloteam.sportsbuddyapp.views.ui.theme.*
+import app.helloteam.sportsbuddyapp.views.ui.theme.ButtonBlue
+import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.*
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 import java.time.LocalDate
@@ -105,7 +106,7 @@ class LandingPage2 : ComponentActivity() {
         setContent {
             currentcontext = LocalContext.current
 
-            TeamUpTheme() {
+            TeamUpTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -120,7 +121,7 @@ class LandingPage2 : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun DefaultPreview() {
-        TeamUpTheme() {
+        TeamUpTheme {
             LandingPageCompose()
         }
     }
@@ -170,8 +171,8 @@ class LandingPage2 : ComponentActivity() {
         )
     }
 
-    private @Composable
-    fun ExtraPadding() {
+    @Composable
+    private fun ExtraPadding() {
         Box(
             modifier = Modifier
                 .padding(50.dp)
@@ -195,7 +196,7 @@ fun CreateEventButton() {
         ) {
             Button(
                 onClick = {
-                    var intent = Intent(currentcontext, CreateEventActivity::class.java)
+                    val intent = Intent(currentcontext, CreateEventActivity::class.java)
                     currentcontext.startActivity(intent)
                 }, colors = ButtonDefaults.textButtonColors(
                     backgroundColor = colorResource(id = R.color.secondaryColor)
@@ -238,7 +239,7 @@ fun GreetingSection(
                 color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
-                text = todayWithZeroTime.toString(),
+                text = todayWithZeroTime,
                 style = MaterialTheme.typography.body1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
@@ -252,6 +253,7 @@ fun GreetingSection(
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun CurrentWeather() {
     Row(
@@ -298,14 +300,11 @@ fun CurrentWeather() {
 /**
  * Horizontal scrolling cards for Recommended Events
  *
- * @param events ListOf state events to display
- * @param navigateToEvent (event) request navigation to Article screen
- * navigateToEvent: (String) -> Unit
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RecommendedEventScroll() {
-    Column() {
+    Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -325,8 +324,34 @@ fun RecommendedEventScroll() {
             )
         }
 
-        if (recommendedEventList.size == 0){
-            Box(modifier = Modifier)
+        if (recommendedEventList.size == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .background(colorResource(id = R.color.secondaryColor))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(
+                        text = "Unable to find any event recommedations in your area!",
+                        style = MaterialTheme.typography.h4,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier.padding(15.dp)
+                    )
+                    Text(
+                        text = "Remember to set your favourite activity in settings!",
+                        style = MaterialTheme.typography.h4,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier.padding(15.dp)
+                    )
+                }
+            }
         }
         LazyRow(
             modifier = Modifier
@@ -362,15 +387,11 @@ fun RecommendedEventScroll() {
 /**
  * Horizontal scrolling cards for your events
  *
- * @param events ListOf state events to display
- * @param navigateToEvent (event) request navigation to Article screen
- * navigateToEvent: (String) -> Unit
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventScroll() {
-    Column(
-    ) {
+    Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -384,7 +405,7 @@ fun EventScroll() {
             )
             Text(
                 text = "See More",
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.h6,
                 color = colorResource(id = R.color.secondaryTextColor),
                 modifier = Modifier.padding(15.dp),
             )
@@ -460,7 +481,7 @@ fun EventCard(
                     {
                         Text(
                             text = event.title,
-                            style = MaterialTheme.typography.h5,
+                            style = MaterialTheme.typography.h3,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -473,7 +494,7 @@ fun EventCard(
                     }
 
 
-                    var eventhostline =
+                    val eventhostline =
                         if (event.isHosting) "Hosted By You" else "Hosted by: " + event.hostName
                     Text(
                         text = eventhostline,
