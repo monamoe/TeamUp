@@ -40,8 +40,6 @@ import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
-import java.time.LocalDate
-import java.util.*
 
 
 //context
@@ -70,6 +68,7 @@ lateinit var todayWithZeroTime: String
 
 class LandingPage2 : ComponentActivity() {
 
+    // this isnt used
     private val eventViewModel by viewModels<EventViewModel>()
 
 
@@ -182,36 +181,6 @@ class LandingPage2 : ComponentActivity() {
     }
 }
 
-
-@Composable
-fun CreateEventButton() {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center
-        ) {
-            Button(
-                onClick = {
-                    val intent = Intent(currentcontext, CreateEventActivity::class.java)
-                    currentcontext.startActivity(intent)
-                }, colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = colorResource(id = R.color.secondaryColor)
-                )
-            ) {
-                Text(
-                    text = "Create Event",
-                    color = colorResource(id = R.color.secondaryTextColor),
-                    style = MaterialTheme.typography.h2,
-                )
-            }
-        }
-    }
-}
 
 
 @Composable
@@ -488,9 +457,7 @@ fun EventCard(
         ) {
             Column {
 
-                // banner image TO DO GET THIS TO WORK
                 if(event.imageId != "null" && event.imageId != "") {
-
                     Image(
                         painter = rememberImagePainter(event.imageId),
                         contentDescription = null, // decorative

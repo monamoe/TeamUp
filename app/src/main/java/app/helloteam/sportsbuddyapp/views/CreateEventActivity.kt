@@ -97,7 +97,6 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     activitySelection = parent.getItemAtPosition(pos).toString()
                 }
             }
-
         }
 
         //set the start time
@@ -170,10 +169,9 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
             var addInfo = findViewById<EditText>(R.id.aboutEventEdit).text.toString()
 
-            if(endDate <= date){
+            if (endDate <= date) {
                 Toast.makeText(this, "Invalid start and end time", Toast.LENGTH_SHORT).show()
-            }
-            else if (addInfo.length > 200){
+            } else if (addInfo.length > 200) {
                 Toast.makeText(this, "Information too long", Toast.LENGTH_SHORT).show()
             }
             // enter required fields

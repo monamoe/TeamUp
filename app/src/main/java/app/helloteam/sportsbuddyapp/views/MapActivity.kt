@@ -5,6 +5,16 @@ Manages map component of SportBuddy app
 uses ParkLocationMarker.kt for creating markers
  */
 
+
+/*
+   monamoe
+   10-10-2021
+   allows the user to submit a form to create an event
+   create event composable with xml AndroidView
+   https://developer.android.com/jetpack/compose/interop/interop-apis#views-in-compose
+ */
+
+
 package app.helloteam.sportsbuddyapp.views
 
 import android.Manifest
