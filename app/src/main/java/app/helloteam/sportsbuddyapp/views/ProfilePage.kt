@@ -111,6 +111,7 @@ class ProfilePage : AppCompatActivity() {
                 .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
                     FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
