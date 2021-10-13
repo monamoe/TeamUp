@@ -62,6 +62,7 @@ class EditProfilePage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+        supportActionBar?.title = "Edit Profile"
 
         val max = 100
         val min = 10
@@ -167,6 +168,9 @@ class EditProfilePage : AppCompatActivity() {
             if (imageUri != null) { //Image uploading
                 FileHandling.uploadProfileImage(imageUri!!,this)
             }
+            val intent = Intent(this, SplashActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         } else {
             Toast.makeText(this, "About Me section is too long", Toast.LENGTH_SHORT).show()
         }

@@ -67,7 +67,8 @@ class ViewPlayerEvents : AppCompatActivity() {
                                                 hostname = hostuser.get("userName").toString()
                                                 val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
                                                 var time: Timestamp = event.get("date") as Timestamp
-                                                var eventTime = sfd.format(Date(time.seconds*1000))
+                                                var eventTime =
+                                                    sfd.format(Date(time.seconds * 1000))
                                                 hostname = hostuser.get("userName").toString()
                                                 val ED = EventDisplayer(
                                                     event.id,
@@ -94,13 +95,13 @@ class ViewPlayerEvents : AppCompatActivity() {
         listview.setOnItemClickListener { parent, view, position, id ->
             val eventID = eventList.get(position).getEventID()
             val locationID = eventList.get(position).getLocationID()
-            val intent = Intent(this, event::class.java)
+            val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("eventID", eventID)
             intent.putExtra("locationID", locationID)
             startActivity(intent)
         }
 
-        findViewById<Button>(R.id.eventInviteButton).setOnClickListener{
+        findViewById<Button>(R.id.eventInviteButton).setOnClickListener {
             val intent = Intent(this, EventInviteActivity::class.java)
             startActivity(intent)
         }

@@ -113,9 +113,10 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         //allows user to go back to login page from signup
-        findViewById<Button>(R.id.backBtn).setOnClickListener {
+        findViewById<TextView>(R.id.backBtn).setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
     }
 }

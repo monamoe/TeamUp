@@ -96,7 +96,7 @@ class HostEvents : AppCompatActivity() {
         listview.setOnItemClickListener { parent, view, position, id ->
             val eventID = eventList.get(position).getEventID()
             val locationID = eventList.get(position).getLocationID()
-            val intent = Intent(this, event::class.java)
+            val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("eventID", eventID)
             intent.putExtra("locationID", locationID)
             startActivity(intent)

@@ -41,6 +41,7 @@ class ProfilePage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
+        supportActionBar?.title = "Your Profile"
 
         db.collection("User").document(uid)
             .get()
@@ -80,12 +81,6 @@ class ProfilePage : AppCompatActivity() {
                 if (maxDistance != null) binding.maxDistanceEdit.text = maxDistance.toString() + "KM"
             }
 
-        findViewById<Button>(R.id.editProfileButton).setOnClickListener {
-            finish()
-            val intent = Intent(this, EditProfilePage::class.java)
-            startActivity(intent)
-        }
-
         binding.copyButton.setOnClickListener {
             var clip = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             var clipData = ClipData.newPlainText("friendCode", binding.friendCodeEdit.text.toString())
@@ -99,23 +94,13 @@ class ProfilePage : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
+        inflater.inflate(R.menu.profile_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_profile -> {
-            val intent = Intent(this, ProfilePage::class.java)
-            startActivity(intent)
-            true
-        }
-        R.id.action_events -> {
-            val intent = Intent(this, ViewPlayerEvents::class.java)
-            startActivity(intent)
-            true
-        }
-        R.id.action_hosted -> {
-            val intent = Intent(this, HostEvents::class.java)
+            val intent = Intent(this, EditProfilePage::class.java)
             startActivity(intent)
             true
         }
@@ -134,16 +119,6 @@ class ProfilePage : AppCompatActivity() {
             val alert = dialogBuilder.create()
             alert.setTitle("Logout")
             alert.show()
-            true
-        }
-        R.id.action_map -> {
-            val intent = Intent(this, map::class.java)
-            startActivity(intent)
-            true
-        }
-        R.id.action_team -> {
-            val intent = Intent(this, TeamsActivity::class.java)
-            startActivity(intent)
             true
         }
         else -> {

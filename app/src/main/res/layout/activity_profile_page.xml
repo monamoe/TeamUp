@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
+    android:background="#000000"
     tools:context=".views.ProfilePage">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#C2E89A"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -21,7 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#C2E89A"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <LinearLayout
@@ -50,8 +51,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:background="@drawable/customboard"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
@@ -62,6 +63,7 @@
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"
                     android:text="User Name: "
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -71,15 +73,16 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="User Name not found."
-                    android:textColor="#6C6B6B"
+                    android:textColor="#000000"
                     android:textSize="16sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginLeft="4dp"
-                android:layout_marginTop="1dp"
                 android:layout_marginRight="4dp"
                 android:background="@drawable/customboard"
                 android:orientation="horizontal"
@@ -91,6 +94,7 @@
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"
                     android:text="FriendCode: "
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -98,24 +102,27 @@
                     android:id="@+id/friendCodeEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="4"
                     android:gravity="center_vertical"
                     android:text="No Code Found"
-                    android:textColor="#6C6B6B"
+                    android:textColor="#000000"
+                    android:textColorHint="#000000"
                     android:textSize="16sp" />
 
                 <Button
                     android:id="@+id/copyButton"
-                    android:layout_width="1dp"
+                    android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/clipboard"
-                    android:paddingLeft="7.5dp" />
+                    android:paddingLeft="9dp"
+                    app:icon="@drawable/ic_baseline_content_copy_24"
+                    app:iconPadding="0dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginRight="4dp"
@@ -129,6 +136,7 @@
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"
                     android:text="Joined:"
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -138,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Joined date not found."
-                    android:textColor="#6C6B6B"
+                    android:textColor="#000000"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -146,6 +154,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginRight="4dp"
@@ -160,6 +170,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="Max Event Distance:"
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -169,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="20KM"
-                    android:textColor="#6C6B6B"
+                    android:textColor="#000000"
                     android:textSize="16sp" />
 
 
@@ -178,6 +189,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginRight="4dp"
@@ -192,6 +205,7 @@
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"
                     android:text="Favourite Sport:"
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -201,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="No favourite Sport selected."
-                    android:textColor="#6C6B6B"
+                    android:textColor="#000000"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -209,6 +223,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginVertical="10dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginRight="4dp"
@@ -222,7 +237,9 @@
                     android:id="@+id/textView7"
                     android:layout_width="126dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="About Me:"
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -231,25 +248,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="196dp"
                     android:layout_weight="1"
+                    android:gravity="center_vertical"
                     android:text="Please fill out a small bio about you. (Max 200 words.)"
+                    android:textAlignment="gravity"
+                    android:textColor="#000000"
                     android:textSize="16sp" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal|center_vertical"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/editProfileButton"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:text="Edit"
-                    android:textAlignment="center" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -1,6 +1,8 @@
-// implements marker
-// custom marker class
-// doing it this way so i can save the info window information into this class (title snippet image etc)
+/*
+ * monamoe
+ * custom marker class to manage marker locations
+ * doing it this way so i can save the info window information into this class (title snippet image etc)
+ */
 
 package app.helloteam.sportsbuddyapp.models
 
@@ -58,6 +60,7 @@ class ParkLocationMarker {
         return LatLng(this.getLat(), this.getLon())
     }
 
+    // for testing
     fun showdata() {
         Log.i("ParkLocationsManager", "$name : $lat // $lon \n")
     }

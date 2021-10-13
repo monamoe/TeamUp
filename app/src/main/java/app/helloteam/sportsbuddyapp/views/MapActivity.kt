@@ -3,12 +3,9 @@ Author: monamoe
 Created:  Feb 22nd 2021
 Manages map component of SportBuddy app
 uses ParkLocationMarker.kt for creating markers
-uses SportLocation to retrive marker locations
  */
 
-
 package app.helloteam.sportsbuddyapp.views
-
 
 import android.Manifest
 import android.content.DialogInterface
@@ -20,16 +17,14 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.R.id.backBtn
-import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
 import app.helloteam.sportsbuddyapp.firebase.UserHandling
+import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,7 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.*
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
@@ -83,7 +78,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             val locationUI: String? = PLM.getName()
             val locationComp = inputView.findViewById<TextView>(R.id.location)
             if (locationUI != null) {
-                locationComp.text = locationUI;
+                locationComp.text = locationUI
             } else {
                 locationComp.text = "Null"
             }
@@ -108,7 +103,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     //default user location values
     var userLocationLon = 32.00
     var userLocationLat = 32.00
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,8 +158,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     //update user interface
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
-                    locationA.latitude = userLocationLat;
-                    locationA.longitude = userLocationLon;
+                    locationA.latitude = userLocationLat
+                    locationA.longitude = userLocationLon
                     //checking accuracy
                     // idk why we need this, yet
                     if (location.hasAccuracy()) {
@@ -190,69 +184,71 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
         db.collection("User").document(Firebase.auth.currentUser?.uid.toString())
             .get().addOnSuccessListener { user ->
-        db.collection("Location")
-            .get()
-            .addOnSuccessListener { documents ->
-                for (location in documents) {
-                    // events exist at this location
-                    db.collection("Location").document(location.id).collection("Events")
-                        .get()
-                        .addOnSuccessListener { document ->
-                            if (!document.isEmpty) {
-                                val park1 = ParkLocationMarker()
-                                park1.createParkLocationMarker(
-                                    location.id,
-                                    location.get("Location Name").toString(),
-                                    location.get("Lat").toString().toDouble(),
-                                    location.get("Lon").toString().toDouble()
-                                )
-                                locationB.latitude = location.get("Lat").toString().toDouble();
-                                locationB.longitude = location.get("Lon").toString().toDouble();
-                                val distance = locationA.distanceTo(locationB)
-                                var maxDistance = user.get("distance")
-                                if (maxDistance == null){
-                                    if (distance <= 20000
-                                    ) {
-                                        parklocations.add(park1)
-                                    }
-                                } else {
-                                    if (distance <= user.get("distance").toString()
-                                            .toInt() * 1000
-                                    ) {
-                                        parklocations.add(park1)
-                                    }
-                                }
-                                for (i in 0..parklocations.size - 1) {
-                                    mMap.addMarker(
-                                        MarkerOptions()
-                                            .position(
-                                                LatLng(
-                                                    parklocations.get(i).getLat(),
-                                                    parklocations.get(i).getLon()
-                                                )
+                db.collection("Location")
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (location in documents) {
+                            // events exist at this location
+                            db.collection("Location").document(location.id).collection("Events")
+                                .get()
+                                .addOnSuccessListener { document ->
+                                    if (!document.isEmpty) {
+                                        val park1 = ParkLocationMarker()
+                                        park1.createParkLocationMarker(
+                                            location.id,
+                                            location.get("Location Name").toString(),
+                                            location.get("Lat").toString().toDouble(),
+                                            location.get("Lon").toString().toDouble()
+                                        )
+                                        locationB.latitude =
+                                            location.get("Lat").toString().toDouble()
+                                        locationB.longitude =
+                                            location.get("Lon").toString().toDouble()
+                                        val distance = locationA.distanceTo(locationB)
+                                        var maxDistance = user.get("distance")
+                                        if (maxDistance == null) {
+                                            if (distance <= 20000) {
+                                                parklocations.add(park1)
+                                            }
+                                        } else {
+                                            if (distance <= user.get("distance").toString()
+                                                    .toInt() * 1000
+                                            ) {
+                                                parklocations.add(park1)
+                                            }
+                                        }
+                                        for (i in 0..parklocations.size - 1) {
+                                            mMap.addMarker(
+                                                MarkerOptions()
+                                                    .position(
+                                                        LatLng(
+                                                            parklocations.get(i).getLat(),
+                                                            parklocations.get(i).getLon()
+                                                        )
+                                                    )
+                                                    .title(parklocations.get(i).getName())
+                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                                             )
-                                            .title(parklocations.get(i).getName())
-                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                                    )
-                                    Log.i(
-                                        "DisplayingMarkers",
-                                        "adding marker to the map :" + parklocations.get(i)
-                                            .getID() + ", " + parklocations.get(i).getLat()
-                                            .toString() + ", " + parklocations.get(i).getLon()
-                                            .toString()
-                                    )
+                                            Log.i(
+                                                "DisplayingMarkers",
+                                                "adding marker to the map :" + parklocations.get(i)
+                                                    .getID() + ", " + parklocations.get(i).getLat()
+                                                    .toString() + ", " + parklocations.get(i)
+                                                    .getLon()
+                                                    .toString()
+                                            )
+                                        }
+                                    }
                                 }
-                            }
                         }
-                }
 
-                //display the markers
+                        //display the markers
 
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w("CreatingParkLocation", "Error getting documents: ", exception)
+                    }
             }
-            .addOnFailureListener { exception ->
-                Log.w("CreatingParkLocation", "Error getting documents: ", exception)
-            }
-    }
 
         //set the info windows and click listeners for the markers
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
@@ -301,44 +297,5 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
     }
 
-
-    // navigation purposes
-    fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_map, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_profile -> {
-            val intent = Intent(this, ProfilePage::class.java)
-            startActivity(intent)
-            true
-        }
-        R.id.action_logout -> {
-            val dialogBuilder = AlertDialog.Builder(this)
-            dialogBuilder.setMessage("Do you want to log out?")
-                .setCancelable(false)
-                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
-                    UserHandling.Logout()
-                    afterLogout()
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.cancel()
-                })
-            val alert = dialogBuilder.create()
-            alert.setTitle("Logout")
-            alert.show()
-            true
-        }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
 }
 

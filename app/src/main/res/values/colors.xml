@@ -11,20 +11,30 @@
     <color name="red">#FA3333</color>
 
 
-    <color name="landingPageBackground">#84B9FD</color>
-
-
     <color name="primaryColor">#0087cf</color>
     <color name="primaryLightColor">#5db6ff</color>
     <color name="primaryDarkColor">#005b9d</color>
+    <!--    <color name="primaryDarkColor">#000000</color>-->
 
 
-    <color name="secondaryColor">#7FFB68</color>
-
-
-    <color name="secondaryColor1">#39b54a</color>
-    <color name="secondaryLightColor">#FD2FFF3B</color>
     <color name="secondaryDarkColor">#00841b</color>
     <color name="primaryTextColor">#FBFBFB</color>
     <color name="secondaryTextColor">#000000</color>
+
+
+    <color name="landingPageBackground">#FBFBFB</color>
+    <color name="landingCardColor">#002AC2</color>
+    <color name="landingCardBackgroundColor">#264EDF</color>
+
+
+    <color name="secondaryColor">#84B9FD</color>
+
+
+    <!--    <color name="landingPageBackground">#84B9FD</color>-->
+    <!--    <color name="landingCardColor">#002AC2</color>-->
+    <!--    <color name="landingCardBackgroundColor">#264EDF</color>-->
+
+    <!--    <color name="secondaryColor">#6D87E4</color>-->
+
+
 </resources>

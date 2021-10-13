@@ -24,9 +24,7 @@ import kotlin.collections.ArrayList
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import android.app.Activity
-
-
-
+import android.view.Window
 
 
 lateinit private var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
@@ -38,13 +36,13 @@ class EventInviteActivity : AppCompatActivity() {
         val listview = findViewById<ListView>(R.id.inviteList)
         // events array list
         eventList = ArrayList()
+        supportActionBar?.title = "Event Invites"
 
         // populate array list with events that match the location ID of the marker selected
         getInvites(listview)
 
-
         listview.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(this, event::class.java)
+            val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("locationID", eventList.get(position).locationID)
             intent.putExtra("eventID", eventList.get(position).eventID)
             startActivity(intent)

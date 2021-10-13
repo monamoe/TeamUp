@@ -23,6 +23,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".views.CreateEvent"
+            android:exported="true"
+            android:label="@string/title_activity_create_event"
+            android:theme="@style/Theme.SportsBuddyApp" />
 
         <service android:name=".firebase.FirebaseService"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -43,10 +48,16 @@
             android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.ChatLogActivity"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity"/>
+        </activity>
         <activity
             android:name=".views.NewMessageActivity"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity"/>
+        </activity>
         <activity
             android:name=".views.LatestMessagesActivity"
             android:exported="true" />
@@ -58,21 +69,25 @@
             android:exported="true" />
         <activity
             android:name=".views.TeamInvites"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.TeamsActivity"/>
+        </activity>
         <activity
             android:name=".views.TeamsActivity"
             android:exported="true" />
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
         <activity android:name=".views.eventslist" />
-        <activity android:name=".views.event" />
+        <activity android:name=".views.ViewEvent" />
         <activity android:name=".views.CreateEventActivity" />
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.RegisterActivity" />
-
-
-        <activity android:name=".views.LoginActivity">
+        <activity android:name=".views.LoginActivity"/>
+        <activity
+            android:name=".views.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

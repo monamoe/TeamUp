@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TeamUp</string>
     <string name="title_activity_profile_page">profile_page</string>
-    <string name="title_activity_maps">maps</string>
+    <string name="title_activity_maps">Map</string>
 
     <!--
     This string is used for square devices and overridden by hello_world in
@@ -13,4 +13,5 @@
     <string name="invite_title">Enter Friend Code</string>
     <string name="cancel">Cancel</string>
     <string name="password_title">Enter Your Email</string>
+    <string name="title_activity_create_event">CreateEvent</string>
 </resources>

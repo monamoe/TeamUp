@@ -1,31 +1,20 @@
 package app.helloteam.sportsbuddyapp.models;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.androdocs.httprequest.HttpRequest;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import app.helloteam.sportsbuddyapp.views.LandingPageKt;
 
 
 public class weatherTask extends AsyncTask<String, Void, String> {
 
-    public ImageView x;
 
-    public weatherTask(ImageView im) {
-        x = im;
+    public weatherTask() {
     }
 
     @Override
@@ -49,20 +38,19 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             JSONObject main = jsonObj.getJSONObject("main");
             JSONObject weather = jsonObj.getJSONArray("weather").getJSONObject(0);
             Log.i("weather", weather.toString());
-            JSONObject sys = jsonObj.getJSONObject("sys");
-            String city_name = jsonObj.getString("name");
+           // JSONObject sys = jsonObj.getJSONObject("sys");
+           // String city_name = jsonObj.getString("name");
             Log.i("weather", "hi2");
 
-            String countryname = sys.getString("country");
+           // String countryname = sys.getString("country");
             String temperature = main.getString("temp");
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
 
-//
-//            getTemp().setText(temperature + "°C");
-//            getForecast().setText(cast.toUpperCase());
 
-            Picasso.get().load(iconUrl).into(x);
+            LandingPageKt.setTemp(temperature + "°C");
+            LandingPageKt.setForecast(cast.toUpperCase());
+            LandingPageKt.setWeatherIcon(iconUrl);
 
         } catch (Exception ignored) {
 
