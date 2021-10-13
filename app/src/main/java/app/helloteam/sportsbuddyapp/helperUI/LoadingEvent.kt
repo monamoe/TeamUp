@@ -4,6 +4,7 @@ package app.helloteam.sportsbuddyapp.helperUI
 import android.content.Intent
 import android.location.Location
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import app.helloteam.sportsbuddyapp.views.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -121,7 +122,7 @@ class LoadingEvent {
                 }
             recEventsDone = true
             if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                context.startActivity(Intent(context, LandingPage2::class.java))
+                toLanding()
             }
         }
 
@@ -141,12 +142,8 @@ class LoadingEvent {
                                 yourHostDone = true
                                 Log.i("hellooooo", "h empty")
                                 if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                    context.startActivity(
-                                        Intent(
-                                            context,
-                                            LandingPage2::class.java
-                                        )
-                                    )
+                                    toLanding()
+
                                 }
                             }
                             var h = 0
@@ -204,12 +201,7 @@ class LoadingEvent {
                                                         if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
                                                             Log.i("hellooooo", "h sending")
 
-                                                            context.startActivity(
-                                                                Intent(
-                                                                    context,
-                                                                    LandingPage2::class.java
-                                                                )
-                                                            )
+                                                            toLanding()
                                                         }
                                                     }
                                                 }
@@ -236,12 +228,7 @@ class LoadingEvent {
                                 yourEventsDone = true
                                 Log.i("hellooooo", "a empty")
                                 if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                    context.startActivity(
-                                        Intent(
-                                            context,
-                                            LandingPage2::class.java
-                                        )
-                                    )
+                                    toLanding()
                                 }
                             }
                             var a = 0
@@ -289,12 +276,7 @@ class LoadingEvent {
                                                             if (a == hosting.size()) {
                                                                 yourEventsDone = true
                                                                 if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                                                    context.startActivity(
-                                                                        Intent(
-                                                                            context,
-                                                                            LandingPage2::class.java
-                                                                        )
-                                                                    )
+                                                                    toLanding()
                                                                 }
                                                             }
                                                         }
@@ -317,6 +299,12 @@ class LoadingEvent {
                 .addOnSuccessListener { user ->
                     username = user.get("userName").toString()
                 }
+        }
+
+        fun toLanding(){
+            val intent = Intent(context, LandingPage2::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
         }
     }
 }
