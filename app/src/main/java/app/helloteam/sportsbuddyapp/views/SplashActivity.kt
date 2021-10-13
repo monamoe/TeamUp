@@ -71,6 +71,7 @@ class SplashActivity : ComponentActivity() {
         context = this
         if(user == "null" || user == null){
                 context.startActivity(Intent(context, LoginActivity::class.java))
+                finish()
         }
         setContent {
             Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {

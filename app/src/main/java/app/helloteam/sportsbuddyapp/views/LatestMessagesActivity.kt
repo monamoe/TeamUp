@@ -33,6 +33,7 @@ class LatestMessagesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
         var adapter = LatestAdapter(messagesList, this)
+        supportActionBar?.title = "Messages"
 
 
         Log.i("LOG_TAG", "INSIDE LATEST MESSAGE ACTIVITY")

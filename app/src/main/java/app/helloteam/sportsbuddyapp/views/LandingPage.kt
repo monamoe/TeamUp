@@ -391,6 +391,18 @@ fun EventScroll() {
                 color = colorResource(id = R.color.secondaryTextColor),
                 modifier = Modifier.padding(15.dp),
             )
+            Text(
+                text = "View Invites",
+                style = MaterialTheme.typography.h4,
+                color = colorResource(id = R.color.secondaryTextColor),
+                modifier = Modifier
+                    .padding(15.dp)
+                    .clickable {
+
+                        val intent = Intent(context, EventInviteActivity::class.java)
+                        context.startActivity(intent)
+                    }
+            )
         }
 
         LazyRow {

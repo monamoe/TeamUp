@@ -297,44 +297,5 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         }
     }
 
-
-    // navigation purposes
-    fun afterLogout() {//method to go back to login screen after logout
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu_map, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_profile -> {
-            val intent = Intent(this, ProfilePage::class.java)
-            startActivity(intent)
-            true
-        }
-        R.id.action_logout -> {
-            val dialogBuilder = AlertDialog.Builder(this)
-            dialogBuilder.setMessage("Do you want to log out?")
-                .setCancelable(false)
-                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
-                    UserHandling.Logout()
-                    afterLogout()
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.cancel()
-                })
-            val alert = dialogBuilder.create()
-            alert.setTitle("Logout")
-            alert.show()
-            true
-        }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-    }
 }
 

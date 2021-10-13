@@ -201,6 +201,7 @@ class LoginActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.signUpButtonMain).setOnClickListener {//go to sign up activity
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         //login button pressed

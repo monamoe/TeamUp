@@ -39,10 +39,16 @@
             android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.ChatLogActivity"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity"/>
+        </activity>
         <activity
             android:name=".views.NewMessageActivity"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity"/>
+        </activity>
         <activity
             android:name=".views.LatestMessagesActivity"
             android:exported="true" />
@@ -54,7 +60,10 @@
             android:exported="true" />
         <activity
             android:name=".views.TeamInvites"
-            android:exported="true" />
+            android:exported="true">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.TeamsActivity"/>
+        </activity>
         <activity
             android:name=".views.TeamsActivity"
             android:exported="true" />

@@ -27,8 +27,8 @@ class TeamInvites : AppCompatActivity() {
         val listview = findViewById<ListView>(R.id.listView)
         inviteList = ArrayList()
 
-        // populate array list with events that match the location ID of the marker selected
-        Log.i("Teamssss", "i just wanna test")
+        supportActionBar?.title = "Team Invites"
+
 
         // FIREBASE MIGRATION //
         val db = Firebase.firestore

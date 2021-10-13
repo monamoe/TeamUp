@@ -6,67 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".views.TeamsActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#C2E89A"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="16dp">
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:background="@drawable/customboard"
+            android:clickable="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:text="Your Team Members"
-                    android:textSize="34sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <ListView
-                android:id="@+id/listView"
-                android:layout_width="match_parent"
-                android:layout_height="447dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/customboard"
-                android:clickable="true" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/addMemberButton"
-                    android:layout_width="124dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="0"
-                    android:gravity="center_horizontal"
-                    android:text="Add Member" />
-
-                <Button
-                    android:id="@+id/invitesButton"
-                    android:layout_width="124dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:text="View Invites" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addMemberButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="124dp"
+        android:layout_marginBottom="128dp"
+        android:contentDescription="@string/submit"
+        android:src="@drawable/ic_baseline_person_add_24"
+        app:backgroundTint="#005B9D"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
