@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityViewMemberProfileBinding
+import app.helloteam.sportsbuddyapp.firebase.UserHandling.BlockUser
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
