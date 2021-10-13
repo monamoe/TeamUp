@@ -510,10 +510,17 @@ fun EventCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2
                     )
-                    Text(
-                        text = event.eventDesc,
-                        style = MaterialTheme.typography.body2
-                    )
+                    if(event.eventDesc == "" || event.eventDesc == "null"){
+                        Text(
+                            text = "No Description",
+                            style = MaterialTheme.typography.body2
+                        )
+                    } else {
+                        Text(
+                            text = event.eventDesc,
+                            style = MaterialTheme.typography.body2
+                        )
+                    }
                 }
             }
         }

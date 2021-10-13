@@ -97,7 +97,7 @@ class LoadingEvent {
                                                                                     .toString(),
                                                                                 false,
                                                                                 if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
-                                                                                "Playing soccer with a couple friends, feel free to join in",
+                                                                                event.get("information").toString(),
                                                                                 event.get("eventSpace")
                                                                                     .toString()
                                                                                     .toInt(),
@@ -189,7 +189,7 @@ class LoadingEvent {
                                                             loc.get("StreetView").toString(),
                                                             true,
                                                             users.get("userName").toString(),
-                                                            "Playing soccer with a couple friends, feel free to join in",
+                                                            event.get("information").toString(),
                                                             event.get("eventSpace").toString()
                                                                 .toInt(),
                                                             event.get("currentlyAttending")

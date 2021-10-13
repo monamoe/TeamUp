@@ -60,6 +60,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_event)
+        supportActionBar?.title = "Event Information"
 
         val api: String = getString(R.string.google_key)
 
@@ -164,15 +165,22 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             else
                 eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
             //addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
+            val date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
+            val endDate: Date =
+                Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
+            var addInfo = findViewById<EditText>(R.id.aboutEventEdit).text.toString()
 
+            if(endDate <= date){
+                Toast.makeText(this, "Invalid start and end time", Toast.LENGTH_SHORT).show()
+            }
+            else if (addInfo.length > 200){
+                Toast.makeText(this, "Information too long", Toast.LENGTH_SHORT).show()
+            }
             // enter required fields
-            if (!address.equals("") && !activitySelection.equals("") && hour != 0 && !eventTitle.equals(
+            else if (!address.equals("") && !activitySelection.equals("") && hour != 0 && !eventTitle.equals(
                     ""
                 )
             ) {
-                val date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
-                val endDate: Date =
-                    Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
 
                 //pushing to firestore database required the use of a hashmap,
                 val db = Firebase.firestore
@@ -186,7 +194,8 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     "hostID" to FirebaseAuth.getInstance().uid,
                     "eventPlaceID" to locationPlaceId,
                     "date" to date,
-                    "endDate" to endDate
+                    "endDate" to endDate,
+                    "information" to addInfo
 
                 )
                 val LocationsHashMap = hashMapOf(
