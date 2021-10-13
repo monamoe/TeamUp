@@ -30,6 +30,7 @@ class ViewMemberProfileActivity : AppCompatActivity() {
 
         var user = intent.getStringExtra("member").toString()
         var inviteId = intent.getStringExtra("invite").toString()
+
         Log.i("userrrrrrr", user)
         db.collection("User").document(user)
             .get()
@@ -87,6 +88,7 @@ class ViewMemberProfileActivity : AppCompatActivity() {
             }
 
         binding.blockButton.setOnClickListener {
+            BlockUser(user, this, FirebaseAuth.getInstance().currentUser)
 
         }
 
