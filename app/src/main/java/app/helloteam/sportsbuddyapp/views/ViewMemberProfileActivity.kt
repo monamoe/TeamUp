@@ -85,6 +85,10 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                     }
             }
 
+        binding.blockButton.setOnClickListener {
+
+        }
+
         binding.acceptButton.setOnClickListener { //accept team invite
                     var member = hashMapOf(
                         "member" to user
