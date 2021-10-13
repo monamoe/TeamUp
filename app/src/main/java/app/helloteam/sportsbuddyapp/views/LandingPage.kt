@@ -197,15 +197,15 @@ fun CreateEventButton() {
         ) {
             Button(
                 onClick = {
-                    var intent = Intent(currentcontext, CreateEventActivity::class.java)
+                    val intent = Intent(currentcontext, CreateEventActivity::class.java)
                     currentcontext.startActivity(intent)
                 }, colors = ButtonDefaults.textButtonColors(
-                    backgroundColor = Color.Blue
+                    backgroundColor = colorResource(id = R.color.secondaryColor)
                 )
             ) {
                 Text(
                     text = "Create Event",
-                    color = Color.White,
+                    color = colorResource(id = R.color.secondaryTextColor),
                     style = MaterialTheme.typography.h1,
                 )
             }

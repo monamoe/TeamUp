@@ -23,17 +23,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".views.CreateEvent"
-            android:exported="true"
-            android:label="@string/title_activity_create_event"
-            android:theme="@style/Theme.SportsBuddyApp" />
 
-        <service android:name=".firebase.FirebaseService"
+
+        <service
+            android:name=".firebase.FirebaseService"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
 
@@ -49,14 +46,16 @@
         <activity
             android:name=".views.ChatLogActivity"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LatestMessagesActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity" />
         </activity>
         <activity
             android:name=".views.NewMessageActivity"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LatestMessagesActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity" />
         </activity>
         <activity
             android:name=".views.LatestMessagesActivity"
@@ -70,8 +69,9 @@
         <activity
             android:name=".views.TeamInvites"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.TeamsActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.TeamsActivity" />
         </activity>
         <activity
             android:name=".views.TeamsActivity"
@@ -79,12 +79,20 @@
         <activity android:name=".views.HostEvents" />
         <activity android:name=".views.ViewPlayerEvents" />
         <activity android:name=".views.eventslist" />
-        <activity android:name=".views.ViewEvent" />
-        <activity android:name=".views.CreateEventActivity" />
+        <activity android:name=".views.ViewEvent">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LandingPage2" />
+        </activity>
+        <activity android:name=".views.CreateEventActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LandingPage2" />
+        </activity>
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.RegisterActivity" />
-        <activity android:name=".views.LoginActivity"/>
+        <activity android:name=".views.LoginActivity" />
         <activity
             android:name=".views.SplashActivity"
             android:exported="true">

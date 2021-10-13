@@ -27,7 +27,7 @@ data class NavMenuContent(
     val title: String,
     val icon: ImageVector,
     val route: String,
-    val badgeCount: Int = 0,
+    val displayBadge: Boolean = false,
     val icon2: Int = 0
 ) {
 
@@ -39,30 +39,33 @@ val items = listOf(
         title = "Home",
         route = "home",
         icon = Icons.Default.Home,
+        displayBadge = false
     ),
     NavMenuContent(
         title = "Messages",
         route = "chat",
         icon = Icons.Default.Email,
-        badgeCount = 5
-
+        displayBadge = true
     ),
     NavMenuContent(
         title = "Map",
         route = "map",
         icon = Icons.Default.Menu,
-        icon2 = R.drawable.ic_baseline_map_24
-),
+        icon2 = R.drawable.ic_baseline_map_24,
+        displayBadge = false
+    ),
     NavMenuContent(
         title = "Teams",
         route = "teams",
         icon = Icons.Default.Notifications,
-        icon2 = R.drawable.ic_baseline_people_24
+        icon2 = R.drawable.ic_baseline_people_24,
+        displayBadge = false
     ),
     NavMenuContent(
         title = "Profile",
         route = "profile",
-        icon = Icons.Default.Person
+        icon = Icons.Default.Person,
+        displayBadge = false
     ),
 )
 
@@ -100,13 +103,9 @@ fun BottomNavigationBar(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (item.badgeCount > 0) {
+                        if (item.displayBadge == true) {
                             BadgeBox(
-                                badgeContent = {
-                                    Text(
-                                        text = item.badgeCount.toString()
-                                    )
-                                }
+                                badgeContent = {}
                             ) {
                                 Icon(
                                     imageVector = item.icon,
@@ -114,24 +113,17 @@ fun BottomNavigationBar(
                                 )
                             }
                         } else {
-                            if(item.icon2 == 0) {
+                            if (item.icon2 == 0) {
                                 Icon(
                                     imageVector = item.icon,
                                     contentDescription = item.title
                                 )
-                            }else{
+                            } else {
                                 Icon(
                                     painter = painterResource(id = item.icon2),
                                     contentDescription = item.title // decorative element
                                 )
                             }
-                        }
-                        if (selected) {
-                            Text(
-                                text = item.title,
-                                textAlign = TextAlign.Center,
-                                fontSize = 10.sp
-                            )
                         }
                     }
                 }
