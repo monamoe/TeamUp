@@ -3,10 +3,12 @@ package app.helloteam.sportsbuddyapp.firebase
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import app.helloteam.sportsbuddyapp.views.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -48,6 +50,30 @@ object UserHandling {
     fun Logout() {//logs out user
         FirebaseAuth.getInstance().signOut()
     }
+
+    fun BlockUser(userNameBlockID: String, context: Context, currentUser: FirebaseUser?) {
+        val db = Firebase.firestore
+
+        val blockHashMap = hashMapOf(
+            "Blocked Users" to userNameBlockID
+        )
+
+        db.collection("User").document(currentUser?.uid.toString()).collection("BlockList").document()
+                    .set(blockHashMap, SetOptions.merge())
+                        .addOnSuccessListener{
+                            val blockedUser = db.collection("User").document(userNameBlockID).get()
+                                .addOnSuccessListener{blockedUser->
+                                    Toast.makeText(context, "You have blocked ${blockedUser.get("userName")}" , Toast.LENGTH_LONG).show()
+                                }
+
+                        }
+
+
+
+    }
+
+
+
 
     fun userDelete(currentUser: FirebaseUser?, context: Context) {
         val ref = FirebaseDatabase.getInstance()

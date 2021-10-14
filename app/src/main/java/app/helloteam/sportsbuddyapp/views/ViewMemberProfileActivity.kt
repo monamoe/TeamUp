@@ -11,6 +11,7 @@ import android.widget.Toast
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.databinding.ActivityViewMemberProfileBinding
 import app.helloteam.sportsbuddyapp.firebase.InviteHandling
+import app.helloteam.sportsbuddyapp.firebase.UserHandling.BlockUser
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -30,6 +31,7 @@ class ViewMemberProfileActivity : AppCompatActivity() {
 
         var user = intent.getStringExtra("member").toString()
         var inviteId = intent.getStringExtra("invite").toString()
+
         Log.i("userrrrrrr", user)
         db.collection("User").document(user)
             .get()
@@ -85,6 +87,11 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                         }
                     }
             }
+
+        binding.blockButton.setOnClickListener {
+            BlockUser(user, this, FirebaseAuth.getInstance().currentUser)
+
+        }
 
         binding.acceptButton.setOnClickListener { //accept team invite
                     var member = hashMapOf(

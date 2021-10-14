@@ -14,4 +14,5 @@
     <string name="cancel">Cancel</string>
     <string name="password_title">Enter Your Email</string>
     <string name="title_activity_create_event">CreateEvent</string>
+    <string name="title_activity_event_list_compose">EventListCompose</string>
 </resources>

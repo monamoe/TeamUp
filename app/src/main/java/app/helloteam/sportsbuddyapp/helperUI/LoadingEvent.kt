@@ -98,7 +98,8 @@ class LoadingEvent {
                                                                                     .toString(),
                                                                                 false,
                                                                                 if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
-                                                                                event.get("information").toString(),
+                                                                                event.get("information")
+                                                                                    .toString(),
                                                                                 event.get("eventSpace")
                                                                                     .toString()
                                                                                     .toInt(),
@@ -167,7 +168,7 @@ class LoadingEvent {
                                                 .addOnSuccessListener { loc ->
                                                     Log.i(
                                                         "LOG_TAG",
-                                                        "EVENT DISPLAY: \t\t Adding event to list"
+                                                        "EVENT DISPLAY: inside location - ${loc.id}"
                                                     )
                                                     h++
 

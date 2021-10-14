@@ -34,6 +34,16 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
+        <activity
+            android:name=".views.EventListCompose"
+            android:exported="true"
+            android:label="@string/title_activity_event_list_compose"
+            android:theme="@style/Theme.SportsBuddyApp" />
+        <activity
+            android:name=".views.CreateEvent"
+            android:exported="true"
+            android:label="@string/title_activity_create_event"
+            android:theme="@style/Theme.SportsBuddyApp" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
