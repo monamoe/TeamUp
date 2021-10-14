@@ -68,13 +68,13 @@ object InviteHandling {
                                                 .addOnSuccessListener {
 
                                                    db.collection("Notification").document(user.id).get() //gets user notif token
-                                                      .addOnSuccessListener { reciver ->
+                                                      .addOnSuccessListener { reciever ->
                                                          PushNotification(
                                                             NotificationData( //creates invite message
                                                                "Team Invite",
                                                                "You have been invited to ${sender.get("userName")}'s team"
                                                             ),
-                                                            reciver.get("token").toString() //gets token
+                                                            reciever.get("token").toString() //gets token
                                                          ).also {
                                                             sendNotification(it) //sends result
                                                          }
@@ -129,8 +129,23 @@ object InviteHandling {
                         "Invite Sent",
                         Toast.LENGTH_SHORT
                      ).show()
+
+                     db.collection("Notification").document(receiver).get() //gets user notif token
+                        .addOnSuccessListener { reciever ->
+                           PushNotification(
+                              NotificationData( //creates invite message
+                                 "Team Invite",
+                                 "You have been invited to ${FirebaseAuth.getInstance().currentUser?.displayName}'s game."
+                              ),
+                              reciever.get("token").toString() //gets token
+                           ).also {
+                              sendNotification(it) //sends result
+                           }
+
+                        }
                   }
-            } else {
+
+            }else {
                Toast.makeText(
                   context,
                   "Invite already sent",
