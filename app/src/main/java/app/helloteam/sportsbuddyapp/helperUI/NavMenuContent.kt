@@ -61,15 +61,15 @@ fun BottomNavigationBar(
     val readChat = remember { mutableStateOf(true) }
 
 
-    fun listenForLatestMessages(){
+    fun listenForLatestMessages() {
         val currentUser = FirebaseAuth.getInstance().currentUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$currentUser")
 
-        ref.addChildEventListener(object: ChildEventListener {
+        ref.addChildEventListener(object : ChildEventListener {
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
                 var otherUser = chatMessage?.fromId.toString()
-                if(otherUser == currentUser.toString()){
+                if (otherUser == currentUser.toString()) {
                     otherUser = chatMessage?.toId.toString()
                 }
 
@@ -81,7 +81,7 @@ fun BottomNavigationBar(
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
                 var otherUser = chatMessage?.fromId.toString()
-                if(otherUser == currentUser.toString()){
+                if (otherUser == currentUser.toString()) {
                     otherUser = chatMessage?.toId.toString()
                 }
 
@@ -114,22 +114,21 @@ fun BottomNavigationBar(
     ) {
 //        RowScope
         var selected = "home" == a.value?.destination?.route
-            BottomNavigationItem(
-                selected = selected,
-                onClick = {
-                    useIntentOnRoute(currentcontext, "home")
-                },
-                selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
-                unselectedContentColor = Color.White,
-                icon = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                                Icon(
-                                    imageVector = Icons.Default.Home,
-                                    contentDescription = "Home"
-                                )
-                    }
+        BottomNavigationItem(
+            selected = selected,
+            onClick = {
+                useIntentOnRoute(currentcontext, "home")
+            },
+            selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
+            unselectedContentColor = Color.White,
+            icon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home"
+                    )
                 }
             }
         )
@@ -140,10 +139,13 @@ fun BottomNavigationBar(
             onClick = {
                 useIntentOnRoute(currentcontext, "chat")
                 readChat.value = true
-                FirebaseDatabase.getInstance().getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}").get()
+                FirebaseDatabase.getInstance()
+                    .getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
+                    .get()
                     .addOnSuccessListener { latests ->
                         latests.children.forEach { latest ->
-                            FirebaseDatabase.getInstance().getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
+                            FirebaseDatabase.getInstance()
+                                .getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
                                 .child(latest.key.toString()).child("read").setValue(true)
                         }
                     }

@@ -23,11 +23,6 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".views.MapCompose"
-            android:exported="true"
-            android:label="@string/title_activity_map_compose"
-            android:theme="@style/Theme.SportsBuddyApp" />
-        <activity
             android:name=".views.EventListCompose"
             android:exported="true"
             android:label="@string/title_activity_event_list_compose"
