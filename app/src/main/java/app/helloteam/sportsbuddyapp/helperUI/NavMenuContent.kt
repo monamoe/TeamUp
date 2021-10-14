@@ -8,6 +8,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,37 +37,8 @@ data class NavMenuContent(
     val icon2: Int = 0
 )
 
-val items = listOf(
-    NavMenuContent(
-        title = "Home",
-        route = "LandingPage2",
-        icon = Icons.Default.Home,
-    ),
-    NavMenuContent(
-        title = "Messages",
-        route = "LatestMessagesActivity",
-        icon = Icons.Default.Email,
-        badgeCount = 5
 
-    ),
-    NavMenuContent(
-        title = "Map",
-        route = "map",
-        icon = Icons.Default.Menu,
-        icon2 = R.drawable.ic_baseline_map_24
-    ),
-    NavMenuContent(
-        title = "Teams",
-        route = "TeamsActivity",
-        icon = Icons.Default.Notifications,
-        icon2 = R.drawable.ic_baseline_people_24
-    ),
-    NavMenuContent(
-        title = "Profile",
-        route = "ProfilePage",
-        icon = Icons.Default.Person
-    ),
-)
+
 
 // TO DO PASS CONTEXT and compare values
 /**
@@ -79,6 +52,8 @@ fun BottomNavigationBar(
     onItemClicker: (NavMenuContent) -> Unit,
     context: Context
 ) {
+    val readChat = remember { mutableStateOf(false) }
+
     val a = navController.currentBackStackEntryAsState()
     val currentcontext = LocalContext.current
     BottomNavigation(
@@ -87,12 +62,11 @@ fun BottomNavigationBar(
         modifier = modifier
     ) {
 //        RowScope
-        items.forEach { item ->
-            val selected = item.route == a.value?.destination?.route
+            var selected = "home" == a.value?.destination?.route
             BottomNavigationItem(
                 selected = selected,
                 onClick = {
-                    useIntentOnRoute(currentcontext, item.route)
+                    useIntentOnRoute(currentcontext, "home")
                 },
                 selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
                 unselectedContentColor = Color.White,
@@ -100,43 +74,108 @@ fun BottomNavigationBar(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (item.badgeCount > 0) {
-                            BadgeBox(
-                                badgeContent = {
-                                    Text(
-                                        text = item.badgeCount.toString()
-                                    )
-                                }
-                            ) {
                                 Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.title
+                                    imageVector = Icons.Default.Home,
+                                    contentDescription = "Home"
                                 )
-                            }
-                        } else {
-                            if (item.icon2 == 0) {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = item.title
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(id = item.icon2),
-                                    contentDescription = item.title // decorative element
-                                )
-                            }
-                        }
-                        if (selected) {
-                            Text(
-                                text = item.title,
-                                textAlign = TextAlign.Center,
-                                fontSize = 10.sp
-                            )
-                        }
                     }
                 }
             )
-        }
+
+        selected = "chat" == a.value?.destination?.route
+        BottomNavigationItem(
+            selected = selected,
+            onClick = {
+                useIntentOnRoute(currentcontext, "chat")
+                readChat.value = true
+            },
+            selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
+            unselectedContentColor = Color.White,
+            icon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (!readChat.value) {
+                        BadgeBox(
+                            badgeContent = {}
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Messages"
+                            )
+                        }
+                    } else {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Messages"
+                            )
+                    }
+                }
+            }
+        )
+
+        selected = "map" == a.value?.destination?.route
+        BottomNavigationItem(
+            selected = selected,
+            onClick = {
+                useIntentOnRoute(currentcontext, "map")
+            },
+            selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
+            unselectedContentColor = Color.White,
+            icon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_map_24),
+                                contentDescription = "Map" // decorative element
+                            )
+                }
+            }
+        )
+
+
+        selected = "teams" == a.value?.destination?.route
+        BottomNavigationItem(
+            selected = selected,
+            onClick = {
+                useIntentOnRoute(currentcontext, "teams")
+            },
+            selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
+            unselectedContentColor = Color.White,
+            icon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_people_24),
+                                contentDescription = "Teams" // decorative element
+                            )
+                }
+            }
+        )
+
+
+        selected = "profile" == a.value?.destination?.route
+        BottomNavigationItem(
+            selected = selected,
+            onClick = {
+                useIntentOnRoute(currentcontext, "profile")
+            },
+            selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
+            unselectedContentColor = Color.White,
+            icon = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Profile"
+                            )
+                }
+            }
+        )
+
     }
 }
 
