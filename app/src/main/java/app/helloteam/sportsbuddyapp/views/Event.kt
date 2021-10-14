@@ -76,6 +76,7 @@ class ViewEvent : AppCompatActivity() {
         val hostbio = findViewById<TextView>(R.id.hostbio)
 
         attendBtn.text = "Attend"
+        findViewById<Button>(R.id.becomeHostButton).visibility = View.GONE
 
         // populate array list with events that match the location ID of the marker selected
         // this query needs to be redone
@@ -92,7 +93,7 @@ class ViewEvent : AppCompatActivity() {
                 if (!document.exists()) {
                     val intent = Intent(this, SplashActivity::class.java)
                     startActivity(intent)
-                    Toast.makeText(this, "Event No Longer Exsists", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "eventID", Toast.LENGTH_SHORT).show()
                 } else {
                     Log.d("LOG_TAG", "DocumentSnapshot data: ${eventID}")
 
@@ -146,6 +147,7 @@ class ViewEvent : AppCompatActivity() {
                                 for (user in users) {
                                     if (user.get("userID").toString() == uid) {
                                         attending = true
+                                        findViewById<Button>(R.id.becomeHostButton).visibility = View.VISIBLE
                                     }
                                 }
                             }
@@ -220,9 +222,6 @@ class ViewEvent : AppCompatActivity() {
                     removeAttendance()
                     Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
                         .show()
-
-                    val intent = Intent(context, SplashActivity::class.java)
-                    startActivity(intent)
                 }
                 negativeButton(R.string.cancel)
             }
@@ -234,6 +233,17 @@ class ViewEvent : AppCompatActivity() {
     private fun hostLeaveEvent() {
         db.collection("Location").document(locationID).collection("Events").document(eventID)
             .update("hostID", "null")
+        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("Hosting")
+            .whereEqualTo("eventID", eventID).get()
+            .addOnSuccessListener { hosting ->
+                for (host in hosting){
+                    db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("Hosting")
+                        .document(host.id).delete()
+                }
+                val intent = Intent(context, SplashActivity::class.java)
+                startActivity(intent)
+            }
+
 
     }
 
@@ -299,7 +309,15 @@ class ViewEvent : AppCompatActivity() {
                             db.collection("User")
                                 .document(FirebaseAuth.getInstance().uid.toString())
                                 .collection("Attending").document(eventID)
-                                .set(attendingHashMap, SetOptions.merge())
+                                .set(attendingHashMap, SetOptions.merge()).addOnSuccessListener {
+                                    val intent = Intent(this, SplashActivity::class.java)
+                                    startActivity(intent)
+                                    Toast.makeText(
+                                        this,
+                                        "Successfully registered for this event",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
 
 
                         }
@@ -307,14 +325,8 @@ class ViewEvent : AppCompatActivity() {
                             Log.w("a", "Error creating Attendee document", e)
                         }
 
-                    Toast.makeText(
-                        this,
-                        "Successfully registered for this event",
-                        Toast.LENGTH_SHORT
-                    ).show()
 
-                    val intent = Intent(this, SplashActivity::class.java)
-                    startActivity(intent)
+
 
                 } else {
                     Toast.makeText(
@@ -372,8 +384,5 @@ class ViewEvent : AppCompatActivity() {
                     e
                 )
             }
-
-        val intent = Intent(this, SplashActivity::class.java)
-        startActivity(intent)
     }
 }

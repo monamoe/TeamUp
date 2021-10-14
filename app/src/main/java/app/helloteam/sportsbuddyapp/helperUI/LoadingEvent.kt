@@ -177,7 +177,7 @@ class LoadingEvent {
                                                             event.get("title").toString()
                                                         } - ${event.id}  "
                                                     )
-
+                                                try {
                                                     hostingAttendingEventList.add(
                                                         EventCard(
                                                             event.get("title").toString(),
@@ -194,6 +194,13 @@ class LoadingEvent {
                                                                 .toInt(),
                                                         )
                                                     )
+                                                } catch (e: Exception){
+                                                    Log.i("errorr", e.toString())
+                                                    db.collection("User").document(userID).collection("Hosting")
+                                                        .document(host.id).delete()
+                                                }
+
+
                                                     if (h == hosting.size()) {
                                                         Log.i("hellooooo", "h full")
 
@@ -251,15 +258,17 @@ class LoadingEvent {
                                                         .document(event.get("hostID").toString())
                                                         .get().addOnSuccessListener { user ->
                                                             a++
+                                                            var hostName = "No Host"
+                                                            if (user.exists()){
+                                                                hostName =
+                                                                    user.get("userName").toString()
+                                                            }
 
-                                                            val hostName =
-                                                                user.get("userName").toString()
                                                             hostingAttendingEventList.add(
                                                                 EventCard(
                                                                     event.get("title").toString(),
-                                                                    event.get("eventID").toString(),
-                                                                    loc.get("locationID")
-                                                                        .toString(),
+                                                                    event.id,
+                                                                    loc.id,
                                                                     loc.get("StreetView")
                                                                         .toString(),
                                                                     false,
