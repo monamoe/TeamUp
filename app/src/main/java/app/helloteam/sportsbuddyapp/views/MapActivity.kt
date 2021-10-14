@@ -8,22 +8,17 @@ uses ParkLocationMarker.kt for creating markers
 package app.helloteam.sportsbuddyapp.views
 
 import android.Manifest
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.firebase.UserHandling
 import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -38,7 +33,6 @@ import com.google.firebase.ktx.Firebase
 
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
-
 
     // park locations arraylist
     var parklocations = ArrayList<ParkLocationMarker>()

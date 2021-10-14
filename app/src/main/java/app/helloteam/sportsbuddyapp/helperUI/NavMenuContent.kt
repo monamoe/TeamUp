@@ -131,7 +131,8 @@ fun BottomNavigationBar(
                                 )
                     }
                 }
-            )
+            }
+        )
 
         selected = "chat" == a.value?.destination?.route
         BottomNavigationItem(
@@ -164,10 +165,10 @@ fun BottomNavigationBar(
                             )
                         }
                     } else {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = "Messages"
-                            )
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Messages"
+                        )
                     }
                 }
             }
@@ -185,10 +186,10 @@ fun BottomNavigationBar(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_map_24),
-                                contentDescription = "Map" // decorative element
-                            )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_map_24),
+                        contentDescription = "Map" // decorative element
+                    )
                 }
             }
         )
@@ -206,10 +207,10 @@ fun BottomNavigationBar(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_baseline_people_24),
-                                contentDescription = "Teams" // decorative element
-                            )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_people_24),
+                        contentDescription = "Teams" // decorative element
+                    )
                 }
             }
         )
@@ -227,10 +228,10 @@ fun BottomNavigationBar(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile"
-                            )
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile"
+                    )
                 }
             }
         )
