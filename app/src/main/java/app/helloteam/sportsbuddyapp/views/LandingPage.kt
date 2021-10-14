@@ -28,9 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
-import app.helloteam.sportsbuddyapp.helperUI.EventCard
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
+import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.models.EventViewModel
 import app.helloteam.sportsbuddyapp.views.ui.theme.ButtonBlue
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
@@ -86,11 +84,11 @@ class LandingPage2 : ComponentActivity() {
 
         val lt = LocalTime()
 
-        if(lt< lt.withHourOfDay(12)){
+        if (lt < lt.withHourOfDay(12)) {
             welcomeMessage = "Good Morning"
-        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)){
+        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)) {
             welcomeMessage = "Good Afternoon"
-        } else if (lt >= lt.withHourOfDay(17)){
+        } else if (lt >= lt.withHourOfDay(17)) {
             welcomeMessage = "Good Evening"
         }
 
@@ -165,25 +163,17 @@ class LandingPage2 : ComponentActivity() {
                     navController = navController,
                     onItemClicker = {
                         navController.navigate(it.route)
-                    }
+                    },
+                    context = currentcontext
                 )
             }
-        )
-    }
-
-    @Composable
-    private fun ExtraPadding() {
-        Box(
-            modifier = Modifier
-                .padding(50.dp)
-                .fillMaxWidth()
         )
     }
 }
 
 
 @Composable
-fun CreateEventButton() {
+private fun CreateEventButton() {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -219,7 +209,7 @@ fun CreateEventButton() {
  * @param name
  */
 @Composable
-fun GreetingSection(
+private fun GreetingSection(
     name: String = "User",
 ) {
     Row(
@@ -249,7 +239,7 @@ fun GreetingSection(
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun CurrentWeather() {
+private fun CurrentWeather() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -297,7 +287,7 @@ fun CurrentWeather() {
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RecommendedEventScroll() {
+private fun RecommendedEventScroll() {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -378,7 +368,7 @@ fun RecommendedEventScroll() {
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun EventScroll() {
+private fun EventScroll() {
     Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -437,7 +427,7 @@ fun EventScroll() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EventCard(
+private fun EventCard(
     event: EventCard,
     modifier: Modifier = Modifier
 ) {
@@ -457,7 +447,7 @@ fun EventCard(
             Column {
 
                 // banner image TO DO GET THIS TO WORK
-                if(event.imageId != "null" && event.imageId != "") {
+                if (event.imageId != "null" && event.imageId != "") {
 
                     Image(
                         painter = rememberImagePainter(event.imageId),
@@ -467,7 +457,7 @@ fun EventCard(
                             .height(100.dp)
                             .fillMaxWidth()
                     )
-                }else{
+                } else {
                     Image(
                         painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
@@ -510,7 +500,7 @@ fun EventCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2
                     )
-                    if(event.eventDesc == "" || event.eventDesc == "null"){
+                    if (event.eventDesc == "" || event.eventDesc == "null") {
                         Text(
                             text = "No Description",
                             style = MaterialTheme.typography.body2
@@ -525,43 +515,8 @@ fun EventCard(
             }
         }
     }
-
 }
 
 
-/**
- * Full-width divider with padding
- */
-@Composable
-private fun ContentDivider() {
-    Divider(
-        modifier = Modifier.padding(horizontal = 14.dp),
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
-    )
-}
 
-/**
- * Intent Navigation Router
- * @param context current context
- * @param route decides on navigation
- */
-// TO DO : change routing to compare values NavContent and Context to determine weather or not to switch the view
-fun useIntentOnRoute(context: Context, route: String) {
-    Log.i("LOG_tAG", "CURRENT CONTEXT: $context")
-    Log.i("LOG_tAG", "CURRENT CONTEXT: ${context.applicationContext}")
-    if (route != "home") {
 
-        var intent = Intent(context, LandingPage2::class.java)
-        when (route) {
-            "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
-            "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
-            "map" -> intent = Intent(context, map::class.java)
-            "teams" -> intent = Intent(context, TeamsActivity::class.java)
-            "profile" -> intent = Intent(context, ProfilePage::class.java)
-            else -> {
-                Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
-            }
-        }
-        context.startActivity(intent)
-    }
-}

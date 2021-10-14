@@ -1,6 +1,8 @@
 package app.helloteam.sportsbuddyapp.helperUI
 
-import android.graphics.drawable.VectorDrawable
+import android.content.Context
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,12 +18,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.views.useIntentOnRoute
+import app.helloteam.sportsbuddyapp.views.*
 
+/**
+ * Navigation Bar
+ */
 
 data class NavMenuContent(
     val title: String,
@@ -29,20 +33,17 @@ data class NavMenuContent(
     val route: String,
     val badgeCount: Int = 0,
     val icon2: Int = 0
-) {
-
-}
-
+)
 
 val items = listOf(
     NavMenuContent(
         title = "Home",
-        route = "home",
+        route = "LandingPage2",
         icon = Icons.Default.Home,
     ),
     NavMenuContent(
         title = "Messages",
-        route = "chat",
+        route = "LatestMessagesActivity",
         icon = Icons.Default.Email,
         badgeCount = 5
 
@@ -52,32 +53,31 @@ val items = listOf(
         route = "map",
         icon = Icons.Default.Menu,
         icon2 = R.drawable.ic_baseline_map_24
-),
+    ),
     NavMenuContent(
         title = "Teams",
-        route = "teams",
+        route = "TeamsActivity",
         icon = Icons.Default.Notifications,
         icon2 = R.drawable.ic_baseline_people_24
     ),
     NavMenuContent(
         title = "Profile",
-        route = "profile",
+        route = "ProfilePage",
         icon = Icons.Default.Person
     ),
 )
 
+// TO DO PASS CONTEXT and compare values
 /**
  * NavBar Creator
- *
- * This class returns a listOf EventCard objects
- * @param userID
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onItemClicker: (NavMenuContent) -> Unit
+    onItemClicker: (NavMenuContent) -> Unit,
+    context: Context
 ) {
     val a = navController.currentBackStackEntryAsState()
     val currentcontext = LocalContext.current
@@ -114,12 +114,12 @@ fun BottomNavigationBar(
                                 )
                             }
                         } else {
-                            if(item.icon2 == 0) {
+                            if (item.icon2 == 0) {
                                 Icon(
                                     imageVector = item.icon,
                                     contentDescription = item.title
                                 )
-                            }else{
+                            } else {
                                 Icon(
                                     painter = painterResource(id = item.icon2),
                                     contentDescription = item.title // decorative element
@@ -137,5 +137,37 @@ fun BottomNavigationBar(
                 }
             )
         }
+    }
+}
+
+
+/**
+ * Intent Navigation Router
+ * @param context current context
+ * @param route decides on navigation
+ */
+// TO DO : change routing to compare values NavContent and Context to determine weather or not to switch the view
+fun useIntentOnRoute(context: Context, route: String) {
+    // jank way to get the name of the file the user is currently looking at
+    var listContextName = context.toString().split("@")[0]
+    var currentPageNameArray = listContextName.split(".")
+    var currentPageName = currentPageNameArray[currentPageNameArray.size - 1]
+    Log.i("LOG_TAG", "CURRENT CONTEXT: current page vs route : $currentPageName - $route")
+
+
+    var intent = Intent(context, LandingPage2::class.java)
+    // if the current page is the one the user wants to go to
+    if (currentPageName != route) {
+        when (route) {
+            "LandingPage2" -> intent = Intent(context, LandingPage2::class.java)
+            "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
+            "map" -> intent = Intent(context, map::class.java)
+            "teams" -> intent = Intent(context, TeamsActivity::class.java)
+            "profile" -> intent = Intent(context, ProfilePage::class.java)
+            else -> {
+                Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
+            }
+        }
+        context.startActivity(intent)
     }
 }

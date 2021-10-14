@@ -23,6 +23,11 @@
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".views.EventListCompose"
+            android:exported="true"
+            android:label="@string/title_activity_event_list_compose"
+            android:theme="@style/Theme.SportsBuddyApp" />
+        <activity
             android:name=".views.CreateEvent"
             android:exported="true"
             android:label="@string/title_activity_create_event"
@@ -40,14 +45,16 @@
         <activity
             android:name=".views.ChatLogActivity"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LatestMessagesActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity" />
         </activity>
         <activity
             android:name=".views.NewMessageActivity"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LatestMessagesActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LatestMessagesActivity" />
         </activity>
         <activity
             android:name=".views.LatestMessagesActivity"
@@ -61,8 +68,9 @@
         <activity
             android:name=".views.TeamInvites"
             android:exported="true">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.TeamsActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.TeamsActivity" />
         </activity>
         <activity
             android:name=".views.TeamsActivity"
@@ -75,7 +83,7 @@
         <activity android:name=".views.ProfilePage" />
         <activity android:name=".views.EditProfilePage" />
         <activity android:name=".views.RegisterActivity" />
-        <activity android:name=".views.LoginActivity"/>
+        <activity android:name=".views.LoginActivity" />
         <activity
             android:name=".views.SplashActivity"
             android:exported="true">
