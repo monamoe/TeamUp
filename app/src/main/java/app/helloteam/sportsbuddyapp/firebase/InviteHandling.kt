@@ -134,7 +134,7 @@ object InviteHandling {
                         .addOnSuccessListener { reciever ->
                            PushNotification(
                               NotificationData( //creates invite message
-                                 "Team Invite",
+                                 "Event Invite",
                                  "You have been invited to ${FirebaseAuth.getInstance().currentUser?.displayName}'s game."
                               ),
                               reciever.get("token").toString() //gets token

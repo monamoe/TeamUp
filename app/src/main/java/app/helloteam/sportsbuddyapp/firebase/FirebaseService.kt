@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.views.EventInviteActivity
 import app.helloteam.sportsbuddyapp.views.TeamInvites
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -23,7 +24,16 @@ class FirebaseService : FirebaseMessagingService(){
     override fun onMessageReceived(message: RemoteMessage){// when user get notif
         super.onMessageReceived(message)
 
-        val intent = Intent(this, TeamInvites::class.java)// set intent that notification will take user too
+
+        lateinit var intent: Intent
+        if(message.data["title"] == "Team Invite") {
+            intent = Intent(this, TeamInvites::class.java)// set intent that notification will take user too
+        }
+
+        if(message.data["title"] == "Event Invite") {
+            intent = Intent(this, EventInviteActivity::class.java)// set intent that notification will take user too
+        }
+
         val notificationManger = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 
