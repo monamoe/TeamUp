@@ -291,7 +291,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     break
                 }
             }
-            val intent = Intent(this, eventslist::class.java)
+            val intent = Intent(this, EventListCompose::class.java)
             intent.putExtra("locationID", locationId)
             startActivity(intent)
         }
