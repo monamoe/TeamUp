@@ -22,8 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.recyclerview.widget.RecyclerView
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.views.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 /**
  * Navigation Bar
@@ -38,8 +46,6 @@ data class NavMenuContent(
 )
 
 
-
-
 // TO DO PASS CONTEXT and compare values
 /**
  * NavBar Creator
@@ -52,8 +58,53 @@ fun BottomNavigationBar(
     onItemClicker: (NavMenuContent) -> Unit,
     context: Context
 ) {
-    val readChat = remember { mutableStateOf(false) }
+    val readChat = remember { mutableStateOf(true) }
 
+
+    fun listenForLatestMessages(){
+        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$currentUser")
+
+        ref.addChildEventListener(object: ChildEventListener {
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
+                var otherUser = chatMessage?.fromId.toString()
+                if(otherUser == currentUser.toString()){
+                    otherUser = chatMessage?.toId.toString()
+                }
+
+                ref.child(otherUser).child("read").get().addOnSuccessListener {
+                    readChat.value = it.value != false
+                }
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
+                var otherUser = chatMessage?.fromId.toString()
+                if(otherUser == currentUser.toString()){
+                    otherUser = chatMessage?.toId.toString()
+                }
+
+                ref.child(otherUser).child("read").get().addOnSuccessListener {
+                    readChat.value = it.value != false
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+
+            }
+        })
+    }
+
+    listenForLatestMessages()
     val a = navController.currentBackStackEntryAsState()
     val currentcontext = LocalContext.current
     BottomNavigation(
@@ -62,7 +113,7 @@ fun BottomNavigationBar(
         modifier = modifier
     ) {
 //        RowScope
-            var selected = "home" == a.value?.destination?.route
+        var selected = "home" == a.value?.destination?.route
             BottomNavigationItem(
                 selected = selected,
                 onClick = {
@@ -88,6 +139,14 @@ fun BottomNavigationBar(
             onClick = {
                 useIntentOnRoute(currentcontext, "chat")
                 readChat.value = true
+                FirebaseDatabase.getInstance().getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}").get()
+                    .addOnSuccessListener { latests ->
+                        latests.children.forEach { latest ->
+                            FirebaseDatabase.getInstance().getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
+                                .child(latest.key.toString()).child("read").setValue(true)
+                        }
+                    }
+
             },
             selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
             unselectedContentColor = Color.White,
@@ -175,7 +234,6 @@ fun BottomNavigationBar(
                 }
             }
         )
-
     }
 }
 

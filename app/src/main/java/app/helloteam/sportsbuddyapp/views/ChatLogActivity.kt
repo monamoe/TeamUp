@@ -174,8 +174,8 @@ class ChatLogActivity : AppCompatActivity() {
         })
     }
 
-    class ChatMessage(val id: String, val text:String, val fromId: String, val toId: String, val timestamp: Long){
-        constructor(): this("", "", "", "", -1)
+    class ChatMessage(val id: String, val text:String, val fromId: String, val toId: String, val timestamp: Long, var read: Boolean){
+        constructor(): this("", "", "", "", -1, true)
     }
 
     private fun performSendMessage(){
@@ -184,7 +184,7 @@ class ChatLogActivity : AppCompatActivity() {
         val toId = intent.getStringExtra("member").toString()
         val dbFrom = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
-        val chatMessage = ChatMessage(dbFrom.key.toString(), text, fromId, toId, System.currentTimeMillis() / 1000)
+        val chatMessage = ChatMessage(dbFrom.key.toString(), text, fromId, toId, System.currentTimeMillis() / 1000, true)
         dbFrom.setValue(chatMessage).addOnSuccessListener {
             Log.d("Messagee", dbFrom.key.toString())
         }
@@ -197,8 +197,9 @@ class ChatLogActivity : AppCompatActivity() {
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
         val latestMessageRefTo = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
 
+        val chatMessageTo = ChatMessage(dbFrom.key.toString(), text, fromId, toId, System.currentTimeMillis() / 1000, false)
         latestMessageRef.setValue(chatMessage)
-        latestMessageRefTo.setValue(chatMessage)
+        latestMessageRefTo.setValue(chatMessageTo)
 
     }
 }
