@@ -1,3 +1,8 @@
+/*
+ * monamoe
+ * List of event views
+ */
+
 package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint

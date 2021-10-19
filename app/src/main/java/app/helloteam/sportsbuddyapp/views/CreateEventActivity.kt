@@ -68,7 +68,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         Places.initialize(applicationContext, api)
 
         // Create a new PlacesClient instance
-        val placesClient = Places.createClient(this)
+//        val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
 
 
@@ -82,7 +82,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             activityType.adapter = adapter
         }
-        activityType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        activityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
@@ -114,7 +114,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         datePicker.init(
             today.get(Calendar.YEAR), today.get(Calendar.MONTH),
             today.get(Calendar.DAY_OF_MONTH)
-        ) { view, year, month, day ->
+        ) { _, year, month, day ->
             dayPicked = day
             yearPicked = year
             monthPicked = month

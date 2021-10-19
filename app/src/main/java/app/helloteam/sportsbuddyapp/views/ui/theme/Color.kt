@@ -1,3 +1,7 @@
+/*
+ * monamoe
+ * app colors, (unused, but required for material theme)
+ */
 package app.helloteam.sportsbuddyapp.views.ui.theme
 
 import androidx.compose.ui.graphics.Color

@@ -41,7 +41,7 @@ class EventInviteActivity : AppCompatActivity() {
         // populate array list with events that match the location ID of the marker selected
         getInvites(listview)
 
-        listview.setOnItemClickListener { parent, view, position, id ->
+        listview.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("locationID", eventList.get(position).locationID)
             intent.putExtra("eventID", eventList.get(position).eventID)
@@ -55,14 +55,14 @@ class EventInviteActivity : AppCompatActivity() {
         }
     }
 
-    fun getInvites(listview: ListView){
+    fun getInvites(listview: ListView) {
         // FIREBASE MIGRATION //
         eventList = ArrayList()
         val db = Firebase.firestore
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .collection("Invites").whereEqualTo("inviteType", "Event")
             .get().addOnSuccessListener { invites ->
-                for (invite in invites){
+                for (invite in invites) {
                     db.collection("User").document(invite.get("sender").toString())
                         .get().addOnSuccessListener { user ->
                             db.collection(
@@ -95,10 +95,15 @@ class EventInviteActivity : AppCompatActivity() {
                                                     }
                                             }
                                     } else {
-                                        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                        db.collection("User")
+                                            .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                             .collection("Invites").document(invite.id).delete()
                                             .addOnSuccessListener {
-                                                Toast.makeText(this, "Some invites have been removed since events no longer exsist", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(
+                                                    this,
+                                                    "Some invites have been removed since events no longer exsist",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
                                             }
                                     }
                                 }
@@ -148,7 +153,8 @@ class EventInviteActivity : AppCompatActivity() {
             eventSender.text = ("Invited by: " + eventList.get(position).sender)
             rowMain.findViewById<Button>(R.id.deleteButton).setOnClickListener {
                 Log.i("Invite ID", eventList.get(position).id)
-                db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                db.collection("User")
+                    .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                     .collection("Invites").document(eventList.get(position).id)
                     .delete().addOnSuccessListener {
                         (mContext as Activity).finish()
@@ -177,7 +183,16 @@ class EventInviteActivity : AppCompatActivity() {
         }
 
         // main constuctor
-        constructor(id: String, eventID: String, locationID: String, name: String, address: String, time: Timestamp, host: String, sender: String) {
+        constructor(
+            id: String,
+            eventID: String,
+            locationID: String,
+            name: String,
+            address: String,
+            time: Timestamp,
+            host: String,
+            sender: String
+        ) {
             this.id = id
             this.eventID = eventID
             this.locationID = locationID

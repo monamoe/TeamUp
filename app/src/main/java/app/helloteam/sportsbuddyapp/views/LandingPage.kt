@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -32,7 +30,6 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
 import app.helloteam.sportsbuddyapp.helperUI.EventCard
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
-import app.helloteam.sportsbuddyapp.models.EventViewModel
 import app.helloteam.sportsbuddyapp.views.ui.theme.ButtonBlue
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.annotation.ExperimentalCoilApi
@@ -40,8 +37,6 @@ import coil.compose.rememberImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
-import java.time.LocalDate
-import java.util.*
 
 
 //context
@@ -70,9 +65,6 @@ lateinit var todayWithZeroTime: String
 
 class LandingPage2 : ComponentActivity() {
 
-    private val eventViewModel by viewModels<EventViewModel>()
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,11 +79,11 @@ class LandingPage2 : ComponentActivity() {
 
         val lt = LocalTime()
 
-        if(lt< lt.withHourOfDay(12)){
+        if (lt < lt.withHourOfDay(12)) {
             welcomeMessage = "Good Morning"
-        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)){
+        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)) {
             welcomeMessage = "Good Afternoon"
-        } else if (lt >= lt.withHourOfDay(17)){
+        } else if (lt >= lt.withHourOfDay(17)) {
             welcomeMessage = "Good Evening"
         }
 
@@ -164,9 +156,6 @@ class LandingPage2 : ComponentActivity() {
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
-                    onItemClicker = {
-                        navController.navigate(it.route)
-                    },
                     context = currentcontext
                 )
             }
@@ -459,7 +448,7 @@ fun EventCard(
             Column {
 
                 // banner image TO DO GET THIS TO WORK
-                if(event.imageId != "null" && event.imageId != "") {
+                if (event.imageId != "null" && event.imageId != "") {
 
                     Image(
                         painter = rememberImagePainter(event.imageId),
@@ -469,7 +458,7 @@ fun EventCard(
                             .height(100.dp)
                             .fillMaxWidth()
                     )
-                }else{
+                } else {
                     Image(
                         painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
@@ -512,7 +501,7 @@ fun EventCard(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2
                     )
-                    if(event.eventDesc == "" || event.eventDesc == "null"){
+                    if (event.eventDesc == "" || event.eventDesc == "null") {
                         Text(
                             text = "No Description",
                             style = MaterialTheme.typography.body2

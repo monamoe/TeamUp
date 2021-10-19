@@ -1,3 +1,8 @@
+/*
+rileygray & monamoe
+Application NavBar contents and event handlers
+ */
+
 package app.helloteam.sportsbuddyapp.helperUI
 
 import android.content.Context
@@ -6,7 +11,9 @@ import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,12 +24,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.recyclerview.widget.RecyclerView
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.views.*
 import com.google.firebase.auth.FirebaseAuth
@@ -30,13 +34,10 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 /**
  * Navigation Bar
  */
-
 data class NavMenuContent(
     val title: String,
     val icon: ImageVector,
@@ -55,7 +56,6 @@ data class NavMenuContent(
 fun BottomNavigationBar(
     navController: NavController,
     modifier: Modifier = Modifier,
-    onItemClicker: (NavMenuContent) -> Unit,
     context: Context
 ) {
     val readChat = remember { mutableStateOf(true) }
@@ -249,9 +249,9 @@ fun BottomNavigationBar(
 // TO DO : change routing to compare values NavContent and Context to determine weather or not to switch the view
 fun useIntentOnRoute(context: Context, route: String) {
     // jank way to get the name of the file the user is currently looking at
-    var listContextName = context.toString().split("@")[0]
-    var currentPageNameArray = listContextName.split(".")
-    var currentPageName = currentPageNameArray[currentPageNameArray.size - 1]
+    val listContextName = context.toString().split("@")[0]
+    val currentPageNameArray = listContextName.split(".")
+    val currentPageName = currentPageNameArray[currentPageNameArray.size - 1]
     Log.i("LOG_TAG", "CURRENT CONTEXT: current page vs route : $currentPageName - $route")
 
 

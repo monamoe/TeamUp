@@ -1,11 +1,17 @@
+/*
+rileygray & monamoe
+collect and load data for the landing page
+ */
 package app.helloteam.sportsbuddyapp.helperUI
 
 
 import android.content.Intent
 import android.location.Location
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
-import app.helloteam.sportsbuddyapp.views.*
+import app.helloteam.sportsbuddyapp.views.LandingPage2
+import app.helloteam.sportsbuddyapp.views.context
+import app.helloteam.sportsbuddyapp.views.loggedIn
+import app.helloteam.sportsbuddyapp.views.username
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -178,28 +184,29 @@ class LoadingEvent {
                                                             event.get("title").toString()
                                                         } - ${event.id}  "
                                                     )
-                                                try {
-                                                    hostingAttendingEventList.add(
-                                                        EventCard(
-                                                            event.get("title").toString(),
-                                                            event.id,
-                                                            loc.id,
-                                                            loc.get("StreetView").toString(),
-                                                            true,
-                                                            users.get("userName").toString(),
-                                                            event.get("information").toString(),
-                                                            event.get("eventSpace").toString()
-                                                                .toInt(),
-                                                            event.get("currentlyAttending")
-                                                                .toString()
-                                                                .toInt(),
+                                                    try {
+                                                        hostingAttendingEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.id,
+                                                                loc.id,
+                                                                loc.get("StreetView").toString(),
+                                                                true,
+                                                                users.get("userName").toString(),
+                                                                event.get("information").toString(),
+                                                                event.get("eventSpace").toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                            )
                                                         )
-                                                    )
-                                                } catch (e: Exception){
-                                                    Log.i("errorr", e.toString())
-                                                    db.collection("User").document(userID).collection("Hosting")
-                                                        .document(host.id).delete()
-                                                }
+                                                    } catch (e: Exception) {
+                                                        Log.i("errorr", e.toString())
+                                                        db.collection("User").document(userID)
+                                                            .collection("Hosting")
+                                                            .document(host.id).delete()
+                                                    }
 
 
                                                     if (h == hosting.size()) {
@@ -260,7 +267,7 @@ class LoadingEvent {
                                                         .get().addOnSuccessListener { user ->
                                                             a++
                                                             var hostName = "No Host"
-                                                            if (user.exists()){
+                                                            if (user.exists()) {
                                                                 hostName =
                                                                     user.get("userName").toString()
                                                             }
@@ -311,7 +318,7 @@ class LoadingEvent {
                 }
         }
 
-        fun toLanding(){
+        fun toLanding() {
             val intent = Intent(context, LandingPage2::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)

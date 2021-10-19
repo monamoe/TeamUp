@@ -25,7 +25,6 @@
         android:usesCleartextTraffic="true">
 
 
-
         <service
             android:name=".firebase.FirebaseService"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -39,11 +38,6 @@
             android:exported="true"
             android:label="@string/title_activity_event_list_compose"
             android:theme="@style/Theme.SportsBuddyApp" />
-        <activity
-            android:name=".views.CreateEvent"
-            android:exported="true"
-            android:label="@string/title_activity_create_event"
-            android:theme="@style/Theme.SportsBuddyApp" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -53,8 +47,8 @@
             android:name=".views.LandingPage2"
             android:exported="true"
             android:label="LandingPage"
-            android:theme="@style/Theme.SportsBuddyApp"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.SportsBuddyApp" />
         <activity
             android:name=".views.ChatLogActivity"
             android:exported="true"
@@ -74,15 +68,15 @@
         <activity
             android:name=".views.LatestMessagesActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.EventInviteActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.ViewMemberProfileActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.TeamInvites"
             android:exported="true"
@@ -94,24 +88,42 @@
         <activity
             android:name=".views.TeamsActivity"
             android:exported="true"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".views.HostEvents" android:screenOrientation="portrait"/>
-        <activity android:name=".views.ViewPlayerEvents" android:screenOrientation="portrait"/>
-        <activity android:name=".views.eventslist" android:screenOrientation="portrait"/>
-        <activity android:name=".views.ViewEvent" android:screenOrientation="portrait">
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.HostEvents"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.ViewPlayerEvents"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.eventslist"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.ViewEvent"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".views.LandingPage2" />
         </activity>
-        <activity android:name=".views.CreateEventActivity" android:screenOrientation="portrait">
+        <activity
+            android:name=".views.CreateEventActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".views.LandingPage2" />
         </activity>
-        <activity android:name=".views.ProfilePage" android:screenOrientation="portrait"/>
-        <activity android:name=".views.EditProfilePage" android:screenOrientation="portrait"/>
-        <activity android:name=".views.RegisterActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".views.LoginActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".views.ProfilePage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.EditProfilePage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".views.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.SplashActivity"
             android:exported="true"
@@ -125,7 +137,7 @@
         <activity
             android:name=".views.map"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
