@@ -33,23 +33,29 @@ class LoadingEvent {
             var currentlyAdded = 0
             val maxAdded = 5
             val db = Firebase.firestore
+            var AAA = 0
             db.collection("User").document(userID).get()
                 .addOnSuccessListener { user ->
                     val favouriteSport = user.get("favouriteSport")
 
                     if (favouriteSport != "") {
-                        Log.i("LOG_TAG", "RECOMMENDED LIST: inside userID")
                         db.collection("Location").get().addOnSuccessListener { location ->
                             for (loc in location) {
+                                var startNextLocation = false
+                                AAA++
+
                                 Log.i(
                                     "LOG_TAG",
                                     "RECOMMENDED LIST: inside location ${loc.get("Location Name")}"
                                 )
                                 if (currentlyAdded < maxAdded) {
+
                                     db.collection("Location")
                                         .document(loc.id)
                                         .collection("Events").get().addOnSuccessListener { events ->
+                                            var BBB = 0
                                             for (event in events) {
+                                                BBB++
                                                 Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
                                                 if (currentlyAdded < maxAdded) {
                                                     if (event.get("activity")
@@ -119,22 +125,40 @@ class LoadingEvent {
                                                     }
                                                 }
                                             }
+
+                                            Log.i(
+                                                "LOG_TAG",
+                                                "RECOMMENDED LIST: $BBB - ${events.size()}"
+                                            )
+                                            if (BBB == events.size()) {
+                                                startNextLocation = true
+                                            }
+
                                         }
+
+                                }
+                                while (!startNextLocation) {
+                                    // do and just wait
+                                }
+
+                                Log.i("LOG_TAG", "RECOMMENDED LIST: $AAA - ${location.size()}")
+                                if (AAA == location.size()) {
+                                    recEventsDone = true
+                                    if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
+                                        toLanding()
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            recEventsDone = true
-            if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                toLanding()
-            }
         }
 
         // Your Events lazy row card's data for landing page
         fun yourEventListData(userID: String) {
             yourHostDone = false
             val db = Firebase.firestore
+            var HHH = 0
 
             db.collection("User").document(userID)
                 .get()
@@ -151,7 +175,6 @@ class LoadingEvent {
 
                                 }
                             }
-                            var h = 0
                             for (host in hosting) {
                                 Log.i("LOG_TAG", "EVENT DISPLAY: THIS USER IS HOSTING AN EVENT:")
 
@@ -174,7 +197,7 @@ class LoadingEvent {
                                                         "LOG_TAG",
                                                         "EVENT DISPLAY: inside location - ${loc.id}"
                                                     )
-                                                    h++
+                                                    HHH++
 
                                                     Log.i(
                                                         "LOG_TAG",
@@ -207,7 +230,7 @@ class LoadingEvent {
                                                     }
 
 
-                                                    if (h == hosting.size()) {
+                                                    if (HHH == hosting.size()) {
                                                         Log.i("hellooooo", "h full")
 
                                                         yourHostDone = true

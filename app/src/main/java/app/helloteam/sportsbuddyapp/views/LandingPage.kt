@@ -306,7 +306,7 @@ fun RecommendedEventScroll() {
                 modifier = Modifier.padding(15.dp)
             )
         }
-
+        Log.i("LOG_CAT", "RECOMMENDED LIST: $recommendedEventList")
         if (recommendedEventList.size == 0) {
             Box(
                 modifier = Modifier
