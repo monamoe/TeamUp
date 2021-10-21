@@ -145,7 +145,7 @@ class SplashActivity : ComponentActivity() {
                 LoadingEvent.recommendedEventList.clear()
                 LoadingEvent.getAttending(FirebaseAuth.getInstance().currentUser?.uid.toString())
                 LoadingEvent.yourEventListData(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                LoadingEvent.recommendedEventsListData(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                LoadingEvent.recommendedEventsListData(FirebaseAuth.getInstance().currentUser?.uid.toString(), userLocationLat, userLocationLon)
                 getUserName()
                 //gets weather for current location
             }

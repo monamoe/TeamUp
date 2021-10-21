@@ -28,12 +28,15 @@ class LoadingEvent {
         var yourHostDone = false
 
         // Recommended Events lazy row card's data for landing page
-        fun recommendedEventsListData(userID: String) {
+        fun recommendedEventsListData(userID: String, userLocationLat: Double, userLocationLon: Double) {
             recEventsDone = false
             var currentlyAdded = 0
             val maxAdded = 5
             val db = Firebase.firestore
             var AAA = 0
+            locationA.latitude = userLocationLat
+            locationA.longitude = userLocationLon
+
             db.collection("User").document(userID).get()
                 .addOnSuccessListener { user ->
                     val favouriteSport = user.get("favouriteSport")
@@ -41,7 +44,6 @@ class LoadingEvent {
                     if (favouriteSport != "") {
                         db.collection("Location").get().addOnSuccessListener { location ->
                             for (loc in location) {
-                                var startNextLocation = false
                                 AAA++
 
                                 Log.i(
@@ -55,9 +57,11 @@ class LoadingEvent {
                                         .collection("Events").get().addOnSuccessListener { events ->
                                             var BBB = 0
                                             for (event in events) {
+
                                                 BBB++
                                                 Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
                                                 if (currentlyAdded < maxAdded) {
+
                                                     if (event.get("activity")
                                                             .toString() == favouriteSport
                                                     ) {
@@ -67,7 +71,6 @@ class LoadingEvent {
                                                         )
                                                         val hostName =
                                                             user.get("userName").toString()
-
 
                                                         // if the user is within the range specified
                                                         locationB.latitude =
@@ -83,11 +86,21 @@ class LoadingEvent {
 
                                                         if (maxDistance == null) {
                                                             maxDistance = 20000
+                                                        } else {
+                                                            maxDistance *= 1000
                                                         }
+                                                        Log.i(
+                                                            "HELLOOOOOOO 4",
+                                                            "$distance $maxDistance"
+                                                        )
                                                         if (distance <= maxDistance) {
+                                                            Log.i(
+                                                                "HELLOOOOOOO 4",
+                                                                event.id
+                                                            )
 
                                                             // if the current user is not the host
-                                                            if (hostName != event.get("hostID")
+                                                            if (user.id != event.get("hostID")
                                                                     .toString()
                                                             ) {
                                                                 var hostName2: String
@@ -98,6 +111,7 @@ class LoadingEvent {
                                                                         u.get("userName").toString()
                                                                     if (currentlyAdded < maxAdded) {
                                                                         currentlyAdded++
+
                                                                         recommendedEventList.add(
                                                                             EventCard(
                                                                                 event.get("title")
@@ -107,7 +121,7 @@ class LoadingEvent {
                                                                                 loc.get("StreetView")
                                                                                     .toString(),
                                                                                 false,
-                                                                                if (hostName2 == null) "N/A" else hostName2, //ignore the warning here
+                                                                                if (hostName2 == "null") "N/A" else hostName2, //ignore the warning here
                                                                                 event.get("information")
                                                                                     .toString(),
                                                                                 event.get("eventSpace")
@@ -130,23 +144,15 @@ class LoadingEvent {
                                                 "LOG_TAG",
                                                 "RECOMMENDED LIST: $BBB - ${events.size()}"
                                             )
-                                            if (BBB == events.size()) {
-                                                startNextLocation = true
+                                            if (BBB == events.size() && AAA == location.size()) {
+                                                recEventsDone = true
+                                                if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
+                                                    toLanding()
+                                                }
                                             }
 
                                         }
 
-                                }
-                                while (!startNextLocation) {
-                                    // do and just wait
-                                }
-
-                                Log.i("LOG_TAG", "RECOMMENDED LIST: $AAA - ${location.size()}")
-                                if (AAA == location.size()) {
-                                    recEventsDone = true
-                                    if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                        toLanding()
-                                    }
                                 }
                             }
                         }
