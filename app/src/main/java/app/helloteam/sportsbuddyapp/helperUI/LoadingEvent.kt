@@ -63,9 +63,7 @@ class LoadingEvent {
                                                             user.get("userName").toString()
 
 
-                                                        // TO DO ADD A CHECK IF THE USER IS WITHIN THE KILOMETER RANGE SPECIFIED
-
-
+                                                        // if the user is within the range specified
                                                         locationB.latitude =
                                                             loc.get("Lat").toString()
                                                                 .toDouble()

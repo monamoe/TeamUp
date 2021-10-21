@@ -4,15 +4,11 @@ Created:  Feb 22nd 2021
 Manages map component of SportBuddy app
 uses ParkLocationMarker.kt for creating markers
 
-allows the user to submit a form to create an event
-create event composable with xml AndroidView
-https://developer.android.com/jetpack/compose/interop/interop-apis#views-in-compose
  */
-
-
 package app.helloteam.sportsbuddyapp.views
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -35,16 +31,15 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-
+import java.lang.Exception
 
 class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
-
     // park locations arraylist
-    var parklocations = ArrayList<ParkLocationMarker>()
+    private var parklocations = ArrayList<ParkLocationMarker>()
 
-    var locationA: Location = Location("point A")
-    var locationB = Location("point B")
+    private var locationA: Location = Location("point A")
+    private var locationB = Location("point B")
 
     // custom Info Windows Rendering
     // https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.InfoWindowAdapter
@@ -52,6 +47,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
 
         // this is used to convert the xml activity (custom_info_window.xml) into a view obect
+        @SuppressLint("InflateParams")
         private val window: View = layoutInflater.inflate(R.layout.custom_info_window, null)
 
         // To replace the default info window, override getInfoWindow(Marker) with your custom rendering and return null for getInfoContents(Marker)
@@ -65,23 +61,36 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         private fun render(marker: Marker, inputView: View) {
             // get the marker data out of the manager array list
             lateinit var PLM: ParkLocationMarker
-            loop@ for (i in 0..parklocations.size - 1) {
+            loop@ for (i in 0 until parklocations.size) {
                 // this is comparing the name of the location to get its marker title but it should be comparing id or something.
-                if (parklocations.get(i).getName() == marker.title) {
-                    PLM = parklocations.get(i)
+                if (parklocations[i].getName() == marker.title) {
+                    PLM = parklocations[i]
                     break@loop
                 }
 
             }
 
-            //updating ui components on the info window
-            val locationUI: String? = PLM.getName()
-            val locationComp = inputView.findViewById<TextView>(R.id.location)
-            if (locationUI != null) {
+            try {
+                //updating ui components on the info window
+                val locationUI: String = PLM.getName()
+                val locationComp = inputView.findViewById<TextView>(R.id.location)
+                if (locationUI != null) {
+                    locationComp.text = locationUI
+                } else {
+                    locationComp.text = "Null"
+                }
+            } catch (e: Exception) {
+                //updating ui components on the info window
+                val locationUI = "Your Location"
+                val locationComp = inputView.findViewById<TextView>(R.id.location)
                 locationComp.text = locationUI
-            } else {
-                locationComp.text = "Null"
+                // if the user clicks their owner marker
+                Log.i(
+                    "LOG_TAG",
+                    "MAP : Unable to run onClick for this marker"
+                )
             }
+
         }
 
         override fun getInfoContents(p0: Marker): View {
@@ -93,7 +102,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     //permission integer
     private val MY_PERMISSION_FINE_LOCATION: Int = 44
 
-    /** This is ok to be lateinit as it is initialised in onMapReady */
+    // google map property, init in onMapReady
     private lateinit var mMap: GoogleMap
 
     //for users location
@@ -101,8 +110,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
 
     //default user location values
-    var userLocationLon = 32.00
-    var userLocationLat = 32.00
+    private var userLocationLon = 32.00
+    private var userLocationLat = 32.00
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,12 +169,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                     userLocationLon = location.longitude
                     locationA.latitude = userLocationLat
                     locationA.longitude = userLocationLon
-                    //checking accuracy
-                    // idk why we need this, yet
-                    if (location.hasAccuracy()) {
-                        // setting value to  variable = location.accuracy()
-                        // https://www.youtube.com/watch?v=DPKtC2HA9sE
-                    }
                 }
                 //render the marker on the users location.
                 updateUserMarker()
@@ -205,7 +208,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                         locationB.longitude =
                                             location.get("Lon").toString().toDouble()
                                         val distance = locationA.distanceTo(locationB)
-                                        var maxDistance = user.get("distance")
+                                        val maxDistance = user.get("distance")
                                         if (maxDistance == null) {
                                             if (distance <= 20000) {
                                                 parklocations.add(park1)
@@ -217,23 +220,23 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                                 parklocations.add(park1)
                                             }
                                         }
-                                        for (i in 0..parklocations.size - 1) {
+                                        for (i in 0 until parklocations.size) {
                                             mMap.addMarker(
                                                 MarkerOptions()
                                                     .position(
                                                         LatLng(
-                                                            parklocations.get(i).getLat(),
-                                                            parklocations.get(i).getLon()
+                                                            parklocations[i].getLat(),
+                                                            parklocations[i].getLon()
                                                         )
                                                     )
-                                                    .title(parklocations.get(i).getName())
+                                                    .title(parklocations[i].getName())
                                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
                                             )
                                             Log.i(
                                                 "DisplayingMarkers",
-                                                "adding marker to the map :" + parklocations.get(i)
-                                                    .getID() + ", " + parklocations.get(i).getLat()
-                                                    .toString() + ", " + parklocations.get(i)
+                                                "adding marker to the map :" + parklocations[i]
+                                                    .getID() + ", " + parklocations[i].getLat()
+                                                    .toString() + ", " + parklocations[i]
                                                     .getLon()
                                                     .toString()
                                             )
@@ -241,9 +244,6 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                                     }
                                 }
                         }
-
-                        //display the markers
-
                     }
                     .addOnFailureListener { exception ->
                         Log.w("CreatingParkLocation", "Error getting documents: ", exception)
@@ -270,8 +270,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         mMap.animateCamera(
             CameraUpdateFactory.newCameraPosition(
                 CameraPosition.Builder().target(userlocation)
-                    .zoom(15.5f)
-                    .tilt(70f) // viewing angle
+                    .zoom(21f)
+                    .tilt(72f) // viewing angle
                     .build()
             )
         )
@@ -279,23 +279,35 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     // info window event handler ( redirects to the view eventslist.kt )
     override fun onInfoWindowClick(p0: Marker?) {
-        //get the latlng position from the marker
-        val markerPosition = p0?.position
+        //get the lat lng position from the marker clicked
+        try {
+            val markerPosition = p0?.position
 
-        // if the user clicks their owner marker
-        Log.i("LOG_TAG", "MAP:  ${markerPosition.toString()} - $userLocationLat, $userLocationLon")
-        if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
-            var locationId = ""
-            //find which latlng that belongs to
-            for (i in 0..parklocations.size - 1) {
-                if (markerPosition?.equals(parklocations.get(i).getLatLng())!!) {
-                    locationId = parklocations.get(i).getID().toString()
-                    break
+            // if the user clicks their owner marker
+            Log.i(
+                "LOG_TAG",
+                "MAP :  ${markerPosition.toString()} - $userLocationLat, $userLocationLon"
+            )
+
+            if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
+                var locationId = ""
+                //find which lat lng that belongs to
+                for (i in 0 until parklocations.size) {
+                    if (markerPosition?.equals(parklocations[i].getLatLng())!!) {
+                        locationId = parklocations[i].getID().toString()
+                        break
+                    }
                 }
+                val intent = Intent(this, EventListCompose::class.java)
+                intent.putExtra("locationID", locationId)
+                startActivity(intent)
             }
-            val intent = Intent(this, EventListCompose::class.java)
-            intent.putExtra("locationID", locationId)
-            startActivity(intent)
+        } catch (e: Exception) {
+            // if the user clicks their owner marker
+            Log.i(
+                "LOG_TAG",
+                "MAP : Unable to run onClick for this marker"
+            )
         }
     }
 }
