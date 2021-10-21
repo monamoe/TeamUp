@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventList
 import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -298,7 +299,9 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                         break
                     }
                 }
-                val intent = Intent(this, EventListCompose::class.java)
+
+                // go to event list loading page
+                val intent = Intent(this, LoadingEventList::class.java)
                 intent.putExtra("locationID", locationId)
                 startActivity(intent)
             }

@@ -29,7 +29,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
 import app.helloteam.sportsbuddyapp.helperUI.ContentDivider
 import app.helloteam.sportsbuddyapp.helperUI.EventCard
 import app.helloteam.sportsbuddyapp.helperUI.ExtraPadding
@@ -48,7 +50,8 @@ private var locationEventList: List<EventCard> = listOf(
         "a",
         "a",
         1,
-        1
+        1,
+        "Soccer"
     ),
     EventCard(
         "A",
@@ -59,7 +62,8 @@ private var locationEventList: List<EventCard> = listOf(
         "a",
         "a",
         1,
-        1
+        1,
+        "Soccer"
     ),
     EventCard(
         "A",
@@ -70,7 +74,8 @@ private var locationEventList: List<EventCard> = listOf(
         "a",
         "a",
         1,
-        1
+        1,
+        "Soccer"
     ),
     EventCard(
         "A",
@@ -81,10 +86,14 @@ private var locationEventList: List<EventCard> = listOf(
         "a",
         "a",
         1,
-        1
+        1,
+        "Soccer"
     ),
 )
 
+var locationName = "Location Name"
+var locationInfo = "Location Info"
+var locationImage = "IDK"
 
 //context
 @SuppressLint("StaticFieldLeak")
@@ -124,6 +133,7 @@ fun DefaultPreview() {
 
 @Composable
 fun EventList() {
+    val navController = rememberNavController()
     Scaffold(
         content = {
             Box(
@@ -136,22 +146,19 @@ fun EventList() {
                     LocationInfo()
                     ContentDivider()
 
-
+                    // scroll list of events at the location
                     EventListScroll()
 
                     ExtraPadding()
                 }
             }
         },
-//        bottomBar = {
-//            BottomNavigationBar(
-//                navController = navController,
-//                onItemClicker = {
-//                    navController.navigate(it.route)
-//                },
-//                context = currentcontext
-//            )
-//        }
+        bottomBar = {
+            BottomNavigationBar(
+                navController = navController,
+                context = currentcontext
+            )
+        }
     )
 }
 
@@ -179,12 +186,12 @@ private fun LocationInfo() {
                     .height(10.dp)
             )
             Text(
-                text = "Location Name",
+                text = locationName,
                 style = MaterialTheme.typography.h1,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
             Text(
-                text = "Small community park offering tennis, soccer, basketball and a playground.",
+                text = locationInfo,
                 style = MaterialTheme.typography.h2,
                 color = colorResource(id = R.color.secondaryTextColor)
             )
@@ -261,15 +268,15 @@ fun LocationEventCard(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "Event Title",
+                    text = event.title,
                     style = MaterialTheme.typography.h3,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Attending 3/10",
+                    text = "${event.currentlyAttending} / ${event.space}",
                     style = MaterialTheme.typography.h5,
-                    maxLines = 2,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -282,7 +289,7 @@ fun LocationEventCard(
             ) {
                 // activity type
                 Text(
-                    text = event.title,
+                    text = event.activityType,
                     style = MaterialTheme.typography.h3,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

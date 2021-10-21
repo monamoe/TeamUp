@@ -49,9 +49,12 @@ import org.joda.time.DateTime
 import org.joda.time.LocalTime
 import java.util.*
 
+
 var loggedIn = false
 lateinit var context: Context
+
 class SplashActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
@@ -66,12 +69,11 @@ class SplashActivity : ComponentActivity() {
                     loggedIn = true
                     getUserCity()
                 }
-
             }
         context = this
-        if(user == "null" || user == null){
-                context.startActivity(Intent(context, LoginActivity::class.java))
-                finish()
+        if (user == "null" || user == null) {
+            context.startActivity(Intent(context, LoginActivity::class.java))
+            finish()
         }
         setContent {
             Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
@@ -80,6 +82,7 @@ class SplashActivity : ComponentActivity() {
             }
         }
     }
+
     // LANDING PAGE STUFF FROM OLD CODE
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -145,7 +148,11 @@ class SplashActivity : ComponentActivity() {
                 LoadingEvent.recommendedEventList.clear()
                 LoadingEvent.getAttending(FirebaseAuth.getInstance().currentUser?.uid.toString())
                 LoadingEvent.yourEventListData(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                LoadingEvent.recommendedEventsListData(FirebaseAuth.getInstance().currentUser?.uid.toString(), userLocationLat, userLocationLon)
+                LoadingEvent.recommendedEventsListData(
+                    FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                    userLocationLat,
+                    userLocationLon
+                )
                 getUserName()
                 //gets weather for current location
             }
@@ -169,16 +176,20 @@ class SplashActivity : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController,
-        startDestination = "splash_screen") {
+    NavHost(
+        navController = navController,
+        startDestination = "splash_screen"
+    ) {
         composable("splash_screen") {
             SplashScreen()
         }
     }
 }
+
 @Composable
 fun SplashScreen() {
     val scale = remember {
@@ -202,28 +213,29 @@ fun SplashScreen() {
                 durationMillis = 800,
                 easing = {
                     OvershootInterpolator(4f).getInterpolation(it)
-                }))
+                })
+        )
     }
 
-            // Image
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Change the logo
-                Image(
-                    painter = painterResource(id = R.drawable.logoteamup),
-                    contentDescription = "Logo",
-                    modifier = Modifier.scale(scale.value)
-                )
-                Image(
-                    painter = painterResource(R.drawable.soccer),
-                    "image",
-                    Modifier
-                        .size(50.dp)
-                        .rotate(angle),
-                    contentScale = ContentScale.Fit,
-                )
-            }
-        }
+    // Image
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Change the logo
+        Image(
+            painter = painterResource(id = R.drawable.logoteamup),
+            contentDescription = "Logo",
+            modifier = Modifier.scale(scale.value)
+        )
+        Image(
+            painter = painterResource(R.drawable.soccer),
+            "image",
+            Modifier
+                .size(50.dp)
+                .rotate(angle),
+            contentScale = ContentScale.Fit,
+        )
+    }
+}

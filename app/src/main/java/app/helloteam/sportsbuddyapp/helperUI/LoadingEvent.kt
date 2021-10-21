@@ -57,7 +57,6 @@ class LoadingEvent {
                                         .collection("Events").get().addOnSuccessListener { events ->
                                             var BBB = 0
                                             for (event in events) {
-
                                                 BBB++
                                                 Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
                                                 if (currentlyAdded < maxAdded) {
@@ -130,6 +129,8 @@ class LoadingEvent {
                                                                                 event.get("currentlyAttending")
                                                                                     .toString()
                                                                                     .toInt(),
+                                                                                event.get("activity")
+                                                                                    .toString()
                                                                             )
                                                                         )
                                                                     }
@@ -226,6 +227,8 @@ class LoadingEvent {
                                                                 event.get("currentlyAttending")
                                                                     .toString()
                                                                     .toInt(),
+                                                                event.get("activity")
+                                                                    .toString()
                                                             )
                                                         )
                                                     } catch (e: Exception) {
@@ -315,6 +318,8 @@ class LoadingEvent {
                                                                     event.get("currentlyAttending")
                                                                         .toString()
                                                                         .toInt(),
+                                                                    event.get("activity")
+                                                                        .toString()
                                                                 )
                                                             )
                                                             if (a == hosting.size()) {
@@ -327,9 +332,7 @@ class LoadingEvent {
                                                 }
                                         }
                                     }
-
                             }
-
                         }
                 }
         }

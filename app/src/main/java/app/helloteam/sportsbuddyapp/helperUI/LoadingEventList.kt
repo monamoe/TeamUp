@@ -1,0 +1,74 @@
+package app.helloteam.sportsbuddyapp.helperUI
+
+import android.content.Intent
+import app.helloteam.sportsbuddyapp.views.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+
+class LoadingEventList {
+
+    companion object {
+        var locationEventList: MutableList<EventCard> = mutableListOf()
+        var locationEventListDone = false
+
+
+        // populate location event list
+        var locationEventListDataCounter = 0
+        fun locationEventListData(locationID: String) {
+            locationEventListDone = false
+            val db = Firebase.firestore
+
+            // location data = loc
+            db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
+
+                // event data = event
+                db.collection("Location").document(locationID).collection("Events")
+                    .get()
+                    .addOnSuccessListener { events ->
+
+                        for (event in events) {
+
+
+                            // host data = host
+                            val hostID = event.get("hostID").toString()
+                            var hostName = ""
+
+                            db.collection("User").document(hostID)
+                                .get()
+                                .addOnSuccessListener { u ->
+                                    hostName =
+                                        u.get("userName").toString()
+
+                                    locationEventListDataCounter++
+                                    locationEventList.add(
+                                        EventCard(
+                                            event.get("title").toString(),
+                                            event.id,
+                                            loc.id,
+                                            loc.get("StreetView").toString(),
+                                            false,
+                                            if (hostName == "") "No Host" else hostName,
+                                            event.get("information").toString(),
+                                            event.get("eventSpace").toString().toInt(),
+                                            event.get("currentlyAttending").toString().toInt(),
+                                            event.get("activity").toString()
+                                        )
+                                    )
+                                }
+                        }
+                        if (locationEventListDataCounter == events.size()) {
+                            toEventListView()
+                        }
+                    }
+            }
+        }
+
+        // to event list view
+        fun toEventListView() {
+            val intent = Intent(EventListContext, EventListCompose::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        }
+
+    }
+}
