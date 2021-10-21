@@ -1,3 +1,8 @@
+/*
+ * monamoe
+ * 10/21/21
+ * Landing Page Compose
+ */
 package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
@@ -28,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
+import app.helloteam.sportsbuddyapp.helperUI.ContentDivider
 import app.helloteam.sportsbuddyapp.helperUI.EventCard
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
 import app.helloteam.sportsbuddyapp.views.ui.theme.ButtonBlue
@@ -43,13 +49,15 @@ import org.joda.time.LocalTime
 @SuppressLint("StaticFieldLeak")
 private lateinit var currentcontext: Context
 
+// location permission integer
 const val MY_PERMISSION_FINE_LOCATION: Int = 44
 
 private var userID: String = "1"
-var username: String = "user"
-
 var userLocationLat = 0.0
 var userLocationLon = 0.0
+
+// screen values
+var username: String = "user"
 var weatherIcon = ""
 var cityName = ""
 var prov = ""
@@ -58,27 +66,31 @@ var temp: String = ""
 var icon: String = ""
 var welcomeMessage = "Hello"
 
-private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
-private var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
+// lists
+private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf()
+private var recommendedEventList: MutableList<EventCard> = mutableListOf()
 lateinit var todayWithZeroTime: String
 
 
 class LandingPage2 : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // check if the user is logged in
+        userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        if (userID.equals(null)) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
+        // init variables
         val dt = DateTime()
-
-
         hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
         recommendedEventList = LoadingEvent.recommendedEventList
-
         todayWithZeroTime =
             dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
-
         val lt = LocalTime()
-
         if (lt < lt.withHourOfDay(12)) {
             welcomeMessage = "Good Morning"
         } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)) {
@@ -87,15 +99,7 @@ class LandingPage2 : ComponentActivity() {
             welcomeMessage = "Good Evening"
         }
 
-        // is the user isnt logged in
-        userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        if (userID.equals(null)) {
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
-
-
+        // set content
         setContent {
             currentcontext = LocalContext.current
 
@@ -269,13 +273,13 @@ fun CurrentWeather() {
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .background(ButtonBlue)
+                    .background(colorResource(id = R.color.secondaryColor))
                     .padding(10.dp)
             ) {
                 Image(
                     painter = rememberImagePainter(weatherIcon),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(70.dp)
                 )
             }
         }
@@ -308,6 +312,7 @@ fun RecommendedEventScroll() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(colorResource(id = R.color.secondaryColor))
             ) {
                 Column(
@@ -315,10 +320,10 @@ fun RecommendedEventScroll() {
                         .fillMaxWidth()
                         .align(Alignment.TopStart),
                     verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = "Unable to find any event recommedations in your area!",
+                        text = "Unable to find any event recommendations in your area!",
                         style = MaterialTheme.typography.h4,
                         color = colorResource(id = R.color.secondaryTextColor),
                         modifier = Modifier.padding(15.dp)
@@ -396,6 +401,38 @@ fun EventScroll() {
             )
         }
 
+        if (hostingAttendingEventList.size == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colorResource(id = R.color.secondaryColor))
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopStart),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Text(
+                        text = "You aren't registed for any events!",
+                        style = MaterialTheme.typography.h4,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier.padding(15.dp)
+                    )
+                    Text(
+                        text = "Click Create Event to host an event, or go to the map view and " +
+                                "find an event in your area!",
+                        style = MaterialTheme.typography.h4,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier.padding(15.dp)
+                    )
+                }
+            }
+        }
+
         LazyRow {
             items(hostingAttendingEventList) { e ->
                 EventCard(
@@ -403,7 +440,7 @@ fun EventScroll() {
                     Modifier
                         .padding(start = 16.dp, bottom = 16.dp)
                         .clickable {
-                            // updates current event in view model (doesnt use viewmodel for intent but im keeping it here)
+                            // updates current event in view model (doesn't use view model for intent but im keeping it here)
                             // navigates to the event page
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
                             val intent = Intent(context, ViewEvent::class.java)
@@ -426,7 +463,7 @@ fun EventScroll() {
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoilApi::class)
 @Composable
 fun EventCard(
     event: EventCard,
@@ -436,8 +473,6 @@ fun EventCard(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .size(280.dp, 240.dp)
-            .background(colorResource(id = R.color.secondaryColor))
-            .clip(RoundedCornerShape(20.dp))
     ) {
         BoxWithConstraints(
             modifier = Modifier
@@ -446,10 +481,8 @@ fun EventCard(
                 .background(colorResource(id = R.color.secondaryColor))
         ) {
             Column {
-
-                // banner image TO DO GET THIS TO WORK
+                // banner image
                 if (event.imageId != "null" && event.imageId != "") {
-
                     Image(
                         painter = rememberImagePainter(event.imageId),
                         contentDescription = null, // decorative
@@ -517,42 +550,4 @@ fun EventCard(
         }
     }
 
-}
-
-
-/**
- * Full-width divider with padding
- */
-@Composable
-private fun ContentDivider() {
-    Divider(
-        modifier = Modifier.padding(horizontal = 14.dp),
-        color = MaterialTheme.colors.onSurface.copy(alpha = 0.08f)
-    )
-}
-
-/**
- * Intent Navigation Router
- * @param context current context
- * @param route decides on navigation
- */
-// TO DO : change routing to compare values NavContent and Context to determine weather or not to switch the view
-fun useIntentOnRoute(context: Context, route: String) {
-    Log.i("LOG_tAG", "CURRENT CONTEXT: $context")
-    Log.i("LOG_tAG", "CURRENT CONTEXT: ${context.applicationContext}")
-    if (route != "home") {
-
-        var intent = Intent(context, LandingPage2::class.java)
-        when (route) {
-            "home" -> Log.i("LOG_NAVIGATION", "ALREADY ON REQUESTED PAGE")
-            "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
-            "map" -> intent = Intent(context, map::class.java)
-            "teams" -> intent = Intent(context, TeamsActivity::class.java)
-            "profile" -> intent = Intent(context, ProfilePage::class.java)
-            else -> {
-                Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
-            }
-        }
-        context.startActivity(intent)
-    }
 }

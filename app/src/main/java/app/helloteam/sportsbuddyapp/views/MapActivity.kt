@@ -282,6 +282,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         //get the latlng position from the marker
         val markerPosition = p0?.position
 
+        // if the user clicks their owner marker
+        Log.i("LOG_TAG", "MAP:  ${markerPosition.toString()} - $userLocationLat, $userLocationLon")
         if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
             var locationId = ""
             //find which latlng that belongs to
@@ -296,6 +298,4 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
             startActivity(intent)
         }
     }
-
 }
-

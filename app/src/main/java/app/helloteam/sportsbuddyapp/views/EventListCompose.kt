@@ -24,13 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.ContentDivider
 import app.helloteam.sportsbuddyapp.helperUI.EventCard
@@ -126,7 +124,6 @@ fun DefaultPreview() {
 
 @Composable
 fun EventList() {
-    val navController = rememberNavController()
     Scaffold(
         content = {
             Box(
@@ -285,7 +282,7 @@ fun LocationEventCard(
             ) {
                 // activity type
                 Text(
-                    text = "Soccer",
+                    text = event.title,
                     style = MaterialTheme.typography.h3,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

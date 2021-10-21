@@ -25,7 +25,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-lateinit private var eventList: ArrayList<eventslist.EventDisplayer>
+private lateinit var eventList: ArrayList<eventslist.EventDisplayer>
 
 
 class eventslist : AppCompatActivity() {
@@ -98,7 +98,7 @@ class eventslist : AppCompatActivity() {
 
         // overrides
         override fun getCount(): Int {
-            return eventList.size;
+            return eventList.size
         }
 
         override fun getItem(position: Int): Any {
@@ -112,7 +112,7 @@ class eventslist : AppCompatActivity() {
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.event_list_adapter_view, viewGroup, false)
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
@@ -125,7 +125,7 @@ class eventslist : AppCompatActivity() {
             eventTime.text = (eventList.get(position).time)
             eventHost.text = (eventList.get(position).host)
 
-            return rowMain;
+            return rowMain
         }
     }
 

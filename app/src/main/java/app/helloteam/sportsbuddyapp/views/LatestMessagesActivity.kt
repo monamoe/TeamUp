@@ -121,7 +121,7 @@ class LatestMessagesActivity : AppCompatActivity() {
                                     messagesList.add(sort)
                                 }
                                 var recyclerView = findViewById<RecyclerView>(R.id.myList)
-                                recyclerView.setAdapter(adapter);
+                                recyclerView.setAdapter(adapter)
                             }
                         }
 
@@ -153,8 +153,8 @@ class LatestMessagesActivity : AppCompatActivity() {
                                 for (sort in sorted) {
                                     messagesList.add(sort)
                                 }
-                                var recyclerView = findViewById<RecyclerView>(R.id.myList);
-                                recyclerView.setAdapter(adapter);
+                                var recyclerView = findViewById<RecyclerView>(R.id.myList)
+                                recyclerView.setAdapter(adapter)
                             }
                         } else {
                             FirebaseDatabase.getInstance().getReference("/user-messages/${currentUser}").child(otherUser).removeValue()

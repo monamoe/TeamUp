@@ -18,7 +18,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 object TeamHandling {
-    lateinit private var memberList: ArrayList<TeamDisplayer>
+    private lateinit var memberList: ArrayList<TeamDisplayer>
 
     fun getTeam(listview: ListView, context: Context, from: String, event: String, location: String){
         memberList = ArrayList()

@@ -49,10 +49,10 @@ class ViewEvent : AppCompatActivity() {
         setContentView(R.layout.activity_event)
 
         val listview = findViewById<ListView>(R.id.listView)
-        listview.isNestedScrollingEnabled = true;
+        listview.isNestedScrollingEnabled = true
 
         val listViewAttendees = findViewById<ListView>(R.id.listViewAttendees)
-        listViewAttendees.isNestedScrollingEnabled = true;
+        listViewAttendees.isNestedScrollingEnabled = true
 
         // get id for the event selected
         eventID = intent.getStringExtra("eventID").toString()
@@ -118,7 +118,7 @@ class ViewEvent : AppCompatActivity() {
                         .addOnSuccessListener { loc ->
                             information.setText(loc.get("Location Name").toString())
                             Glide.with(this).load(loc.get("StreetView").toString())
-                                .into(findViewById(R.id.eventImage));
+                                .into(findViewById(R.id.eventImage))
                         }
 
                     val hostID = document.get("hostID").toString()
@@ -126,10 +126,10 @@ class ViewEvent : AppCompatActivity() {
 
                     if (hostID.equals(uid)) {
                         // the current user is the one who made this event. display appropriate options
-                        hosting = true;
+                        hosting = true
                         attendBtn.text = "Leave Event"
                     } else {
-                        hosting = false;
+                        hosting = false
 
                         // check if the user is already attending
                         db.collection("Location").document(locationID).collection("Events")

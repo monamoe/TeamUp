@@ -109,7 +109,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             timeBtn.setText("$hour:$min")
         }
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
-        datePicker.setMinDate(System.currentTimeMillis() - 1000);
+        datePicker.setMinDate(System.currentTimeMillis() - 1000)
         val today = Calendar.getInstance()
         datePicker.init(
             today.get(Calendar.YEAR), today.get(Calendar.MONTH),
@@ -160,7 +160,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         createBtn.setOnClickListener {
             eventTitle = findViewById<TextView>(R.id.eventTitle).text.toString()
             if (findViewById<EditText>(R.id.eventSpace).text.toString().equals(""))
-                eventSpace = 1;
+                eventSpace = 1
             else
                 eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
             //addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()

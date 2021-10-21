@@ -1,16 +1,15 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat.startActivity
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import com.baoyz.widget.PullRefreshLayout
@@ -20,14 +19,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import android.widget.ArrayAdapter
-import androidx.core.content.ContextCompat
-import android.app.Activity
-import android.view.Window
 
 
-lateinit private var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
+private lateinit var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
 
 class EventInviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +45,7 @@ class EventInviteActivity : AppCompatActivity() {
         val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
         layout.setOnRefreshListener {
             getInvites(listview)
-            layout.setRefreshing(false);
+            layout.setRefreshing(false)
         }
     }
 
@@ -120,7 +114,7 @@ class EventInviteActivity : AppCompatActivity() {
 
         // overrides
         override fun getCount(): Int {
-            return eventList.size;
+            return eventList.size
         }
 
         override fun getItem(position: Int): Any {
@@ -134,7 +128,7 @@ class EventInviteActivity : AppCompatActivity() {
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.event_invite_list_adapter, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.event_invite_list_adapter, viewGroup, false)
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
@@ -163,7 +157,7 @@ class EventInviteActivity : AppCompatActivity() {
                     }
 
             }
-            return rowMain;
+            return rowMain
         }
     }
 

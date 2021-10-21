@@ -117,7 +117,7 @@ fun BottomNavigationBar(
         BottomNavigationItem(
             selected = selected,
             onClick = {
-                useIntentOnRoute(currentcontext, "home")
+                useIntentOnRoute(currentcontext, "LandingPage2")
             },
             selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
             unselectedContentColor = Color.White,
@@ -137,7 +137,7 @@ fun BottomNavigationBar(
         BottomNavigationItem(
             selected = selected,
             onClick = {
-                useIntentOnRoute(currentcontext, "chat")
+                useIntentOnRoute(currentcontext, "LatestMessagesActivity")
                 readChat.value = true
                 FirebaseDatabase.getInstance()
                     .getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
@@ -186,6 +186,7 @@ fun BottomNavigationBar(
             unselectedContentColor = Color.White,
             icon = {
                 Column(
+
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
@@ -201,7 +202,7 @@ fun BottomNavigationBar(
         BottomNavigationItem(
             selected = selected,
             onClick = {
-                useIntentOnRoute(currentcontext, "teams")
+                useIntentOnRoute(currentcontext, "TeamsActivity")
             },
             selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
             unselectedContentColor = Color.White,
@@ -222,7 +223,7 @@ fun BottomNavigationBar(
         BottomNavigationItem(
             selected = selected,
             onClick = {
-                useIntentOnRoute(currentcontext, "profile")
+                useIntentOnRoute(currentcontext, "ProfilePage")
             },
             selectedContentColor = colorResource(id = R.color.secondaryDarkColor),
             unselectedContentColor = Color.White,
@@ -252,18 +253,18 @@ fun useIntentOnRoute(context: Context, route: String) {
     val listContextName = context.toString().split("@")[0]
     val currentPageNameArray = listContextName.split(".")
     val currentPageName = currentPageNameArray[currentPageNameArray.size - 1]
-    Log.i("LOG_TAG", "CURRENT CONTEXT: current page vs route : $currentPageName - $route")
+    Log.i("LOG_TAG", "CURRENT CONTEXT: current page vs route :!!! $currentPageName-$route")
 
 
-    var intent = Intent(context, LandingPage2::class.java)
     // if the current page is the one the user wants to go to
     if (currentPageName != route) {
+        var intent = Intent(context, LandingPage2::class.java)
         when (route) {
             "LandingPage2" -> intent = Intent(context, LandingPage2::class.java)
-            "chat" -> intent = Intent(context, LatestMessagesActivity::class.java)
+            "LatestMessagesActivity" -> intent = Intent(context, LatestMessagesActivity::class.java)
             "map" -> intent = Intent(context, map::class.java)
-            "teams" -> intent = Intent(context, TeamsActivity::class.java)
-            "profile" -> intent = Intent(context, ProfilePage::class.java)
+            "TeamsActivity" -> intent = Intent(context, TeamsActivity::class.java)
+            "ProfilePage" -> intent = Intent(context, ProfilePage::class.java)
             else -> {
                 Log.i("LOG_TAG", "FATAL ERROR! UNABLE TO GO TO THE VIEW REQUESTED! ")
             }

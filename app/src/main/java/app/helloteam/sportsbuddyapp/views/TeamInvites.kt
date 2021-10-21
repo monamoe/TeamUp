@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-lateinit private var inviteList: ArrayList<TeamInvites.InviteDisplayer>
+private lateinit var inviteList: ArrayList<TeamInvites.InviteDisplayer>
 
 
 class TeamInvites : AppCompatActivity() {
@@ -82,7 +82,7 @@ class TeamInvites : AppCompatActivity() {
                                 listview.adapter = TeamListAdapter(this)
                             }
                     }
-                    layout.setRefreshing(false);
+                    layout.setRefreshing(false)
 
                 }
         }
@@ -96,7 +96,7 @@ class TeamInvites : AppCompatActivity() {
 
         // overrides
         override fun getCount(): Int {
-            return inviteList.size;
+            return inviteList.size
         }
 
         override fun getItem(position: Int): Any {
@@ -110,7 +110,7 @@ class TeamInvites : AppCompatActivity() {
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.invite_list_adapter_view, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.invite_list_adapter_view, viewGroup, false)
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
             val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
@@ -120,11 +120,11 @@ class TeamInvites : AppCompatActivity() {
 
                 if (viewGroup != null) {
                     Glide.with(viewGroup).load(inviteList.get(position).image).into(profileImage)
-                };
+                }
 
             }
 
-            return rowMain;
+            return rowMain
         }
     }
 

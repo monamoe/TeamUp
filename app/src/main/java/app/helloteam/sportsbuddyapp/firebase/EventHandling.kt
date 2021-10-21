@@ -15,7 +15,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 object EventHandling {
-    lateinit private var attendeeList: ArrayList<AttendeeDisplayer>
+    private lateinit var attendeeList: ArrayList<AttendeeDisplayer>
 
     val db = Firebase.firestore
 
