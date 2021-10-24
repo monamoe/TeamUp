@@ -20,7 +20,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventList
 import app.helloteam.sportsbuddyapp.models.ParkLocationMarker
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -75,11 +74,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 //updating ui components on the info window
                 val locationUI: String = PLM.getName()
                 val locationComp = inputView.findViewById<TextView>(R.id.location)
-                if (locationUI != null) {
-                    locationComp.text = locationUI
-                } else {
-                    locationComp.text = "Null"
-                }
+                locationComp.text = locationUI
             } catch (e: Exception) {
                 //updating ui components on the info window
                 val locationUI = "Your Location"
@@ -280,36 +275,38 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
 
     // info window event handler ( redirects to the view eventslist.kt )
     override fun onInfoWindowClick(p0: Marker?) {
+
+
         //get the lat lng position from the marker clicked
-        try {
-            val markerPosition = p0?.position
+        val markerPosition = p0?.position
 
-            // if the user clicks their owner marker
-            Log.i(
-                "LOG_TAG",
-                "MAP :  ${markerPosition.toString()} - $userLocationLat, $userLocationLon"
-            )
+        // if the user clicks their owner marker
+        Log.i(
+            "LOG_TAG",
+            "MAP :  ${markerPosition.toString()} - $userLocationLat, $userLocationLon"
+        )
 
-            if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
-                var locationId = ""
-                //find which lat lng that belongs to
-                for (i in 0 until parklocations.size) {
-                    if (markerPosition?.equals(parklocations[i].getLatLng())!!) {
-                        locationId = parklocations[i].getID().toString()
-                        break
-                    }
+
+        if (markerPosition != LatLng(userLocationLat, userLocationLon)) {
+            var locationId = ""
+            //find which lat lng that belongs to
+            for (i in 0 until parklocations.size) {
+                if (markerPosition?.equals(parklocations[i].getLatLng())!!) {
+                    locationId = parklocations[i].getID().toString()
+                    break
                 }
-
-                // go to event list loading page
-                val intent = Intent(this, LoadingEventList::class.java)
-                intent.putExtra("locationID", locationId)
-                startActivity(intent)
             }
-        } catch (e: Exception) {
-            // if the user clicks their owner marker
+
+            // go to event list loading page
+            val intent = Intent(this, SplashLoadingEventList::class.java)
+            intent.putExtra("locationID", locationId)
+            Log.i("LOG_TAG", "LOADING EVENTS: INTENT TO SPLASH LOADING EVENTLIST")
+            startActivity(intent)
+            Log.i("LOG_TAG", "LOADING EVENTS: SPLASH LOADING EVENTLIST STARTED")
+        } else {
             Log.i(
                 "LOG_TAG",
-                "MAP : Unable to run onClick for this marker"
+                "MAP :  USER CLICKED THEIR OWN MARKER"
             )
         }
     }

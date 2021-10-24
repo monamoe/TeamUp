@@ -39,57 +39,7 @@ import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 
-//private var locationEventList: MutableList<EventCard> = mutableListOf<EventCard>()
-private var locationEventList: List<EventCard> = listOf(
-    EventCard(
-        "A",
-        "A",
-        "A",
-        "A",
-        true,
-        "a",
-        "a",
-        1,
-        1,
-        "Soccer"
-    ),
-    EventCard(
-        "A",
-        "A",
-        "A",
-        "A",
-        true,
-        "a",
-        "a",
-        1,
-        1,
-        "Soccer"
-    ),
-    EventCard(
-        "A",
-        "A",
-        "A",
-        "A",
-        true,
-        "a",
-        "a",
-        1,
-        1,
-        "Soccer"
-    ),
-    EventCard(
-        "A",
-        "A",
-        "A",
-        "A",
-        true,
-        "a",
-        "a",
-        1,
-        1,
-        "Soccer"
-    ),
-)
+private var locationEventList: MutableList<EventCard> = mutableListOf<EventCard>()
 
 var locationName = "Location Name"
 var locationInfo = "Location Info"

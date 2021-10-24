@@ -8,42 +8,43 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 
-var EventListLoggedIn = false
 lateinit var EventListContext: Context
 
 class SplashLoadingEventList : ComponentActivity() {
 
-    private var loggedIn = false
-    private lateinit var context: Context
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        var locationID = intent.getStringExtra("locationID").toString()
-
         super.onCreate(savedInstanceState)
+
+        var locationID = intent.getStringExtra("locationID").toString()
         var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
         val db = Firebase.firestore
         var testUser = false
 
         // context
-        context = this
+        EventListContext = this
 
         // getting value from intent
         val locationIDa = intent.getStringExtra("locationID").toString()
 
+        Log.i("LOG_TAG", "LOADING EVENTS: GOT LOCATION ID : $locationIDa")
         // load event list
         LoadEventList(locationIDa)
 
@@ -52,7 +53,7 @@ class SplashLoadingEventList : ComponentActivity() {
         setContent {
             Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
                 Navigation()
-                context = LocalContext.current
+                EventListContext = LocalContext.current
             }
         }
 

@@ -43,6 +43,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
 
+
         <activity
             android:name=".views.LandingPage2"
             android:exported="true"
@@ -65,6 +66,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".views.LatestMessagesActivity" />
         </activity>
+
+        <activity
+            android:name=".views.SplashLoadingEventList"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".views.LatestMessagesActivity"
             android:exported="true"

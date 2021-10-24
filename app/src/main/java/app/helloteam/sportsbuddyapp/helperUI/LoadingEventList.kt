@@ -1,6 +1,7 @@
 package app.helloteam.sportsbuddyapp.helperUI
 
 import android.content.Intent
+import android.util.Log
 import app.helloteam.sportsbuddyapp.views.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -54,10 +55,16 @@ class LoadingEventList {
                                             event.get("activity").toString()
                                         )
                                     )
+
+
+                                    Log.i(
+                                        "LOG_TAG",
+                                        "LOADING EVENTS: SIZE COMPARING - $locationEventListDataCounter - ${events.size()}"
+                                    )
+                                    if (locationEventListDataCounter == events.size()) {
+                                        toEventListView()
+                                    }
                                 }
-                        }
-                        if (locationEventListDataCounter == events.size()) {
-                            toEventListView()
                         }
                     }
             }
