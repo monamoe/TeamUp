@@ -33,17 +33,21 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-        <activity
-            android:name=".views.EventListCompose"
-            android:exported="true"
-            android:label="@string/title_activity_event_list_compose"
-            android:theme="@style/Theme.SportsBuddyApp" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
 
 
+        <activity
+            android:name=".views.EventListCompose"
+            android:exported="true"
+            android:label="@string/title_activity_event_list_compose"
+            android:theme="@style/Theme.SportsBuddyApp">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.map" />
+        </activity>
         <activity
             android:name=".views.LandingPage2"
             android:exported="true"
@@ -144,7 +148,12 @@
         <activity
             android:name=".views.map"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LandingPage2" />
+        </activity>
     </application>
 
 </manifest>

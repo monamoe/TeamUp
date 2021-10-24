@@ -10,6 +10,10 @@ class LoadingEventList {
 
     companion object {
         var locationEventList: MutableList<EventCard> = mutableListOf()
+        var locationName = "Location Name"
+        var locationInfo = "No additional information on this location"
+        var locationImage = "IDK"
+
         var locationEventListDone = false
 
 
@@ -21,6 +25,13 @@ class LoadingEventList {
 
             // location data = loc
             db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
+
+                locationName = loc.get("Location Name").toString()
+                locationInfo = if (loc.get("Location Info")
+                        .toString() == ""
+                ) "No additional information on this location" else loc.get("Location Info")
+                    .toString()
+                locationImage = loc.get("StreetView").toString()
 
                 // event data = event
                 db.collection("Location").document(locationID).collection("Events")
