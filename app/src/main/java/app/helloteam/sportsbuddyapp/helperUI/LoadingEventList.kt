@@ -8,17 +8,21 @@ import com.google.firebase.ktx.Firebase
 
 class LoadingEventList {
 
+
     companion object {
         var locationEventList: MutableList<EventCard> = mutableListOf()
         var locationName = "Location Name"
         var locationInfo = "No additional information on this location"
         var locationImage = "IDK"
+        lateinit var eventInfo: EventCard
 
         var locationEventListDone = false
 
 
         // populate location event list
         var locationEventListDataCounter = 0
+
+
         fun locationEventListData(locationID: String) {
             locationEventListDone = false
             val db = Firebase.firestore
@@ -84,9 +88,7 @@ class LoadingEventList {
         // to event list view
         fun toEventListView() {
             val intent = Intent(EventListContext, EventListCompose::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
-
     }
 }

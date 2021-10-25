@@ -46,7 +46,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
     // https://github.com/googlemaps/android-samples/blob/main/ApiDemos/kotlin/app/src/gms/java/com/example/kotlindemos/MarkerDemoActivity.kt
     internal inner class CustomInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
 
-        // this is used to convert the xml activity (custom_info_window.xml) into a view obect
+        // this is used to convert the xml activity (custom_info_window.xml) into a view object
         @SuppressLint("InflateParams")
         private val window: View = layoutInflater.inflate(R.layout.custom_info_window, null)
 
@@ -154,7 +154,7 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            //this event only runs when the onMapReady funtion is finished running
+            //this event only runs when the onMapReady function is finished running
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 //program has permission
                     location ->

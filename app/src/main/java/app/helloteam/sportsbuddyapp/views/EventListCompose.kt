@@ -39,9 +39,9 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 
 private var locationEventList: MutableList<EventCard> = mutableListOf()
-var locationName = "Location Name"
-var locationInfo = "Location Info"
-var locationImage = "IDK"
+private var locationName = "Location Name"
+private var locationInfo = "Location Info"
+private var locationImage = "IDK"
 
 //context
 @SuppressLint("StaticFieldLeak")

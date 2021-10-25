@@ -3,7 +3,11 @@ package app.helloteam.sportsbuddyapp.helperUI
 /**
  * Event Object
  *
- * This class returns a listOf EventCard objects
+ * Holds event information, used in ...
+ * Landing - your events
+ * Landing - recommended events
+ * EventList - Event List
+ * Event View
  * @param title event title
  * @param eventID eventID
  * @param imageId location's imageID for the event
@@ -14,7 +18,6 @@ package app.helloteam.sportsbuddyapp.helperUI
  * @param currentlyAttending the number of people currently attending
  * @param activityType activity
  */
-
 data class EventCard(
     val title: String,
     val eventID: String,
@@ -28,10 +31,16 @@ data class EventCard(
     val activityType: String,
 )
 
-data class LocationCard(
-    val title: String,
-
-    )
+/**
+ * Attendee Object
+ *
+ * Holds user attendee information, used in ...
+ * Event View
+ */
+data class AttendeesCard(
+    val name: String,
+    val profileImage: String,
+)
 
 
 

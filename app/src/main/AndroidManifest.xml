@@ -23,7 +23,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsBuddyApp"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".views.EventCompose"
+            android:exported="true"
+            android:label="@string/title_activity_event_compose"
+            android:theme="@style/Theme.SportsBuddyApp" />
 
         <service
             android:name=".firebase.FirebaseService"
@@ -37,7 +41,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_key" />
-
 
         <activity
             android:name=".views.EventListCompose"
@@ -70,12 +73,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".views.LatestMessagesActivity" />
         </activity>
-
         <activity
             android:name=".views.SplashLoadingEventList"
             android:exported="true"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".views.LatestMessagesActivity"
             android:exported="true"
@@ -149,7 +150,6 @@
             android:name=".views.map"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".views.LandingPage2" />
