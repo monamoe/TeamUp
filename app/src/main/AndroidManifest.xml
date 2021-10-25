@@ -115,14 +115,14 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
         <activity
             android:name=".views.CreateEventActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
         <activity
             android:name=".views.ProfilePage"
@@ -142,10 +142,20 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".views.SplashLoadingEventView"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".views.LandingPage2" />
+        </activity>
+
+
         <activity
             android:name=".views.map"
             android:label="@string/title_activity_maps"

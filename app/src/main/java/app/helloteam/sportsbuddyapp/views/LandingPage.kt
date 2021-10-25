@@ -32,11 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.BottomNavigationBar
-import app.helloteam.sportsbuddyapp.helperUI.ContentDivider
-import app.helloteam.sportsbuddyapp.helperUI.EventCard
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
-import app.helloteam.sportsbuddyapp.views.ui.theme.ButtonBlue
+import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -163,15 +159,6 @@ class LandingPage2 : ComponentActivity() {
                     context = currentcontext
                 )
             }
-        )
-    }
-
-    @Composable
-    private fun ExtraPadding() {
-        Box(
-            modifier = Modifier
-                .padding(50.dp)
-                .fillMaxWidth()
         )
     }
 }
@@ -348,7 +335,7 @@ fun RecommendedEventScroll() {
                         .padding(start = 16.dp, bottom = 16.dp)
                         .clickable {
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            val intent = Intent(context, ViewEvent::class.java)
+                            val intent = Intent(context, SplashLoadingEventView::class.java)
                             Log.i(
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: eventID ${e.eventID}"
@@ -443,7 +430,7 @@ fun EventScroll() {
                             // updates current event in view model (doesn't use view model for intent but im keeping it here)
                             // navigates to the event page
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            val intent = Intent(context, ViewEvent::class.java)
+                            val intent = Intent(context, SplashLoadingEventView::class.java)
                             Log.i(
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: eventID ${e.eventID}"

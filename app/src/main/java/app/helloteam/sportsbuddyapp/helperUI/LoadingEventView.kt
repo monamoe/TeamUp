@@ -14,8 +14,8 @@ class LoadingEventView {
         var locationName = "Location Name"
         var locationInfo = "No additional information on this location"
         var locationImage = "IDK"
-        var locationLat = 1.1
-        var locationLon = 1.1
+        var locationLat: Double? = 1.1
+        var locationLon: Double? = 1.1
 
         // host info
         var hostName = "Location Name"
@@ -47,12 +47,28 @@ class LoadingEventView {
                 locationName = loc.get("Location Name").toString()
                 locationInfo = loc.get("locationInfo").toString()
                 locationImage = loc.get("StreetView").toString()
-                locationLat = loc.get("Lat").toString().toDouble()
-                locationLon = loc.get("Lon").toString().toDouble()
+                locationLat =
+                    if (loc.get("Lat").toString() == "") 0.00 else loc.get("Lat").toString()
+                        .toDoubleOrNull()
+                locationLon =
+                    if (loc.get("Lon").toString() == "") 0.00 else loc.get("Lat").toString()
+                        .toDoubleOrNull()
+
+
+                Log.i(
+                    "LOG_TAG",
+                    "LOADING EVENT VIEW: Inside Location $locationName"
+                )
 
                 // event data = event
                 db.collection("Location").document(locationID).collection("Events")
                     .document(eventID).get().addOnSuccessListener { event ->
+
+
+                        Log.i(
+                            "LOG_TAG",
+                            "LOADING EVENT VIEW: Inside event ${event.get("title").toString()}"
+                        )
 
                         // host data = host
                         db.collection("Users").document(event.get("hostID").toString()).get()
@@ -75,22 +91,52 @@ class LoadingEventView {
                                         event.get("activity").toString()
                                     )
 
+                                Log.i(
+                                    "LOG_TAG",
+                                    "LOADING EVENT VIEW: Got Event Info}"
+                                )
+
                                 // attendee data = attendees
                                 db.collection("Location").document(locationID).collection("Events")
                                     .document(eventID).collection("Attendees").get()
                                     .addOnSuccessListener { attendees ->
+
+                                        // intent check goes before as well since there coule be events with 0 attendees
+                                        Log.i(
+                                            "LOG_TAG",
+                                            "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                                        )
+                                        if (attendingListDataCounter == attendees.size()) {
+                                            toEventViewPage()
+                                        }
+
                                         for (attendee in attendees) {
                                             // attending user data = user
                                             db.collection("Users")
                                                 .document(attendee.get("userID").toString())
                                                 .get().addOnSuccessListener { user ->
+                                                    Log.i(
+                                                        "LOG_TAG",
+                                                        "LOADING EVENT VIEW: Inside Attendees ${
+                                                            user.get(
+                                                                "userName"
+                                                            ).toString()
+                                                        }}"
+                                                    )
+
                                                     attendeeList +=
                                                         AttendeesCard(
                                                             user.get("userName").toString(),
                                                             user.get("photoUrl").toString()
                                                         )
                                                 }
+
+
                                             attendingListDataCounter++
+                                            Log.i(
+                                                "LOG_TAG",
+                                                "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                                            )
                                             if (attendingListDataCounter == attendees.size()) {
                                                 toEventViewPage()
                                             }

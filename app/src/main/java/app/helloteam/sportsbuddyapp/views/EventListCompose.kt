@@ -88,7 +88,7 @@ fun DefaultPreview() {
 }
 
 @Composable
-fun EventList() {
+private fun EventList() {
     val navController = rememberNavController()
     Scaffold(
         content = {
@@ -212,7 +212,7 @@ private fun EventListScroll() {
 
 
 @Composable
-fun LocationEventCard(
+private fun LocationEventCard(
     event: EventCard,
     modifier: Modifier = Modifier
 ) {

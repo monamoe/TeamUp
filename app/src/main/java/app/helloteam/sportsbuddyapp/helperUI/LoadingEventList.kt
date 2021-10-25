@@ -13,7 +13,7 @@ class LoadingEventList {
         var locationEventList: MutableList<EventCard> = mutableListOf()
         var locationName = "Location Name"
         var locationInfo = "No additional information on this location"
-        var locationImage = "IDK"
+        var locationImage = ""
         lateinit var eventInfo: EventCard
 
         var locationEventListDone = false
@@ -56,19 +56,17 @@ class LoadingEventList {
                                         u.get("userName").toString()
 
                                     locationEventListDataCounter++
-                                    locationEventList.add(
-                                        EventCard(
-                                            event.get("title").toString(),
-                                            event.id,
-                                            loc.id,
-                                            loc.get("StreetView").toString(),
-                                            false,
-                                            if (hostName == "") "No Host" else hostName,
-                                            event.get("information").toString(),
-                                            event.get("eventSpace").toString().toInt(),
-                                            event.get("currentlyAttending").toString().toInt(),
-                                            event.get("activity").toString()
-                                        )
+                                    eventInfo = EventCard(
+                                        event.get("title").toString(),
+                                        event.id,
+                                        loc.id,
+                                        loc.get("StreetView").toString(),
+                                        false,
+                                        if (hostName == "") "No Host" else hostName,
+                                        event.get("information").toString(),
+                                        event.get("eventSpace").toString().toInt(),
+                                        event.get("currentlyAttending").toString().toInt(),
+                                        event.get("activity").toString()
                                     )
 
 
