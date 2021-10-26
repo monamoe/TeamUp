@@ -6,28 +6,30 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +37,7 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.compose.rememberImagePainter
+import com.google.android.gms.maps.model.Circle
 
 
 private var locationName = "Location Name"
@@ -155,7 +158,7 @@ class EventCompose : ComponentActivity() {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .background(colorResource(id = R.color.secondaryColor))
-                .clip(RoundedCornerShape(10.dp))
+                .padding(bottom = 20.dp)
         ) {
             Column(
                 modifier = Modifier
@@ -195,26 +198,82 @@ class EventCompose : ComponentActivity() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .background(colorResource(id = R.color.secondaryColor))
-                .clip(RoundedCornerShape(10.dp))
-                .padding(start = 20.dp, end = 20.dp)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         ) {
-            Column(
+            Box(
                 modifier = Modifier
+                    .background(colorResource(id = R.color.secondaryColor))
+                    .clip(RoundedCornerShape(20.dp))
                     .fillMaxWidth()
+                    .padding(10.dp)
             ) {
-                Box(modifier = Modifier.padding(20.dp)) {
-                    Column {
-                        Text(
-                            text = locationName,
-                            style = MaterialTheme.typography.h1,
-                            color = colorResource(id = R.color.secondaryTextColor)
-                        )
-                        Text(
-                            text = locationInfo,
-                            style = MaterialTheme.typography.h2,
-                            color = colorResource(id = R.color.secondaryTextColor)
-                        )
+                Column {
+                    Text(
+                        text = locationName,
+                        style = MaterialTheme.typography.h2,
+                        color = colorResource(id = R.color.secondaryTextColor)
+                    )
+                    Text(
+                        text = locationInfo,
+                        style = MaterialTheme.typography.h3,
+                        color = colorResource(id = R.color.secondaryTextColor)
+                    )
+                    Box(modifier = Modifier.padding(top = 10.dp)) {
+                        Column {
+//                            // activity
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(top = 10.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_sports_soccer_24),
+                                    contentDescription = "Activity Icon"
+                                )
+                                Text(
+                                    text = eventInfo.activityType,
+                                    style = MaterialTheme.typography.h4,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            // timing
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(top = 10.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_schedule_24),
+                                    contentDescription = "Schedule Icon"
+                                )
+                                Text(
+                                    text = "${eventInfo.startingData} ${eventInfo.startingTime}",
+                                    style = MaterialTheme.typography.h4,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            //location
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(top = 10.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_place_24),
+                                    contentDescription = "Place Icon"
+                                )
+                                Text(
+                                    text = eventInfo.locationName,
+                                    style = MaterialTheme.typography.h4,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -222,8 +281,73 @@ class EventCompose : ComponentActivity() {
     }
 
     @Composable
-    fun AttendeeList() {
+    private fun AttendeeList() {
+        Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Attendees",
+                    style = MaterialTheme.typography.h2,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                )
+                Text(
+                    text = "${eventInfo.currentlyAttending} / ${eventInfo.space}",
+                    style = MaterialTheme.typography.h3,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(20.dp)
+                )
+            }
+            LazyRow {
+                items(attendeeList) {
+                    AttendeeCard(it)
+                }
+            }
+        }
+    }
 
+    @Composable
+    private fun AttendeeCard(
+        attendee: AttendeesCard
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colorResource(id = R.color.secondaryColor))
+                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(colorResource(id = R.color.secondaryColor))
+            ) {
+                Image(
+                    painter = rememberImagePainter(attendee.profileImage),
+                    contentDescription = null, // decorative
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(30.dp)
+                        .width(30.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                )
+                Text(
+                    text = attendee.name,
+                    style = MaterialTheme.typography.h4,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                )
+            }
+        }
     }
 
     @Composable

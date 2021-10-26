@@ -66,7 +66,14 @@ class LoadingEventList {
                                         event.get("information").toString(),
                                         event.get("eventSpace").toString().toInt(),
                                         event.get("currentlyAttending").toString().toInt(),
-                                        event.get("activity").toString()
+                                        event.get("activity")
+                                            .toString(),
+                                        event.get("date")
+                                            .toString(),
+                                        loc.get("endDate")
+                                            .toString(),
+                                        loc.get("Location Name")
+                                            .toString(),
                                     )
 
 

@@ -28,7 +28,11 @@ class LoadingEvent {
         var yourHostDone = false
 
         // Recommended Events lazy row card's data for landing page
-        fun recommendedEventsListData(userID: String, userLocationLat: Double, userLocationLon: Double) {
+        fun recommendedEventsListData(
+            userID: String,
+            userLocationLat: Double,
+            userLocationLon: Double
+        ) {
             recEventsDone = false
             var currentlyAdded = 0
             val maxAdded = 5
@@ -130,7 +134,13 @@ class LoadingEvent {
                                                                                     .toString()
                                                                                     .toInt(),
                                                                                 event.get("activity")
-                                                                                    .toString()
+                                                                                    .toString(),
+                                                                                event.get("date")
+                                                                                    .toString(),
+                                                                                loc.get("endDate")
+                                                                                    .toString(),
+                                                                                loc.get("Location Name")
+                                                                                    .toString(),
                                                                             )
                                                                         )
                                                                     }
@@ -228,9 +238,16 @@ class LoadingEvent {
                                                                     .toString()
                                                                     .toInt(),
                                                                 event.get("activity")
-                                                                    .toString()
+                                                                    .toString(),
+                                                                event.get("date")
+                                                                    .toString(),
+                                                                loc.get("endDate")
+                                                                    .toString(),
+                                                                loc.get("Location Name")
+                                                                    .toString(),
                                                             )
                                                         )
+
                                                     } catch (e: Exception) {
                                                         Log.i("errorr", e.toString())
                                                         db.collection("User").document(userID)
@@ -319,9 +336,16 @@ class LoadingEvent {
                                                                         .toString()
                                                                         .toInt(),
                                                                     event.get("activity")
-                                                                        .toString()
+                                                                        .toString(),
+                                                                    event.get("date")
+                                                                        .toString(),
+                                                                    loc.get("endDate")
+                                                                        .toString(),
+                                                                    loc.get("Location Name")
+                                                                        .toString(),
                                                                 )
                                                             )
+
                                                             if (a == hosting.size()) {
                                                                 yourEventsDone = true
                                                                 if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {

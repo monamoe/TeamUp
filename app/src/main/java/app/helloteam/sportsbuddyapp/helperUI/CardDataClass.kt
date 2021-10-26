@@ -29,12 +29,15 @@ data class EventCard(
     val space: Int,
     val currentlyAttending: Int,
     val activityType: String,
+    val startingTime: String,
+    val startingData: String,
+    val locationName: String,
 )
 
 /**
  * Attendee Object
- *
- * Holds user attendee information, used in ...
+ * * Holds user attendee information, used in ...
+
  * Event View
  */
 data class AttendeesCard(
