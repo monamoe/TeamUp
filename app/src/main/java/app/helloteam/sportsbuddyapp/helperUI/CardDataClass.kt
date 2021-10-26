@@ -41,6 +41,7 @@ data class EventCard(
  * Event View
  */
 data class AttendeesCard(
+    val userID: String,
     val name: String,
     val profileImage: String,
 )

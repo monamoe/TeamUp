@@ -404,7 +404,7 @@ fun EventScroll() {
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = "You aren't registed for any events!",
+                        text = "You aren't registered for any events!",
                         style = MaterialTheme.typography.h4,
                         color = colorResource(id = R.color.secondaryTextColor),
                         modifier = Modifier.padding(15.dp)
@@ -488,7 +488,6 @@ fun EventCard(
                             .height(100.dp)
                             .fillMaxWidth()
                             .fillMaxHeight()
-                            .padding(20.dp)
                     )
                 }
                 Column(modifier = Modifier.padding(16.dp)) {

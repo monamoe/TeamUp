@@ -3,6 +3,7 @@ package app.helloteam.sportsbuddyapp.helperUI
 import android.content.Intent
 import android.util.Log
 import app.helloteam.sportsbuddyapp.views.*
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -24,23 +25,27 @@ class LoadingEventView {
 
         // event info
         lateinit var eventInfo: EventCard
+        private var eventViewDataCounter = 0
 
         // attendee info
         var attendeeList: MutableList<AttendeesCard> = mutableListOf()
+        var attendeeListDone = false
+        private var attendingListDataCounter = 0
 
 
-        // team members info TO DO
-
+        // team members - using AttendeeCard since its the same data values
+        var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
+        var teamMemberListDone = false
+        private var teamMemberListCounter = 0
 
         // populate location event list
-        private var eventViewDataCounter = 0
-        private var attendingListDataCounter = 0
 
         fun eventViewData(locationID: String, eventID: String) {
             eventViewDataCounter = 0
             attendingListDataCounter = 0
             LoadingEventList.locationEventListDone = false
             val db = Firebase.firestore
+            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
             // location data = loc
             db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
@@ -59,6 +64,43 @@ class LoadingEventView {
                     "LOG_TAG",
                     "LOADING EVENT VIEW: Inside Location $locationName"
                 )
+
+
+                // getting list of team members
+                db.collection("User").document(uid).collection("Team").get()
+                    .addOnSuccessListener { members ->
+
+                        // if the user has no team members
+                        if (teamMemberListCounter == members.size()) {
+                            teamMemberListDone = true
+                            toEventViewPage()
+                        }
+
+                        for (member in members) {
+
+                            Log.i(
+                                "LOG_TAG",
+                                "LOADING EVENT VIEW: Inside members : ${
+                                    member.get("userName").toString()
+                                }"
+                            )
+
+                            db.collection("User").document(member.id).get()
+                                .addOnSuccessListener { user ->
+                                    teamMemberList += AttendeesCard(
+                                        user.id,
+                                        user.get("userName").toString(),
+                                        user.get("photoUrl").toString(),
+                                    )
+                                    teamMemberListCounter++
+
+                                    if (teamMemberListCounter == members.size()) {
+                                        teamMemberListDone = true
+                                        toEventViewPage()
+                                    }
+                                }
+                        }
+                    }
 
                 // event data = event
                 db.collection("Location").document(locationID).collection("Events")
@@ -96,7 +138,7 @@ class LoadingEventView {
 
                                 Log.i(
                                     "LOG_TAG",
-                                    "LOADING EVENT VIEW: Got Event Info}"
+                                    "LOADING EVENT VIEW: Got Event Info"
                                 )
 
                                 // attendee data = attendees
@@ -115,34 +157,37 @@ class LoadingEventView {
 
                                         for (attendee in attendees) {
                                             // attending user data = user
-                                            db.collection("Users")
+                                            db.collection("User")
                                                 .document(attendee.get("userID").toString())
                                                 .get().addOnSuccessListener { user ->
                                                     Log.i(
                                                         "LOG_TAG",
-                                                        "LOADING EVENT VIEW: Inside Attendees ${
+                                                        "LOADING EVENT VIEW: Inside Attendees : ${
                                                             user.get(
                                                                 "userName"
                                                             ).toString()
-                                                        }}"
+                                                        }"
                                                     )
 
                                                     attendeeList +=
                                                         AttendeesCard(
+                                                            user.id,
                                                             user.get("userName").toString(),
-                                                            user.get("photoUrl").toString()
+                                                            user.get("photoUrl").toString(),
                                                         )
+
+
+
+                                                    attendingListDataCounter++
+                                                    Log.i(
+                                                        "LOG_TAG",
+                                                        "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                                                    )
+                                                    if (attendingListDataCounter == attendees.size()) {
+                                                        attendeeListDone = true
+                                                    }
+                                                    toEventViewPage()
                                                 }
-
-
-                                            attendingListDataCounter++
-                                            Log.i(
-                                                "LOG_TAG",
-                                                "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
-                                            )
-                                            if (attendingListDataCounter == attendees.size()) {
-                                                toEventViewPage()
-                                            }
                                         }
                                     }
                             }
@@ -150,11 +195,12 @@ class LoadingEventView {
             }
         }
 
-
         // to event list view
-        fun toEventViewPage() {
-            val intent = Intent(EventViewContext, EventCompose::class.java)
-            context.startActivity(intent)
+        private fun toEventViewPage() {
+            if (attendeeListDone && teamMemberListDone) {
+                val intent = Intent(EventViewContext, EventCompose::class.java)
+                context.startActivity(intent)
+            }
         }
     }
 }

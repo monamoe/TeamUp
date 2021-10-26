@@ -6,38 +6,34 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.compose.rememberImagePainter
-import com.google.android.gms.maps.model.Circle
 
 
 private var locationName = "Location Name"
@@ -56,6 +52,9 @@ private lateinit var eventInfo: EventCard
 
 // attendee info
 private var attendeeList: MutableList<AttendeesCard> = mutableListOf()
+
+// team member info
+private var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
 
 
 @SuppressLint("StaticFieldLeak")
@@ -82,7 +81,11 @@ class EventCompose : ComponentActivity() {
 
         // attendee info
         attendeeList = LoadingEventView.attendeeList
+        Log.i("LOG_TAG", "LOADING EVENT VIEW: Attendee List $attendeeList")
 
+        // team member info
+        teamMemberList = LoadingEventView.teamMemberList
+        Log.i("LOG_TAG", "LOADING EVENT VIEW: Team Member List $teamMemberList")
 
         // set content
         setContent {
@@ -142,6 +145,8 @@ class EventCompose : ComponentActivity() {
                         InviteTeamMembers()
                         ContentDivider()
 
+                        // Attend Button
+                        AttendButton()
                         ExtraPadding()
                     }
                 }
@@ -164,10 +169,10 @@ class EventCompose : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                if (locationImage != "null" && locationImage != "") {
-                    Log.i("LOG_TAG", "LOADING EVENT VIEW: RENDERING IMAGE $locationImage")
+                Log.i("LOG_TAG", "LOADING EVENT VIEW: RENDERING IMAGE $locationImage")
+                if (locationImage == null || locationImage == "") {
                     Image(
-                        painter = rememberImagePainter(locationImage),
+                        painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -176,7 +181,7 @@ class EventCompose : ComponentActivity() {
                     )
                 } else {
                     Image(
-                        painter = painterResource(R.drawable.ic_baseline_broken_image_24),
+                        painter = rememberImagePainter(locationImage),
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
@@ -198,7 +203,8 @@ class EventCompose : ComponentActivity() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp, top = 20.dp)
+                .clip(RoundedCornerShape(10.dp))
         ) {
             Box(
                 modifier = Modifier
@@ -286,7 +292,7 @@ class EventCompose : ComponentActivity() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp),
+                    .padding(bottom = 10.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -302,10 +308,10 @@ class EventCompose : ComponentActivity() {
                     style = MaterialTheme.typography.h3,
                     color = colorResource(id = R.color.secondaryTextColor),
                     modifier = Modifier
-                        .padding(20.dp)
+                        .padding(start = 20.dp, end = 20.dp)
                 )
             }
-            LazyRow {
+            LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                 items(attendeeList) {
                     AttendeeCard(it)
                 }
@@ -322,7 +328,8 @@ class EventCompose : ComponentActivity() {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.secondaryColor))
-                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
+                .size(140.dp, 120.dp)
+                .fillMaxSize()
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -330,31 +337,54 @@ class EventCompose : ComponentActivity() {
                 modifier = Modifier
                     .background(colorResource(id = R.color.secondaryColor))
             ) {
-                Image(
-                    painter = rememberImagePainter(attendee.profileImage),
-                    contentDescription = null, // decorative
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                )
+                Log.i("LOG_TAG", "LOADING EVENT VIEW: Profile Image ${attendee.profileImage}")
+                if (attendee.profileImage == "" || attendee.profileImage == "null") {
+                    Image(
+                        painter = painterResource(R.drawable.baseline_person_24),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(90.dp)
+                            .width(120.dp)
+                            .padding(top = 10.dp)
+                    )
+                } else {
+                    Image(
+                        painter = rememberImagePainter(attendee.profileImage),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(90.dp)
+                            .width(120.dp)
+                    )
+                }
                 Text(
                     text = attendee.name,
                     style = MaterialTheme.typography.h4,
                     color = colorResource(id = R.color.secondaryTextColor),
                     modifier = Modifier
-                        .padding(top = 5.dp)
+                        .padding(top = 5.dp, bottom = 5.dp)
                 )
             }
         }
     }
 
     @Composable
-    fun InviteTeamMembers() {
+    private fun InviteTeamMembers() {
+
 
     }
 
+    @Composable
+    private fun InviteTeamMemberCard() {
+
+    }
+
+
+    @Composable
+    private fun AttendButton() {
+
+    }
 
 }
 
