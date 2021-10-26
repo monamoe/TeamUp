@@ -272,9 +272,9 @@ class ViewEvent : AppCompatActivity() {
     }
 
     // check if the event has room
-    // increace the number of people attending in event
-    // add the user uid to the event's attending list
-    // add the eventID to the user's attending list
+// increace the number of people attending in event
+// add the user uid to the event's attending list
+// add the eventID to the user's attending list
     private fun addAttendance() {
 
         db.collection("Location").document(locationID).collection("Events").document(eventID)
@@ -342,8 +342,8 @@ class ViewEvent : AppCompatActivity() {
 
 
     // -1 the event space
-    // delete uid in the events attending list
-    // delete event id in the users attending list
+// delete uid in the events attending list
+// delete event id in the users attending list
     private fun removeAttendance() {
 
         // -1 the event space
@@ -387,4 +387,5 @@ class ViewEvent : AppCompatActivity() {
                 )
             }
     }
+
 }

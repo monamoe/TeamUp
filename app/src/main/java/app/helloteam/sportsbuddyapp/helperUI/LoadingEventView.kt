@@ -2,14 +2,19 @@ package app.helloteam.sportsbuddyapp.helperUI
 
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import app.helloteam.sportsbuddyapp.views.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class LoadingEventView {
 
     companion object {
+        // if the current user is the host or if they are already attending this event
+        var hosting = false
+        var attending = false
 
         // location info
         var locationName = "Location Name"
@@ -39,8 +44,14 @@ class LoadingEventView {
         private var teamMemberListCounter = 0
 
         // populate location event list
+        var locationIDa = ""
+        var eventIDa = ""
 
+        // loading data for event view
         fun eventViewData(locationID: String, eventID: String) {
+            locationIDa = locationID
+            eventIDa = eventID
+
             eventViewDataCounter = 0
             attendingListDataCounter = 0
             LoadingEventList.locationEventListDone = false
@@ -119,6 +130,10 @@ class LoadingEventView {
                                 hostImage = host.get("photoUrl").toString()
                                 hostRating = "4"
 
+                                if (host.id == uid) {
+                                    hosting = true
+                                }
+
                                 eventInfo =
                                     EventCard(
                                         event.get("title").toString(),
@@ -169,6 +184,10 @@ class LoadingEventView {
                                                         }"
                                                     )
 
+                                                    if (attendee.id == uid) {
+                                                        attending = true
+                                                    }
+
                                                     attendeeList +=
                                                         AttendeesCard(
                                                             user.id,
@@ -193,6 +212,178 @@ class LoadingEventView {
                             }
                     }
             }
+        }
+
+
+        // attend button handeling
+        fun hostLeaveEvent() {
+            val db = Firebase.firestore
+            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+            db.collection("Location").document(locationIDa).collection("Events").document(eventIDa)
+                .update("hostID", "null")
+            db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                .collection("Hosting")
+                .whereEqualTo("eventID", eventIDa).get()
+                .addOnSuccessListener { hosting ->
+                    for (host in hosting) {
+                        db.collection("User")
+                            .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                            .collection("Hosting")
+                            .document(host.id).delete()
+                    }
+                    val intent = Intent(EventViewContext, SplashActivity::class.java)
+                    context.startActivity(intent)
+                }
+
+
+        }
+
+        // make the current user the host
+        private fun makeHost(newHostID: String) {
+            val db = Firebase.firestore
+
+            db.collection("Location").document(locationIDa).collection("Events").document(eventIDa)
+                .update("hostID", newHostID)
+
+            val hostingHashMap = hashMapOf(
+                "locationID" to locationIDa,
+                "eventID" to eventIDa
+            )
+
+            // add the hosting data to the user
+            db.collection("User")
+                .document(FirebaseAuth.getInstance().uid.toString())
+                .collection("Hosting").document(eventIDa)
+                .set(hostingHashMap, SetOptions.merge())
+                .addOnSuccessListener {
+                    val intent = Intent(EventViewContext, SplashActivity::class.java)
+                    context.startActivity(intent)
+                }
+        }
+
+        // check if the event has room
+        // increace the number of people attending in event
+        // add the user uid to the event's attending list
+        // add the eventID to the user's attending list
+        fun addAttendance() {
+            val db = Firebase.firestore
+            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+
+            db.collection("Location").document(locationIDa).collection("Events").document(eventIDa)
+                .get()
+                .addOnSuccessListener { doc ->
+                    var numCurrentlyAttending = doc.get("currentlyAttending").toString().toInt()
+
+                    Log.i("LOG_TAG", "$numCurrentlyAttending numCurrentlyAttending!!")
+                    // check if the event has room
+                    if (doc.get("eventSpace").toString().toInt() > numCurrentlyAttending) {
+                        // increace the number of people attending in event
+
+                        numCurrentlyAttending++
+                        val data =
+                            hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
+                        db.collection("Location").document(locationIDa).collection("Events")
+                            .document(eventIDa)
+                            .set(data, SetOptions.merge())
+
+                        // add the user uid to the event's attending list
+                        val attendeeHashMap = hashMapOf(
+                            "userID" to FirebaseAuth.getInstance().uid.toString()
+                        )
+
+                        db.collection("Location").document(locationIDa).collection("Events")
+                            .document(eventIDa).collection("Attendees").document(uid)
+                            .set(attendeeHashMap, SetOptions.merge())
+                            .addOnSuccessListener {
+                                Log.d("CreatingEvent", "Created Attendee")
+
+                                // add the eventID to the user's attending list
+                                val attendingHashMap = hashMapOf(
+                                    "locationID" to locationIDa,
+                                    "eventID" to eventIDa
+                                )
+                                db.collection("User")
+                                    .document(FirebaseAuth.getInstance().uid.toString())
+                                    .collection("Attending").document(eventIDa)
+                                    .set(attendingHashMap, SetOptions.merge())
+                                    .addOnSuccessListener {
+                                        val intent =
+                                            Intent(EventViewContext, SplashActivity::class.java)
+                                        context.startActivity(intent)
+                                        Toast.makeText(
+                                            EventViewContext,
+                                            "Successfully registered for this event",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("a", "Error creating Attendee document", e)
+                            }
+
+
+                    } else {
+                        Toast.makeText(
+                            EventViewContext,
+                            "This event is currently full!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+
+        // -1 the event space
+        // delete uid in the events attending list
+        // delete event id in the users attending list
+        fun removeAttendance() {
+            val db = Firebase.firestore
+            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+
+            // -1 the event space
+            db.collection("Location").document(locationIDa).collection("Events").document(eventIDa)
+                .get()
+                .addOnSuccessListener { doc ->
+                    var numCurrentlyAttending = doc.get("currentlyAttending").toString().toInt()
+                    numCurrentlyAttending--
+                    val data =
+                        hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
+                    db.collection("Location").document(locationIDa).collection("Events")
+                        .document(eventIDa)
+                        .set(data, SetOptions.merge())
+                }
+
+            // delete uid in the events attending list
+            db.collection("Location").document(locationIDa).collection("Events")
+                .document(eventIDa).collection("Attendees")
+                .document(FirebaseAuth.getInstance().uid.toString())
+                .delete()
+                .addOnSuccessListener {
+
+                }
+                .addOnFailureListener { e ->
+                    Log.w(
+                        "LOG_TAG",
+                        "Error removing attendence",
+                        e
+                    )
+                }
+
+            // removing eventID from the users data
+            db.collection("User").document(uid)
+                .collection("Attending").document(eventIDa)
+                .delete()
+                .addOnFailureListener { e ->
+                    Log.w(
+                        "LOG_TAG",
+                        "Error removing attendence",
+                        e
+                    )
+                }
         }
 
         // to event list view

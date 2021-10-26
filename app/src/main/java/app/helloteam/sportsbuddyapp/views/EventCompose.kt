@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -34,6 +35,7 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.compose.rememberImagePainter
+import com.afollestad.materialdialogs.MaterialDialog
 
 
 private var locationName = "Location Name"
@@ -170,7 +172,7 @@ class EventCompose : ComponentActivity() {
                     .fillMaxWidth()
             ) {
                 Log.i("LOG_TAG", "LOADING EVENT VIEW: RENDERING IMAGE $locationImage")
-                if (locationImage == null || locationImage == "") {
+                if (locationImage == "" || locationImage == "null") {
                     Image(
                         painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
@@ -371,20 +373,130 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun InviteTeamMembers() {
-
-
+        Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = "Invite Team Members",
+                    style = MaterialTheme.typography.h2,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                )
+                Text(
+                    text = "${eventInfo.currentlyAttending} / ${eventInfo.space}",
+                    style = MaterialTheme.typography.h3,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp)
+                )
+            }
+            LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
+                items(attendeeList) {
+                    InviteTeamMemberCard(it)
+                }
+            }
+        }
     }
 
     @Composable
-    private fun InviteTeamMemberCard() {
-
+    private fun InviteTeamMemberCard(
+        teamMember: AttendeesCard
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(colorResource(id = R.color.secondaryColor))
+                .size(140.dp, 120.dp)
+                .fillMaxSize()
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(colorResource(id = R.color.secondaryColor))
+            ) {
+                Log.i("LOG_TAG", "LOADING EVENT VIEW: Profile Image ${teamMember.profileImage}")
+                if (teamMember.profileImage == "" || teamMember.profileImage == "null") {
+                    Image(
+                        painter = painterResource(R.drawable.baseline_person_24),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(120.dp)
+                            .width(120.dp)
+                            .padding(top = 10.dp)
+                    )
+                } else {
+                    Image(
+                        painter = rememberImagePainter(teamMember.profileImage),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(90.dp)
+                            .width(120.dp)
+                    )
+                }
+                Text(
+                    text = teamMember.name,
+                    style = MaterialTheme.typography.h4,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier
+                        .padding(top = 5.dp, bottom = 5.dp)
+                )
+                Button(
+                    onClick = {
+                        // this button does nothing, the invite handling is done by the lazy row event listener
+                    }, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = colorResource(id = R.color.secondaryColor)
+                    )
+                ) {
+                    Text(
+                        text = "Create Event",
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        style = MaterialTheme.typography.h2,
+                    )
+                }
+            }
+        }
     }
 
 
     @Composable
     private fun AttendButton() {
-
+        Button(
+            onClick = {
+                if (!LoadingEventView.hosting) {
+                    if (LoadingEventView.attending) {
+                        LoadingEventView.removeAttendance()
+                        Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        LoadingEventView.addAttendance()
+                    }
+                } else {
+                    MaterialDialog(this).show {
+                        title(text = "Are you sure you want to leave this event as host?")
+                        positiveButton(R.string.yes) {
+                            LoadingEventView.hostLeaveEvent()
+                        }
+                        negativeButton(R.string.cancel)
+                    }
+                }
+            }
+        ) {
+            Text(
+                text = " AAAAAAAAAAAAAAA"
+            )
+        }
     }
+
 
 }
 
