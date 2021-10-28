@@ -505,7 +505,7 @@ fun EventCard(
                         )
                         Text(
                             text = "Space: " + event.currentlyAttending.toString() + "/" + event.space.toString(),
-                            style = MaterialTheme.typography.h3,
+                            style = MaterialTheme.typography.h4,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )

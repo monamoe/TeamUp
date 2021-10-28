@@ -30,7 +30,7 @@ data class EventCard(
     val currentlyAttending: Int,
     val activityType: String,
     val startingTime: String,
-    val startingData: String,
+    val startingDate: String,
     val locationName: String,
 )
 

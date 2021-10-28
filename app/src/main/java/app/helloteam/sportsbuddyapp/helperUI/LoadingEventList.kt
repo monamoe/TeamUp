@@ -25,6 +25,7 @@ class LoadingEventList {
 
         fun locationEventListData(locationID: String) {
             locationEventListDone = false
+            locationEventListDataCounter = 0
             val db = Firebase.firestore
 
             // location data = loc

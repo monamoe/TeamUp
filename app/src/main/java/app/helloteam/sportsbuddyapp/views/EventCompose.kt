@@ -11,14 +11,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -257,7 +254,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Schedule Icon"
                                 )
                                 Text(
-                                    text = "${eventInfo.startingData} ${eventInfo.startingTime}",
+                                    text = "${eventInfo.startingDate} ${eventInfo.startingTime}",
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
@@ -388,13 +385,6 @@ class EventCompose : ComponentActivity() {
                     modifier = Modifier
                         .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                 )
-                Text(
-                    text = "${eventInfo.currentlyAttending} / ${eventInfo.space}",
-                    style = MaterialTheme.typography.h3,
-                    color = colorResource(id = R.color.secondaryTextColor),
-                    modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp)
-                )
             }
             LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                 items(attendeeList) {
@@ -413,7 +403,7 @@ class EventCompose : ComponentActivity() {
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.secondaryColor))
-                .size(140.dp, 120.dp)
+                .size(140.dp, 140.dp)
                 .fillMaxSize()
         ) {
             Column(
@@ -470,33 +460,93 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun AttendButton() {
-        Button(
-            onClick = {
-                if (!LoadingEventView.hosting) {
-                    if (LoadingEventView.attending) {
-                        LoadingEventView.removeAttendance()
-                        Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        LoadingEventView.addAttendance()
-                    }
-                } else {
-                    MaterialDialog(this).show {
-                        title(text = "Are you sure you want to leave this event as host?")
-                        positiveButton(R.string.yes) {
-                            LoadingEventView.hostLeaveEvent()
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(15.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        if (LoadingEventView.hosting) {
+                            MaterialDialog(currentcontext).show {
+                                title(text = "Are you sure you want to leave this event as host?")
+                                positiveButton(R.string.yes) {
+                                    LoadingEventView.hostLeaveEvent()
+                                }
+                                negativeButton(R.string.cancel)
+                            }
+                        } else {
+                            if (LoadingEventView.attending) {
+                                LoadingEventView.removeAttendance()
+                                Toast.makeText(
+                                    currentcontext,
+                                    "Successfully left event",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                LoadingEventView.addAttendance()
+                            }
                         }
-                        negativeButton(R.string.cancel)
+
+                    }, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = colorResource(id = R.color.secondaryColor)
+                    )
+                ) {
+                    var joinButtonText = if (LoadingEventView.hosting)
+                        "Unhost Event"
+                    else
+                        if (LoadingEventView.attending)
+                            "Leave Event"
+                        else
+                            "Join Event"
+                    Text(
+                        text = joinButtonText,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        style = MaterialTheme.typography.h2,
+                    )
+                }
+
+
+                if (!LoadingEventView.hasHost) {
+
+                    Text(
+                        text = "This event has no host!",
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        style = MaterialTheme.typography.h2,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                    // become host button
+                    Button(
+                        onClick = {
+                            MaterialDialog(currentcontext).show {
+                                title(text = "Are you sure you want to become the host for this event?")
+                                positiveButton(R.string.yes) {
+                                    LoadingEventView.makeHost();
+
+                                }
+                                negativeButton(R.string.cancel)
+                            }
+                        }, colors = ButtonDefaults.textButtonColors(
+                            backgroundColor = colorResource(id = R.color.secondaryColor)
+                        ),
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Text(
+                            text = "Become Host",
+                            color = colorResource(id = R.color.secondaryTextColor),
+                            style = MaterialTheme.typography.h2,
+                        )
                     }
                 }
+
+
             }
-        ) {
-            Text(
-                text = " AAAAAAAAAAAAAAA"
-            )
         }
+
     }
-
-
 }
-

@@ -12,16 +12,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView
 
+lateinit var eventViewContext: Context
 
-lateinit var EventViewContext: Context
 
 class SplashLoadingEventView : ComponentActivity() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // context
-        EventViewContext = this
+        eventViewContext = this
 
         // getting value from intent
         val locationIDa = intent.getStringExtra("locationID").toString()
