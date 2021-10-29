@@ -4,7 +4,6 @@ collect and load data for the landing page
  */
 package app.helloteam.sportsbuddyapp.helperUI
 
-
 import android.content.Intent
 import android.location.Location
 import android.util.Log
@@ -19,10 +18,13 @@ import com.google.firebase.ktx.Firebase
 var locationA: Location = Location("point A")
 var locationB = Location("point B")
 
+val logi = "LoadingLanding"
+
 class LoadingEvent {
     companion object {
-        var hostingAttendingEventList: MutableList<EventCard> = mutableListOf<EventCard>()
-        var recommendedEventList: MutableList<EventCard> = mutableListOf<EventCard>()
+        var hostingAttendingEventList: MutableList<EventCard> = mutableListOf()
+        var recommendedEventList: MutableList<EventCard> = mutableListOf()
+
         var recEventsDone = false
         var yourEventsDone = false
         var yourHostDone = false
@@ -37,7 +39,12 @@ class LoadingEvent {
             var currentlyAdded = 0
             val maxAdded = 5
             val db = Firebase.firestore
-            var AAA = 0
+
+            // counters
+            var locationCounter = 0
+            var eventsCounter = 0
+
+            // user location
             locationA.latitude = userLocationLat
             locationA.longitude = userLocationLon
 
@@ -45,23 +52,19 @@ class LoadingEvent {
                 .addOnSuccessListener { user ->
                     val favouriteSport = user.get("favouriteSport")
 
-                    if (favouriteSport != "") {
+                    Log.i(logi, "Favourite Sport: $favouriteSport")
+
+                    if (favouriteSport != "none") {
                         db.collection("Location").get().addOnSuccessListener { location ->
                             for (loc in location) {
-                                AAA++
-
-                                Log.i(
-                                    "LOG_TAG",
-                                    "RECOMMENDED LIST: inside location ${loc.get("Location Name")}"
-                                )
+                                locationCounter++
                                 if (currentlyAdded < maxAdded) {
 
                                     db.collection("Location")
                                         .document(loc.id)
                                         .collection("Events").get().addOnSuccessListener { events ->
-                                            var BBB = 0
                                             for (event in events) {
-                                                BBB++
+                                                eventsCounter++
                                                 Log.i("LOG_TAG", "RECOMMENDED LIST: inside events")
                                                 if (currentlyAdded < maxAdded) {
 
@@ -153,20 +156,20 @@ class LoadingEvent {
 
                                             Log.i(
                                                 "LOG_TAG",
-                                                "RECOMMENDED LIST: $BBB - ${events.size()}"
+                                                "RECOMMENDED LIST: $eventsCounter - ${events.size()}"
                                             )
-                                            if (BBB == events.size() && AAA == location.size()) {
+                                            if (eventsCounter == events.size() && locationCounter == location.size()) {
                                                 recEventsDone = true
-                                                if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                                    toLanding()
-                                                }
+                                                toLanding()
                                             }
-
                                         }
-
                                 }
                             }
                         }
+                    } else {
+                        // user doesn't have a favourite event set
+                        recEventsDone = true
+                        toLanding()
                     }
                 }
         }
@@ -175,7 +178,7 @@ class LoadingEvent {
         fun yourEventListData(userID: String) {
             yourHostDone = false
             val db = Firebase.firestore
-            var HHH = 0
+            var hostingCounter = 0
 
             db.collection("User").document(userID)
                 .get()
@@ -186,11 +189,7 @@ class LoadingEvent {
                         .addOnSuccessListener { hosting ->
                             if (hosting.isEmpty) {
                                 yourHostDone = true
-                                Log.i("hellooooo", "h empty")
-                                if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                    toLanding()
-
-                                }
+                                toLanding()
                             }
                             for (host in hosting) {
                                 Log.i("LOG_TAG", "EVENT DISPLAY: THIS USER IS HOSTING AN EVENT:")
@@ -214,7 +213,7 @@ class LoadingEvent {
                                                         "LOG_TAG",
                                                         "EVENT DISPLAY: inside location - ${loc.id}"
                                                     )
-                                                    HHH++
+                                                    hostingCounter++
 
                                                     Log.i(
                                                         "LOG_TAG",
@@ -256,15 +255,9 @@ class LoadingEvent {
                                                     }
 
 
-                                                    if (HHH == hosting.size()) {
-                                                        Log.i("hellooooo", "h full")
-
+                                                    if (hostingCounter == hosting.size()) {
                                                         yourHostDone = true
-                                                        if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                                            Log.i("hellooooo", "h sending")
-
-                                                            toLanding()
-                                                        }
+                                                        toLanding()
                                                     }
                                                 }
                                         }
@@ -274,7 +267,12 @@ class LoadingEvent {
                 }
         }
 
+
+        // get the events the user is attending
         fun getAttending(userID: String) {
+
+            Log.i(logi, "Inside getAttending")
+
             yourEventsDone = false
             //attending
             // hosting
@@ -287,20 +285,23 @@ class LoadingEvent {
                         .get()
                         .addOnSuccessListener { hosting ->
                             if (hosting.isEmpty) {
+                                Log.i(logi, "Attending list was empty")
                                 yourEventsDone = true
-                                Log.i("hellooooo", "a empty")
-                                if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                                    toLanding()
-                                }
+                                toLanding()
                             }
                             var a = 0
                             for (host in hosting) {
+                                Log.i(logi, "Inside Attending")
                                 db.collection("Location")
                                     .document(host.get("locationID").toString())
                                     .collection("Events")
                                     .document(host.get("eventID").toString())
                                     .get()
                                     .addOnSuccessListener { event ->
+
+                                        Log.i(logi, "users != null ${users != null}")
+
+
                                         if (users != null) {
                                             db.collection("Location")
                                                 .document(
@@ -309,50 +310,104 @@ class LoadingEvent {
                                                 )
                                                 .get()
                                                 .addOnSuccessListener { loc ->
-                                                    db.collection("User")
-                                                        .document(event.get("hostID").toString())
-                                                        .get().addOnSuccessListener { user ->
-                                                            a++
-                                                            var hostName = "No Host"
-                                                            if (user.exists()) {
-                                                                hostName =
-                                                                    user.get("userName").toString()
-                                                            }
+                                                    Log.i(logi, "Inside Loc")
 
-                                                            hostingAttendingEventList.add(
-                                                                EventCard(
-                                                                    event.get("title").toString(),
-                                                                    event.id,
-                                                                    loc.id,
-                                                                    loc.get("StreetView")
-                                                                        .toString(),
-                                                                    false,
-                                                                    hostName,
-                                                                    "Playing soccer with a couple friends, feel free to join in",
-                                                                    event.get("eventSpace")
-                                                                        .toString()
-                                                                        .toInt(),
-                                                                    event.get("currentlyAttending")
-                                                                        .toString()
-                                                                        .toInt(),
-                                                                    event.get("activity")
-                                                                        .toString(),
-                                                                    event.get("date")
-                                                                        .toString(),
-                                                                    loc.get("endDate")
-                                                                        .toString(),
-                                                                    loc.get("Location Name")
-                                                                        .toString(),
-                                                                )
+                                                    // if the event has a host
+                                                    if (event.get("hostID").toString() != "null") {
+                                                        db.collection("User")
+                                                            .document(
+                                                                event.get("hostID").toString()
                                                             )
+                                                            .get().addOnSuccessListener { user ->
 
-                                                            if (a == hosting.size()) {
-                                                                yourEventsDone = true
-                                                                if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
+                                                                Log.i(logi, "Inside User")
+
+                                                                a++
+                                                                var hostName = "No Host"
+                                                                if (user.exists()) {
+                                                                    hostName =
+                                                                        user.get("userName")
+                                                                            .toString()
+                                                                }
+
+                                                                hostingAttendingEventList.add(
+                                                                    EventCard(
+                                                                        event.get("title")
+                                                                            .toString(),
+                                                                        event.id,
+                                                                        loc.id,
+                                                                        loc.get("StreetView")
+                                                                            .toString(),
+                                                                        false,
+                                                                        hostName,
+                                                                        event.get("information")
+                                                                            .toString(),
+                                                                        event.get("eventSpace")
+                                                                            .toString()
+                                                                            .toInt(),
+                                                                        event.get("currentlyAttending")
+                                                                            .toString()
+                                                                            .toInt(),
+                                                                        event.get("activity")
+                                                                            .toString(),
+                                                                        event.get("date")
+                                                                            .toString(),
+                                                                        loc.get("endDate")
+                                                                            .toString(),
+                                                                        loc.get("Location Name")
+                                                                            .toString(),
+                                                                    )
+                                                                )
+                                                                Log.i(
+                                                                    logi,
+                                                                    "Comparing a: $a - ${hosting.size()}"
+                                                                )
+                                                                if (a == hosting.size()) {
+                                                                    yourEventsDone = true
                                                                     toLanding()
                                                                 }
                                                             }
+                                                    } else {
+                                                        a++
+                                                        var hostName = "No Host"
+
+
+                                                        hostingAttendingEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.id,
+                                                                loc.id,
+                                                                loc.get("StreetView")
+                                                                    .toString(),
+                                                                false,
+                                                                hostName,
+                                                                event.get("information")
+                                                                    .toString(),
+                                                                event.get("eventSpace")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("activity")
+                                                                    .toString(),
+                                                                event.get("date")
+                                                                    .toString(),
+                                                                loc.get("endDate")
+                                                                    .toString(),
+                                                                loc.get("Location Name")
+                                                                    .toString(),
+                                                            )
+                                                        )
+                                                        Log.i(
+                                                            logi,
+                                                            "Comparing a: $a - ${hosting.size()}"
+                                                        )
+                                                        if (a == hosting.size()) {
+                                                            yourEventsDone = true
+                                                            toLanding()
                                                         }
+                                                    }
                                                 }
                                         }
                                     }
@@ -372,10 +427,13 @@ class LoadingEvent {
                 }
         }
 
-        fun toLanding() {
-            val intent = Intent(context, LandingPage2::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
+        private fun toLanding() {
+            Log.i(logi, "To Landing: $loggedIn $recEventsDone $yourEventsDone $yourHostDone")
+            if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
+                val intent = Intent(context, LandingPage2::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            }
         }
     }
 }

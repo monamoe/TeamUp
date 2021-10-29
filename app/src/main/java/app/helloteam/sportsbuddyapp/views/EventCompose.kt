@@ -30,30 +30,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attending
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hosting
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.compose.rememberImagePainter
 import com.afollestad.materialdialogs.MaterialDialog
 
 
-private var locationName = "Location Name"
-private var locationInfo = "Location Info"
-private var locationImage = ""
-private var locationLat = 1.1
-private var locationLon = 1.1
-
-// host info
-private var hostName = "Location Name"
-private var hostImage = "Location Name"
-private var hostRating = "Location Name"
-
-// event info
-private lateinit var eventInfo: EventCard
-
-// attendee info
-private var attendeeList: MutableList<AttendeesCard> = mutableListOf()
-
-// team member info
-private var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
+//private var locationName = "Location Name"
+//private var locationInfo = "Location Info"
+//private var locationImage = ""
+//private var locationLat = 1.1
+//private var locationLon = 1.1
+//
+//// host info
+//private var hostName = "Location Name"
+//private var hostImage = "Location Name"
+//private var hostRating = "Location Name"
+//
+//// event info
+//private lateinit var eventInfo: EventCard
+//
+//// attendee info
+//private var attendeeList: MutableList<AttendeesCard> = mutableListOf()
+//
+//// team member info
+//private var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
 
 
 @SuppressLint("StaticFieldLeak")
@@ -64,27 +67,27 @@ class EventCompose : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         //init variables
-        locationName = LoadingEventView.locationName
-        locationInfo = LoadingEventList.locationInfo
-        locationImage = LoadingEventList.locationImage
-        locationLat = LoadingEventView.locationLat!!
-        locationLon = LoadingEventView.locationLon!!
-
-        // host info
-        hostName = LoadingEventView.hostName
-        hostImage = LoadingEventView.hostImage
-        hostRating = LoadingEventView.hostRating
-
-        // event info
-        eventInfo = LoadingEventView.eventInfo
-
-        // attendee info
-        attendeeList = LoadingEventView.attendeeList
-        Log.i("LOG_TAG", "LOADING EVENT VIEW: Attendee List $attendeeList")
-
-        // team member info
-        teamMemberList = LoadingEventView.teamMemberList
-        Log.i("LOG_TAG", "LOADING EVENT VIEW: Team Member List $teamMemberList")
+//        locationName = LoadingEventView.locationName
+//        locationInfo = LoadingEventList.locationInfo
+//        locationImage = LoadingEventList.locationImage
+//        locationLat = LoadingEventView.locationLat!!
+//        locationLon = LoadingEventView.locationLon!!
+//
+//        // host info
+//        hostName = LoadingEventView.hostName
+//        hostImage = LoadingEventView.hostImage
+//        hostRating = LoadingEventView.hostRating
+//
+//        // event info
+//        eventInfo = LoadingEventView.eventInfo
+//
+//        // attendee info
+//        attendeeList = LoadingEventView.attendeeList
+//        Log.i("LOG_TAG", "LOADING EVENT VIEW: Attendee List $attendeeList")
+//
+//        // team member info
+//        teamMemberList = LoadingEventView.teamMemberList
+//        Log.i("LOG_TAG", "LOADING EVENT VIEW: Team Member List $teamMemberList")
 
         // set content
         setContent {
@@ -168,8 +171,11 @@ class EventCompose : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Log.i("LOG_TAG", "LOADING EVENT VIEW: RENDERING IMAGE $locationImage")
-                if (locationImage == "" || locationImage == "null") {
+                Log.i(
+                    "LOG_TAG",
+                    "LOADING EVENT VIEW: RENDERING IMAGE ${LoadingEventView.locationImage}"
+                )
+                if (LoadingEventView.locationImage == "" || LoadingEventView.locationImage == "null") {
                     Image(
                         painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
@@ -180,7 +186,7 @@ class EventCompose : ComponentActivity() {
                     )
                 } else {
                     Image(
-                        painter = rememberImagePainter(locationImage),
+                        painter = rememberImagePainter(LoadingEventView.locationImage),
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
@@ -214,12 +220,12 @@ class EventCompose : ComponentActivity() {
             ) {
                 Column {
                     Text(
-                        text = locationName,
+                        text = LoadingEventView.locationName,
                         style = MaterialTheme.typography.h2,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
                     Text(
-                        text = locationInfo,
+                        text = LoadingEventView.locationInfo,
                         style = MaterialTheme.typography.h3,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
@@ -236,7 +242,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Activity Icon"
                                 )
                                 Text(
-                                    text = eventInfo.activityType,
+                                    text = LoadingEventView.eventInfo.activityType,
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
@@ -254,7 +260,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Schedule Icon"
                                 )
                                 Text(
-                                    text = "${eventInfo.startingDate} ${eventInfo.startingTime}",
+                                    text = "${LoadingEventView.eventInfo.startingDate} ${LoadingEventView.eventInfo.startingTime}",
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
@@ -272,7 +278,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Place Icon"
                                 )
                                 Text(
-                                    text = eventInfo.locationName,
+                                    text = LoadingEventView.eventInfo.locationName,
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
@@ -303,7 +309,7 @@ class EventCompose : ComponentActivity() {
                         .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                 )
                 Text(
-                    text = "${eventInfo.currentlyAttending} / ${eventInfo.space}",
+                    text = "${LoadingEventView.eventInfo.currentlyAttending} / ${LoadingEventView.eventInfo.space}",
                     style = MaterialTheme.typography.h3,
                     color = colorResource(id = R.color.secondaryTextColor),
                     modifier = Modifier
@@ -311,7 +317,7 @@ class EventCompose : ComponentActivity() {
                 )
             }
             LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                items(attendeeList) {
+                items(LoadingEventView.attendeeList) {
                     AttendeeCard(it)
                 }
             }
@@ -387,7 +393,7 @@ class EventCompose : ComponentActivity() {
                 )
             }
             LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                items(attendeeList) {
+                items(LoadingEventView.teamMemberList) {
                     InviteTeamMemberCard(it)
                 }
             }
@@ -472,7 +478,7 @@ class EventCompose : ComponentActivity() {
             ) {
                 Button(
                     onClick = {
-                        if (LoadingEventView.hosting) {
+                        if (hosting) {
                             MaterialDialog(currentcontext).show {
                                 title(text = "Are you sure you want to leave this event as host?")
                                 positiveButton(R.string.yes) {
@@ -497,10 +503,10 @@ class EventCompose : ComponentActivity() {
                         backgroundColor = colorResource(id = R.color.secondaryColor)
                     )
                 ) {
-                    var joinButtonText = if (LoadingEventView.hosting)
+                    var joinButtonText = if (hosting)
                         "Unhost Event"
                     else
-                        if (LoadingEventView.attending)
+                        if (attending)
                             "Leave Event"
                         else
                             "Join Event"
@@ -512,7 +518,7 @@ class EventCompose : ComponentActivity() {
                 }
 
 
-                if (!LoadingEventView.hasHost) {
+                if (!hasHost) {
 
                     Text(
                         text = "This event has no host!",
@@ -543,8 +549,6 @@ class EventCompose : ComponentActivity() {
                         )
                     }
                 }
-
-
             }
         }
 

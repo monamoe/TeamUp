@@ -53,11 +53,37 @@ class LoadingEventView {
 
         // loading data for event view
         fun eventViewData(locationID: String, eventID: String) {
-            locationIDa = locationID
-            eventIDa = eventID
+            // reset variables
+            hasHost = true
+            hosting = false
+            attending = false
 
+            // location info
+            locationName = "Location Name"
+            locationInfo = "No additional information on this location"
+            locationImage = "IDK"
+            locationLat = 1.1
+            locationLon = 1.1
+
+            // host info
+            hostName = "hostName"
+            hostImage = "hostImage"
+            hostRating = "hostRating"
+
+
+            // lists
+            attendeeList.clear()
+            teamMemberList.clear()
             eventViewDataCounter = 0
             attendingListDataCounter = 0
+            attendeeListDone = false
+
+            // IDs
+            locationIDa = locationID
+            eventIDa = eventID
+            teamMemberListDone = false
+
+
 
             LoadingEventList.locationEventListDone = false
             val db = Firebase.firestore

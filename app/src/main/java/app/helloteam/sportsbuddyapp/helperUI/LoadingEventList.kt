@@ -46,53 +46,84 @@ class LoadingEventList {
                         for (event in events) {
 
 
-                            // host data = host
-                            val hostID = event.get("hostID").toString()
-                            var hostName = ""
-
-                            db.collection("User").document(hostID)
-                                .get()
-                                .addOnSuccessListener { u ->
-                                    hostName =
-                                        u.get("userName").toString()
-
-                                    locationEventListDataCounter++
-                                    eventInfo = EventCard(
-                                        event.get("title").toString(),
-                                        event.id,
-                                        loc.id,
-                                        loc.get("StreetView").toString(),
-                                        false,
-                                        if (hostName == "") "No Host" else hostName,
-                                        event.get("information").toString(),
-                                        event.get("eventSpace").toString().toInt(),
-                                        event.get("currentlyAttending").toString().toInt(),
-                                        event.get("activity")
-                                            .toString(),
-                                        event.get("date")
-                                            .toString(),
-                                        loc.get("endDate")
-                                            .toString(),
-                                        loc.get("Location Name")
-                                            .toString(),
-                                    )
-
-
-                                    Log.i(
-                                        "LOG_TAG",
-                                        "LOADING EVENTS: SIZE COMPARING - $locationEventListDataCounter - ${events.size()}"
-                                    )
-                                    if (locationEventListDataCounter == events.size()) {
-                                        toEventListView()
+                            if (event.get("hostID").toString() != "null") {
+                                db.collection("User").document(event.get("hostID").toString())
+                                    .get()
+                                    .addOnSuccessListener { u ->
+                                        locationEventListDataCounter++
+                                        locationEventList += EventCard(
+                                            event.get("title").toString(),
+                                            event.id,
+                                            loc.id,
+                                            loc.get("StreetView").toString(),
+                                            false,
+                                            u.get("userName").toString(),
+                                            event.get("information").toString(),
+                                            event.get("eventSpace").toString().toInt(),
+                                            event.get("currentlyAttending").toString().toInt(),
+                                            event.get("activity")
+                                                .toString(),
+                                            event.get("date")
+                                                .toString(),
+                                            loc.get("endDate")
+                                                .toString(),
+                                            loc.get("Location Name")
+                                                .toString(),
+                                        )
+                                        Log.i(
+                                            "LOG_TAG",
+                                            "LOADING EVENTS: SIZE COMPARING - $locationEventListDataCounter - ${events.size()}"
+                                        )
+                                        Log.i(
+                                            "LOG_TAG",
+                                            "LOADING EVENTS: ${locationEventList.size}"
+                                        )
+                                        if (locationEventListDataCounter == events.size()) {
+                                            toEventListView()
+                                        }
                                     }
+                            } else {
+
+                                locationEventListDataCounter++
+                                locationEventList += EventCard(
+                                    event.get("title").toString(),
+                                    event.id,
+                                    loc.id,
+                                    loc.get("StreetView").toString(),
+                                    false,
+                                    "No Host",
+                                    event.get("information").toString(),
+                                    event.get("eventSpace").toString().toInt(),
+                                    event.get("currentlyAttending").toString().toInt(),
+                                    event.get("activity")
+                                        .toString(),
+                                    event.get("date")
+                                        .toString(),
+                                    loc.get("endDate")
+                                        .toString(),
+                                    loc.get("Location Name")
+                                        .toString(),
+                                )
+
+
+                                Log.i(
+                                    "LOG_TAG",
+                                    "LOADING EVENTS: SIZE COMPARING - $locationEventListDataCounter - ${events.size()}"
+                                )
+                                Log.i("LOG_TAG", "LOADING EVENTS: ${locationEventList.size}")
+                                if (locationEventListDataCounter == events.size()) {
+                                    toEventListView()
                                 }
+                            }
+
+
                         }
                     }
             }
         }
 
         // to event list view
-        fun toEventListView() {
+        private fun toEventListView() {
             val intent = Intent(EventListContext, EventListCompose::class.java)
             context.startActivity(intent)
         }

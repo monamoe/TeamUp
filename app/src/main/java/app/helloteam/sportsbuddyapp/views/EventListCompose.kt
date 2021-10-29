@@ -190,18 +190,9 @@ private fun EventListScroll() {
                     Modifier
                         .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                         .clickable {
-                            Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            val intent = Intent(context, ViewEvent::class.java)
-                            Log.i(
-                                "LOG_TAG",
-                                "VIEW EVENT: BEFORE: eventID ${e.eventID}"
-                            )
+                            val intent = Intent(context, SplashLoadingEventView::class.java)
                             intent.putExtra("eventID", e.eventID)
                             intent.putExtra("locationID", e.locationID)
-                            Log.i(
-                                "LOG_TAG",
-                                "VIEW EVENT: BEFORE: locationID ${e.locationID}"
-                            )
                             context.startActivity(intent)
                         }
                 )

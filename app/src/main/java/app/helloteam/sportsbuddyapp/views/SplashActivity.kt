@@ -57,7 +57,7 @@ class SplashActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var user = FirebaseAuth.getInstance().getCurrentUser()?.uid
+        var user = FirebaseAuth.getInstance().currentUser?.uid
         val db = Firebase.firestore
         var testUser = false
         db.collection("User")
