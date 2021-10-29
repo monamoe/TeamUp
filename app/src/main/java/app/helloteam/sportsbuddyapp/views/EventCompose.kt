@@ -6,6 +6,7 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -378,7 +379,25 @@ class EventCompose : ComponentActivity() {
                 }
                 LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                     items(LoadingEventView.teamMemberList) {
-                        InviteTeamMemberCard(it)
+                        InviteTeamMemberCard(
+                            it,
+                            modifier = Modifier.clickable {
+                                // TO DO
+//                                Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
+//                                val intent = Intent(context, SplashLoadingEventView::class.java)
+//                                Log.i(
+//                                    "LOG_TAG",
+//                                    "VIEW EVENT: BEFORE: eventID ${e.eventID}"
+//                                )
+//                                intent.putExtra("eventID", e.eventID)
+//                                intent.putExtra("locationID", e.locationID)
+//                                Log.i(
+//                                    "LOG_TAG",
+//                                    "VIEW EVENT: BEFORE: locationID ${e.locationID}"
+//                                )
+//                                context.startActivity(intent)
+                            }
+                        )
                     }
                 }
             }
@@ -413,7 +432,8 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun InviteTeamMemberCard(
-        teamMember: AttendeesCard
+        teamMember: AttendeesCard,
+        modifier: Modifier = Modifier
     ) {
         Card(
             modifier = Modifier

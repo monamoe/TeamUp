@@ -381,7 +381,6 @@ fun EventScroll() {
                 modifier = Modifier
                     .padding(15.dp)
                     .clickable {
-
                         val intent = Intent(context, EventInviteActivity::class.java)
                         context.startActivity(intent)
                     }
