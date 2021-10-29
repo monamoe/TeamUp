@@ -38,56 +38,12 @@ import coil.compose.rememberImagePainter
 import com.afollestad.materialdialogs.MaterialDialog
 
 
-//private var locationName = "Location Name"
-//private var locationInfo = "Location Info"
-//private var locationImage = ""
-//private var locationLat = 1.1
-//private var locationLon = 1.1
-//
-//// host info
-//private var hostName = "Location Name"
-//private var hostImage = "Location Name"
-//private var hostRating = "Location Name"
-//
-//// event info
-//private lateinit var eventInfo: EventCard
-//
-//// attendee info
-//private var attendeeList: MutableList<AttendeesCard> = mutableListOf()
-//
-//// team member info
-//private var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
-
-
 @SuppressLint("StaticFieldLeak")
 private lateinit var currentcontext: Context
 
 class EventCompose : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //init variables
-//        locationName = LoadingEventView.locationName
-//        locationInfo = LoadingEventList.locationInfo
-//        locationImage = LoadingEventList.locationImage
-//        locationLat = LoadingEventView.locationLat!!
-//        locationLon = LoadingEventView.locationLon!!
-//
-//        // host info
-//        hostName = LoadingEventView.hostName
-//        hostImage = LoadingEventView.hostImage
-//        hostRating = LoadingEventView.hostRating
-//
-//        // event info
-//        eventInfo = LoadingEventView.eventInfo
-//
-//        // attendee info
-//        attendeeList = LoadingEventView.attendeeList
-//        Log.i("LOG_TAG", "LOADING EVENT VIEW: Attendee List $attendeeList")
-//
-//        // team member info
-//        teamMemberList = LoadingEventView.teamMemberList
-//        Log.i("LOG_TAG", "LOADING EVENT VIEW: Team Member List $teamMemberList")
 
         // set content
         setContent {
@@ -293,32 +249,59 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun AttendeeList() {
-        Column {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Attendees",
-                    style = MaterialTheme.typography.h2,
-                    color = colorResource(id = R.color.secondaryTextColor),
+        if (LoadingEventView.attendeeList.size > 0) {
+            Column {
+                Column(
                     modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-                )
-                Text(
-                    text = "${LoadingEventView.eventInfo.currentlyAttending} / ${LoadingEventView.eventInfo.space}",
-                    style = MaterialTheme.typography.h3,
-                    color = colorResource(id = R.color.secondaryTextColor),
-                    modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Attendees",
+                        style = MaterialTheme.typography.h2,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    )
+                    Text(
+                        text = "${LoadingEventView.eventInfo.currentlyAttending} / ${LoadingEventView.eventInfo.space}",
+                        style = MaterialTheme.typography.h3,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp)
+                    )
+                }
+                LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
+                    items(LoadingEventView.attendeeList) {
+                        AttendeeCard(it)
+                    }
+                }
             }
-            LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                items(LoadingEventView.attendeeList) {
-                    AttendeeCard(it)
+        } else {
+            Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 30.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Attendees",
+                        style = MaterialTheme.typography.h2,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    )
+                    Text(
+                        text = "There are currently 0 attendees for this event!",
+                        style = MaterialTheme.typography.h3,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp)
+                    )
                 }
             }
         }
@@ -376,28 +359,56 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun InviteTeamMembers() {
-        Column {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = "Invite Team Members",
-                    style = MaterialTheme.typography.h2,
-                    color = colorResource(id = R.color.secondaryTextColor),
+        if (LoadingEventView.teamMemberList.size > 0) {
+            Column {
+                Column(
                     modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-                )
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Invite Team Members",
+                        style = MaterialTheme.typography.h2,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    )
+                }
+                LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
+                    items(LoadingEventView.teamMemberList) {
+                        InviteTeamMemberCard(it)
+                    }
+                }
             }
-            LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                items(LoadingEventView.teamMemberList) {
-                    InviteTeamMemberCard(it)
+        } else {
+            Column {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Invite Team Members",
+                        style = MaterialTheme.typography.h2,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    )
+                    Text(
+                        text = "You have no members in your team. DO SOMETHING TO INVITE THEM",
+                        style = MaterialTheme.typography.h3,
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        modifier = Modifier
+                            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                    )
                 }
             }
         }
+
     }
 
     @Composable
