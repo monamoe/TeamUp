@@ -207,12 +207,6 @@
                     android:text="Remove Team Member"
                     tools:visibility="gone" />
 
-                <Button
-                    android:id="@+id/blockButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Block User" />
             </LinearLayout>
 
             <LinearLayout
@@ -229,6 +223,14 @@
                     android:text="Send Team Invite"
                     tools:visibility="gone" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/blockButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Block User"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 
