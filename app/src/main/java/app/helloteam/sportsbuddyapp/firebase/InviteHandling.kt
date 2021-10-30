@@ -135,7 +135,7 @@ object InviteHandling {
                            PushNotification(
                               NotificationData( //creates invite message
                                  "Event Invite",
-                                 "You have been invited to ${FirebaseAuth.getInstance().currentUser?.displayName}'s game."
+                                 "You have a event Invite."
                               ),
                               reciever.get("token").toString() //gets token
                            ).also {
