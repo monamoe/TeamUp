@@ -1,16 +1,15 @@
 package app.helloteam.sportsbuddyapp.views
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat.startActivity
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
 import com.baoyz.widget.PullRefreshLayout
@@ -20,14 +19,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import android.widget.ArrayAdapter
-import androidx.core.content.ContextCompat
-import android.app.Activity
-import android.view.Window
 
 
-lateinit private var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
+private lateinit var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
 
 class EventInviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +35,7 @@ class EventInviteActivity : AppCompatActivity() {
         // populate array list with events that match the location ID of the marker selected
         getInvites(listview)
 
-        listview.setOnItemClickListener { parent, view, position, id ->
+        listview.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ViewEvent::class.java)
             intent.putExtra("locationID", eventList.get(position).locationID)
             intent.putExtra("eventID", eventList.get(position).eventID)
@@ -51,18 +45,18 @@ class EventInviteActivity : AppCompatActivity() {
         val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
         layout.setOnRefreshListener {
             getInvites(listview)
-            layout.setRefreshing(false);
+            layout.setRefreshing(false)
         }
     }
 
-    fun getInvites(listview: ListView){
+    fun getInvites(listview: ListView) {
         // FIREBASE MIGRATION //
         eventList = ArrayList()
         val db = Firebase.firestore
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .collection("Invites").whereEqualTo("inviteType", "Event")
             .get().addOnSuccessListener { invites ->
-                for (invite in invites){
+                for (invite in invites) {
                     db.collection("User").document(invite.get("sender").toString())
                         .get().addOnSuccessListener { user ->
                             db.collection(
@@ -77,6 +71,10 @@ class EventInviteActivity : AppCompatActivity() {
                                                 db.collection("User")
                                                     .document(event.get("hostID").toString())
                                                     .get().addOnSuccessListener { host ->
+                                                        var hostUser = host.get("userName").toString();
+                                                        if(hostUser == "null" || hostUser == ""){
+                                                            hostUser = "No Host"
+                                                        }
                                                         val eventObj = EventInviteDisplayer(
                                                             invite.id,
                                                             invite.get("eventID").toString(),
@@ -84,7 +82,7 @@ class EventInviteActivity : AppCompatActivity() {
                                                             event.get("title").toString(),
                                                             loc.get("Location Name").toString(),
                                                             event.get("date") as Timestamp,
-                                                            host.get("userName").toString(),
+                                                            hostUser,
                                                             user.get("userName").toString()
                                                         )
                                                         eventList.add(eventObj)
@@ -95,10 +93,15 @@ class EventInviteActivity : AppCompatActivity() {
                                                     }
                                             }
                                     } else {
-                                        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                        db.collection("User")
+                                            .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                             .collection("Invites").document(invite.id).delete()
                                             .addOnSuccessListener {
-                                                Toast.makeText(this, "Some invites have been removed since events no longer exsist", Toast.LENGTH_LONG).show()
+                                                Toast.makeText(
+                                                    this,
+                                                    "Some invites have been removed since events no longer exsist",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
                                             }
                                     }
                                 }
@@ -115,7 +118,7 @@ class EventInviteActivity : AppCompatActivity() {
 
         // overrides
         override fun getCount(): Int {
-            return eventList.size;
+            return eventList.size
         }
 
         override fun getItem(position: Int): Any {
@@ -129,7 +132,7 @@ class EventInviteActivity : AppCompatActivity() {
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.event_invite_list_adapter, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.event_invite_list_adapter, viewGroup, false)
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
@@ -148,7 +151,8 @@ class EventInviteActivity : AppCompatActivity() {
             eventSender.text = ("Invited by: " + eventList.get(position).sender)
             rowMain.findViewById<Button>(R.id.deleteButton).setOnClickListener {
                 Log.i("Invite ID", eventList.get(position).id)
-                db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                db.collection("User")
+                    .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                     .collection("Invites").document(eventList.get(position).id)
                     .delete().addOnSuccessListener {
                         (mContext as Activity).finish()
@@ -157,7 +161,7 @@ class EventInviteActivity : AppCompatActivity() {
                     }
 
             }
-            return rowMain;
+            return rowMain
         }
     }
 
@@ -177,7 +181,16 @@ class EventInviteActivity : AppCompatActivity() {
         }
 
         // main constuctor
-        constructor(id: String, eventID: String, locationID: String, name: String, address: String, time: Timestamp, host: String, sender: String) {
+        constructor(
+            id: String,
+            eventID: String,
+            locationID: String,
+            name: String,
+            address: String,
+            time: Timestamp,
+            host: String,
+            sender: String
+        ) {
             this.id = id
             this.eventID = eventID
             this.locationID = locationID

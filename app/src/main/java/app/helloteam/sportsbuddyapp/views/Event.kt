@@ -49,10 +49,10 @@ class ViewEvent : AppCompatActivity() {
         setContentView(R.layout.activity_event)
 
         val listview = findViewById<ListView>(R.id.listView)
-        listview.isNestedScrollingEnabled = true;
+        listview.isNestedScrollingEnabled = true
 
         val listViewAttendees = findViewById<ListView>(R.id.listViewAttendees)
-        listViewAttendees.isNestedScrollingEnabled = true;
+        listViewAttendees.isNestedScrollingEnabled = true
 
         // get id for the event selected
         eventID = intent.getStringExtra("eventID").toString()
@@ -118,7 +118,7 @@ class ViewEvent : AppCompatActivity() {
                         .addOnSuccessListener { loc ->
                             information.setText(loc.get("Location Name").toString())
                             Glide.with(this).load(loc.get("StreetView").toString())
-                                .into(findViewById(R.id.eventImage));
+                                .into(findViewById(R.id.eventImage))
                         }
 
                     val hostID = document.get("hostID").toString()
@@ -126,10 +126,10 @@ class ViewEvent : AppCompatActivity() {
 
                     if (hostID.equals(uid)) {
                         // the current user is the one who made this event. display appropriate options
-                        hosting = true;
+                        hosting = true
                         attendBtn.text = "Leave Event"
                     } else {
-                        hosting = false;
+                        hosting = false
 
                         // check if the user is already attending
                         db.collection("Location").document(locationID).collection("Events")
@@ -147,7 +147,8 @@ class ViewEvent : AppCompatActivity() {
                                 for (user in users) {
                                     if (user.get("userID").toString() == uid) {
                                         attending = true
-                                        findViewById<Button>(R.id.becomeHostButton).visibility = View.VISIBLE
+                                        findViewById<Button>(R.id.becomeHostButton).visibility =
+                                            View.VISIBLE
                                     }
                                 }
                             }
@@ -190,7 +191,7 @@ class ViewEvent : AppCompatActivity() {
             } else {
                 MaterialDialog(this).show {
                     title(text = "Are you sure you want to leave this event as host?")
-                    positiveButton(R.string.yes) { dialog ->
+                    positiveButton(R.string.yes) {
                         hostLeaveEvent()
                     }
                     negativeButton(R.string.cancel)
@@ -217,7 +218,7 @@ class ViewEvent : AppCompatActivity() {
         findViewById<Button>(R.id.becomeHostButton).setOnClickListener {
             MaterialDialog(this).show {
                 title(text = "Are you sure you want to become the host? You will be responsible for leading the event.")
-                positiveButton(R.string.yes) { dialog ->
+                positiveButton(R.string.yes) {
                     makeHost(FirebaseAuth.getInstance().currentUser?.uid.toString())
                     removeAttendance()
                     Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
@@ -233,11 +234,14 @@ class ViewEvent : AppCompatActivity() {
     private fun hostLeaveEvent() {
         db.collection("Location").document(locationID).collection("Events").document(eventID)
             .update("hostID", "null")
-        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("Hosting")
+        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+            .collection("Hosting")
             .whereEqualTo("eventID", eventID).get()
             .addOnSuccessListener { hosting ->
-                for (host in hosting){
-                    db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).collection("Hosting")
+                for (host in hosting) {
+                    db.collection("User")
+                        .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                        .collection("Hosting")
                         .document(host.id).delete()
                 }
                 val intent = Intent(context, SplashActivity::class.java)
@@ -268,9 +272,9 @@ class ViewEvent : AppCompatActivity() {
     }
 
     // check if the event has room
-    // increace the number of people attending in event
-    // add the user uid to the event's attending list
-    // add the eventID to the user's attending list
+// increace the number of people attending in event
+// add the user uid to the event's attending list
+// add the eventID to the user's attending list
     private fun addAttendance() {
 
         db.collection("Location").document(locationID).collection("Events").document(eventID)
@@ -326,8 +330,6 @@ class ViewEvent : AppCompatActivity() {
                         }
 
 
-
-
                 } else {
                     Toast.makeText(
                         this,
@@ -340,8 +342,8 @@ class ViewEvent : AppCompatActivity() {
 
 
     // -1 the event space
-    // delete uid in the events attending list
-    // delete event id in the users attending list
+// delete uid in the events attending list
+// delete event id in the users attending list
     private fun removeAttendance() {
 
         // -1 the event space
@@ -385,4 +387,5 @@ class ViewEvent : AppCompatActivity() {
                 )
             }
     }
+
 }

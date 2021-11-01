@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
+import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -68,7 +69,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         Places.initialize(applicationContext, api)
 
         // Create a new PlacesClient instance
-        val placesClient = Places.createClient(this)
+//        val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
 
 
@@ -82,7 +83,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             activityType.adapter = adapter
         }
-        activityType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        activityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO("Not yet implemented")
             }
@@ -109,12 +110,12 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
             timeBtn.setText("$hour:$min")
         }
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
-        datePicker.setMinDate(System.currentTimeMillis() - 1000);
+        datePicker.setMinDate(System.currentTimeMillis() - 1000)
         val today = Calendar.getInstance()
         datePicker.init(
             today.get(Calendar.YEAR), today.get(Calendar.MONTH),
             today.get(Calendar.DAY_OF_MONTH)
-        ) { view, year, month, day ->
+        ) { _, year, month, day ->
             dayPicked = day
             yearPicked = year
             monthPicked = month
@@ -160,7 +161,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         createBtn.setOnClickListener {
             eventTitle = findViewById<TextView>(R.id.eventTitle).text.toString()
             if (findViewById<EditText>(R.id.eventSpace).text.toString().equals(""))
-                eventSpace = 1;
+                eventSpace = 1
             else
                 eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
             //addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
@@ -212,7 +213,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                             .get().addOnSuccessListener { loc ->
                                 if (loc.get("StreetView") == null) {
                                     Log.i("Helloooooooo", "making picture")
-                                    //FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
+                                    FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
                                 }
                             }
 

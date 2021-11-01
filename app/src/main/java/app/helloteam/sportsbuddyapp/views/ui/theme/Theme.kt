@@ -1,3 +1,7 @@
+/*
+ * monamoe
+ * app MaterialTheme
+ */
 package app.helloteam.sportsbuddyapp.views.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme

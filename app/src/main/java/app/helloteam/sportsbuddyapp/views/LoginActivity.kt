@@ -4,16 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.firebase.InviteHandling
 import app.helloteam.sportsbuddyapp.firebase.NotificationHandling
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
@@ -265,7 +260,7 @@ class LoginActivity : AppCompatActivity() {
     ) { //go to google sign in
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {

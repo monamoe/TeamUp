@@ -46,7 +46,7 @@ class ViewMemberProfileActivity : AppCompatActivity() {
 
                 if (User.get("photoUrl") != null) {
 
-                    Glide.with(this).load(User.get("photoUrl").toString()).into(binding.profilepic);
+                    Glide.with(this).load(User.get("photoUrl").toString()).into(binding.profilepic)
 
 
                 }

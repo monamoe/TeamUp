@@ -33,7 +33,7 @@ class TeamsActivity : AppCompatActivity() {
         val listview = findViewById<ListView>(R.id.listView)
 
         TeamHandling.getTeam(listview,this, "Team", "", "")
-        actionBar?.setIcon(R.drawable.ic_baseline_send_24);
+        actionBar?.setIcon(R.drawable.ic_baseline_send_24)
         supportActionBar?.title = "Team Memebers"
 
         val context = this
@@ -51,7 +51,7 @@ class TeamsActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.invite_menu, menu)
         return true
     }

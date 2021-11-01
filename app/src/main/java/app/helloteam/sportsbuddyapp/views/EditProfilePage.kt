@@ -1,8 +1,6 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,27 +14,17 @@ import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.SportTypes
 import app.helloteam.sportsbuddyapp.databinding.ActivityEditProfilePageBinding
 import app.helloteam.sportsbuddyapp.firebase.FileHandling
-import app.helloteam.sportsbuddyapp.firebase.TeamHandling
 import app.helloteam.sportsbuddyapp.firebase.UserHandling
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import com.ramotion.fluidslider.FluidSlider
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.jvm.Throws
-
-import com.google.firebase.auth.UserProfileChangeRequest
-
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.storage.ktx.storage
-import com.ramotion.fluidslider.FluidSlider
 
 
 class EditProfilePage : AppCompatActivity() {
@@ -55,7 +43,7 @@ class EditProfilePage : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfilePageBinding
     private var sport = "none"
     private var bio = ""
-    var distancePosition = 0.0f
+    private var distancePosition = 0.0f
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +57,7 @@ class EditProfilePage : AppCompatActivity() {
         val total = max - min
 
         val slider = findViewById<FluidSlider>(R.id.fluidSlider)
-        slider.startText ="$min km"
+        slider.startText = "$min km"
         slider.endText = "$max km"
 
         db.collection("User").document(uid)
@@ -78,19 +66,19 @@ class EditProfilePage : AppCompatActivity() {
                 val user = Firebase.auth.currentUser
                 userName = User.get("userName").toString()
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
-                var time: Timestamp = User.get("dateCreated") as Timestamp
-                var dateCreated = sfd.format(Date(time.seconds*1000))
+                val time: Timestamp = User.get("dateCreated") as Timestamp
+                val dateCreated = sfd.format(Date(time.seconds * 1000))
                 bio = User.get("bio").toString()
-                slider.position = User.get("distance").toString().toFloat()/100
+                slider.position = User.get("distance").toString().toFloat() / 100
 
                 if (user?.photoUrl != null) {
-                    Glide.with(this).load(user.photoUrl).into(binding.profilepic);
+                    Glide.with(this).load(user.photoUrl).into(binding.profilepic)
                 }
-                db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)
+                db.collection("User/" + User.id + "/FriendCode").whereEqualTo("user", User.id)
                     .get()
                     .addOnSuccessListener { codes ->
-                        var friendCode =""
-                        for(code in codes){
+                        var friendCode: String
+                        for (code in codes) {
                             friendCode = code.get("code").toString()
                             if (friendCode != "null") binding.friendCodeEdit.text = friendCode
                         }
@@ -98,7 +86,11 @@ class EditProfilePage : AppCompatActivity() {
                     }
                 if (userName != "null") binding.userNameEdit.text = userName
                 if (dateCreated != null) binding.dateText.text = dateCreated.toString()
-                if (bio != "null" && bio != null && bio != "") binding.aboutMeEdit.setText(User.get("bio").toString())
+                if (bio != "null" && bio != null && bio != "") binding.aboutMeEdit.setText(
+                    User.get(
+                        "bio"
+                    ).toString()
+                )
                 sport = User.get("favouriteSport").toString()
 
                 binding.btnLoadPicture.setOnClickListener {
@@ -133,8 +125,9 @@ class EditProfilePage : AppCompatActivity() {
                     }
                 }
 
-                binding.fluidSlider.positionListener = { p ->  slider.bubbleText = "${min + (total  * p).toInt()}"
-                    distancePosition = min + (total  * p)
+                binding.fluidSlider.positionListener = { p ->
+                    slider.bubbleText = "${min + (total * p).toInt()}"
+                    distancePosition = min + (total * p)
                 }
             }
 
@@ -158,7 +151,7 @@ class EditProfilePage : AppCompatActivity() {
                     "bio" to binding.aboutMeEdit.text.toString()
                 )
             )
-            if (distancePosition != 0F){
+            if (distancePosition != 0F) {
                 db.collection("User").document(uid).update(
                     mapOf(
                         "distance" to distancePosition.toInt()
@@ -166,7 +159,7 @@ class EditProfilePage : AppCompatActivity() {
                 )
             }
             if (imageUri != null) { //Image uploading
-                FileHandling.uploadProfileImage(imageUri!!,this)
+                FileHandling.uploadProfileImage(imageUri!!, this)
             }
             val intent = Intent(this, SplashActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -180,7 +173,7 @@ class EditProfilePage : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            Glide.with(this).load(imageUri).into(binding.profilepic);
+            Glide.with(this).load(imageUri).into(binding.profilepic)
 
         }
     }

@@ -60,7 +60,7 @@ class ProfilePage : AppCompatActivity() {
 
                  if (user?.photoUrl != null) {
 
-                     Glide.with(this).load(user.photoUrl).into(binding.profilepic);
+                     Glide.with(this).load(user.photoUrl).into(binding.profilepic)
 
 
                 }
