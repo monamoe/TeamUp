@@ -7,6 +7,7 @@ package app.helloteam.sportsbuddyapp.helperUI
 import android.content.Intent
 import android.location.Location
 import android.util.Log
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.views.LandingPage2
 import app.helloteam.sportsbuddyapp.views.context
 import app.helloteam.sportsbuddyapp.views.loggedIn
@@ -270,8 +271,7 @@ class LoadingEvent {
 
         // get the events the user is attending
         fun getAttending(userID: String) {
-
-            Log.i(logi, "Inside getAttending")
+            Log.i(logi, "Get Attending: Inside getAttending")
 
             yourEventsDone = false
             //attending
@@ -283,133 +283,122 @@ class LoadingEvent {
                 .addOnSuccessListener { users ->
                     db.collection("User").document(userID).collection("Attending")
                         .get()
-                        .addOnSuccessListener { hosting ->
-                            if (hosting.isEmpty) {
-                                Log.i(logi, "Attending list was empty")
+                        .addOnSuccessListener { attendingList ->
+
+                            if (attendingList.isEmpty) {
+                                Log.i(logi, "Get Attending: Attending list was empty")
                                 yourEventsDone = true
                                 toLanding()
                             }
+
                             var a = 0
-                            for (host in hosting) {
-                                Log.i(logi, "Inside Attending")
+                            for (attending in attendingList) {
+                                Log.i(logi, "Get Attending: Inside Attending")
                                 db.collection("Location")
-                                    .document(host.get("locationID").toString())
+                                    .document(attending.get("locationID").toString())
                                     .collection("Events")
-                                    .document(host.get("eventID").toString())
+                                    .document(attending.get("eventID").toString())
                                     .get()
                                     .addOnSuccessListener { event ->
+                                        Log.i(logi, "Get Attending: Inside Attending")
 
-                                        Log.i(logi, "users != null ${users != null}")
 
+                                        db.collection("Location")
+                                            .document(attending.get("locationID").toString())
+                                            .get()
+                                            .addOnSuccessListener { loc ->
+                                                Log.i(logi, "Get Attending: Inside Location")
 
-                                        if (users != null) {
-                                            db.collection("Location")
-                                                .document(
-                                                    host.get("locationID")
-                                                        .toString()
-                                                )
-                                                .get()
-                                                .addOnSuccessListener { loc ->
-                                                    Log.i(logi, "Inside Loc")
+                                                // if the event has a host
+                                                if (event.get("hostID").toString() != "null") {
+                                                    db.collection("User")
+                                                        .document(event.get("hostID").toString())
+                                                        .get()
+                                                        .addOnSuccessListener { eventHost ->
 
-                                                    // if the event has a host
-                                                    if (event.get("hostID").toString() != "null") {
-                                                        db.collection("User")
-                                                            .document(
-                                                                event.get("hostID").toString()
+                                                            Log.i(logi, "Inside User")
+
+                                                            a++
+                                                            var hostName = eventHost.get("userName")
+                                                                .toString()
+
+                                                            hostingAttendingEventList.add(
+                                                                EventCard(
+                                                                    event.get("title").toString(),
+                                                                    event.id,
+                                                                    loc.id,
+                                                                    loc.get("StreetView")
+                                                                        .toString(),
+                                                                    false,
+                                                                    hostName,
+                                                                    event.get("information")
+                                                                        .toString(),
+                                                                    event.get("eventSpace")
+                                                                        .toString()
+                                                                        .toInt(),
+                                                                    event.get("currentlyAttending")
+                                                                        .toString()
+                                                                        .toInt(),
+                                                                    event.get("activity")
+                                                                        .toString(),
+                                                                    event.get("date")
+                                                                        .toString(),
+                                                                    loc.get("endDate")
+                                                                        .toString(),
+                                                                    loc.get("Location Name")
+                                                                        .toString(),
+                                                                )
                                                             )
-                                                            .get().addOnSuccessListener { user ->
-
-                                                                Log.i(logi, "Inside User")
-
-                                                                a++
-                                                                var hostName = "No Host"
-                                                                if (user.exists()) {
-                                                                    hostName =
-                                                                        user.get("userName")
-                                                                            .toString()
-                                                                }
-
-                                                                hostingAttendingEventList.add(
-                                                                    EventCard(
-                                                                        event.get("title")
-                                                                            .toString(),
-                                                                        event.id,
-                                                                        loc.id,
-                                                                        loc.get("StreetView")
-                                                                            .toString(),
-                                                                        false,
-                                                                        hostName,
-                                                                        event.get("information")
-                                                                            .toString(),
-                                                                        event.get("eventSpace")
-                                                                            .toString()
-                                                                            .toInt(),
-                                                                        event.get("currentlyAttending")
-                                                                            .toString()
-                                                                            .toInt(),
-                                                                        event.get("activity")
-                                                                            .toString(),
-                                                                        event.get("date")
-                                                                            .toString(),
-                                                                        loc.get("endDate")
-                                                                            .toString(),
-                                                                        loc.get("Location Name")
-                                                                            .toString(),
-                                                                    )
-                                                                )
-                                                                Log.i(
-                                                                    logi,
-                                                                    "Comparing a: $a - ${hosting.size()}"
-                                                                )
-                                                                if (a == hosting.size()) {
-                                                                    yourEventsDone = true
-                                                                    toLanding()
-                                                                }
+                                                            Log.i(
+                                                                logi,
+                                                                "Comparing a: $a - ${attendingList.size()}"
+                                                            )
+                                                            if (a == attendingList.size()) {
+                                                                yourEventsDone = true
+                                                                toLanding()
                                                             }
-                                                    } else {
-                                                        a++
-                                                        var hostName = "No Host"
-
-
-                                                        hostingAttendingEventList.add(
-                                                            EventCard(
-                                                                event.get("title").toString(),
-                                                                event.id,
-                                                                loc.id,
-                                                                loc.get("StreetView")
-                                                                    .toString(),
-                                                                false,
-                                                                hostName,
-                                                                event.get("information")
-                                                                    .toString(),
-                                                                event.get("eventSpace")
-                                                                    .toString()
-                                                                    .toInt(),
-                                                                event.get("currentlyAttending")
-                                                                    .toString()
-                                                                    .toInt(),
-                                                                event.get("activity")
-                                                                    .toString(),
-                                                                event.get("date")
-                                                                    .toString(),
-                                                                loc.get("endDate")
-                                                                    .toString(),
-                                                                loc.get("Location Name")
-                                                                    .toString(),
-                                                            )
-                                                        )
-                                                        Log.i(
-                                                            logi,
-                                                            "Comparing a: $a - ${hosting.size()}"
-                                                        )
-                                                        if (a == hosting.size()) {
-                                                            yourEventsDone = true
-                                                            toLanding()
                                                         }
+                                                } else {
+                                                    a++
+                                                    var hostName = "No Host"
+
+                                                    hostingAttendingEventList.add(
+                                                        EventCard(
+                                                            event.get("title").toString(),
+                                                            event.id,
+                                                            loc.id,
+                                                            loc.get("StreetView")
+                                                                .toString(),
+                                                            false,
+                                                            hostName,
+                                                            event.get("information")
+                                                                .toString(),
+                                                            event.get("eventSpace")
+                                                                .toString()
+                                                                .toInt(),
+                                                            event.get("currentlyAttending")
+                                                                .toString()
+                                                                .toInt(),
+                                                            event.get("activity")
+                                                                .toString(),
+                                                            event.get("date")
+                                                                .toString(),
+                                                            loc.get("endDate")
+                                                                .toString(),
+                                                            loc.get("Location Name")
+                                                                .toString(),
+                                                        )
+                                                    )
+                                                    Log.i(
+                                                        logi,
+                                                        "Comparing a: $a - ${attendingList.size()}"
+                                                    )
+                                                    if (a == attendingList.size()) {
+                                                        yourEventsDone = true
+                                                        toLanding()
                                                     }
                                                 }
-                                        }
+                                            }
                                     }
                             }
                         }

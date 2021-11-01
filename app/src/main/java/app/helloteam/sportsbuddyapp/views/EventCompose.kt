@@ -6,7 +6,6 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -30,7 +29,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.helloteam.sportsbuddyapp.R
+import app.helloteam.sportsbuddyapp.firebase.InviteHandling.sendEventInvite
 import app.helloteam.sportsbuddyapp.helperUI.*
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attendeeList
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attending
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hosting
@@ -105,7 +106,19 @@ class EventCompose : ComponentActivity() {
                         ContentDivider()
 
                         // Attend Button
-                        AttendButton()
+                        if (!hosting) {
+                            AttendButton()
+                        }
+
+                        // Host button
+                        if (hosting) {
+                            LeaveHost()
+                        }
+
+                        // Become host button
+                        if (!hasHost) {
+                            BecomeHost()
+                        }
                         ExtraPadding()
                     }
                 }
@@ -121,12 +134,13 @@ class EventCompose : ComponentActivity() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .background(colorResource(id = R.color.secondaryColor))
+                .background(colorResource(id = R.color.black))
                 .padding(bottom = 20.dp)
+                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
             ) {
                 Log.i(
                     "LOG_TAG",
@@ -147,11 +161,8 @@ class EventCompose : ComponentActivity() {
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .padding(20.dp)
-                            .height(100.dp)
+                            .height(200.dp)
                             .fillMaxWidth()
-                            .fillMaxHeight()
-                            .padding(20.dp)
                     )
                 }
             }
@@ -181,27 +192,29 @@ class EventCompose : ComponentActivity() {
                         style = MaterialTheme.typography.h2,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
-                    Text(
-                        text = LoadingEventView.locationInfo,
-                        style = MaterialTheme.typography.h3,
-                        color = colorResource(id = R.color.secondaryTextColor)
-                    )
+//                    Text(
+//                        text = LoadingEventView.locationInfo,
+//                        style = MaterialTheme.typography.h3,
+//                        color = colorResource(id = R.color.secondaryTextColor)
+//                    )
                     Box(modifier = Modifier.padding(top = 10.dp)) {
-                        Column {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
 //                            // activity
                             Row(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(top = 10.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_sports_soccer_24),
-                                    contentDescription = "Activity Icon"
+                                    contentDescription = "Activity Icon",
                                 )
                                 Text(
                                     text = LoadingEventView.eventInfo.activityType,
                                     style = MaterialTheme.typography.h4,
-                                    maxLines = 2,
+                                    maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
@@ -214,12 +227,12 @@ class EventCompose : ComponentActivity() {
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_schedule_24),
-                                    contentDescription = "Schedule Icon"
+                                    contentDescription = "Schedule Icon",
                                 )
                                 Text(
-                                    text = "${LoadingEventView.eventInfo.startingDate} ${LoadingEventView.eventInfo.startingTime}",
+                                    text = "${LoadingEventView.eventInfo.startingDate}   ${LoadingEventView.eventInfo.startingTime}",
                                     style = MaterialTheme.typography.h4,
-                                    maxLines = 2,
+                                    maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
@@ -232,12 +245,12 @@ class EventCompose : ComponentActivity() {
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.baseline_place_24),
-                                    contentDescription = "Place Icon"
+                                    contentDescription = "Place Icon",
                                 )
                                 Text(
                                     text = LoadingEventView.eventInfo.locationName,
                                     style = MaterialTheme.typography.h4,
-                                    maxLines = 2,
+                                    maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
@@ -250,7 +263,7 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun AttendeeList() {
-        if (LoadingEventView.attendeeList.size > 0) {
+        if (attendeeList.size > 0) {
             Column {
                 Column(
                     modifier = Modifier
@@ -267,16 +280,16 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     )
                     Text(
-                        text = "${LoadingEventView.eventInfo.currentlyAttending} / ${LoadingEventView.eventInfo.space}",
+                        text = "${attendeeList.size} / ${LoadingEventView.eventInfo.space}",
                         style = MaterialTheme.typography.h3,
                         color = colorResource(id = R.color.secondaryTextColor),
                         modifier = Modifier
                             .padding(start = 20.dp, end = 20.dp)
                     )
                 }
-                LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
-                    items(LoadingEventView.attendeeList) {
-                        AttendeeCard(it)
+                LazyRow(modifier = Modifier.padding(end = 20.dp, bottom = 20.dp)) {
+                    items(attendeeList) {
+                        AttendeeCard(it, modifier = Modifier.padding(start = 16.dp, bottom = 16.dp))
                     }
                 }
             }
@@ -310,15 +323,14 @@ class EventCompose : ComponentActivity() {
 
     @Composable
     private fun AttendeeCard(
-        attendee: AttendeesCard
+        attendee: AttendeesCard,
+        modifier: Modifier = Modifier
     ) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorResource(id = R.color.secondaryColor))
-                .size(140.dp, 120.dp)
-                .fillMaxSize()
+//                .background(colorResource(id = R.color.secondaryColor))
+                .size(200.dp, 180.dp)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -333,9 +345,9 @@ class EventCompose : ComponentActivity() {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(90.dp)
-                            .width(120.dp)
-                            .padding(top = 10.dp)
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .height(100.dp)
+                            .fillMaxWidth()
                     )
                 } else {
                     Image(
@@ -343,13 +355,14 @@ class EventCompose : ComponentActivity() {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(90.dp)
-                            .width(120.dp)
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .height(100.dp)
+                            .fillMaxWidth()
                     )
                 }
                 Text(
                     text = attendee.name,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.h3,
                     color = colorResource(id = R.color.secondaryTextColor),
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
@@ -380,23 +393,7 @@ class EventCompose : ComponentActivity() {
                 LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                     items(LoadingEventView.teamMemberList) {
                         InviteTeamMemberCard(
-                            it,
-                            modifier = Modifier.clickable {
-                                // TO DO
-//                                Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-//                                val intent = Intent(context, SplashLoadingEventView::class.java)
-//                                Log.i(
-//                                    "LOG_TAG",
-//                                    "VIEW EVENT: BEFORE: eventID ${e.eventID}"
-//                                )
-//                                intent.putExtra("eventID", e.eventID)
-//                                intent.putExtra("locationID", e.locationID)
-//                                Log.i(
-//                                    "LOG_TAG",
-//                                    "VIEW EVENT: BEFORE: locationID ${e.locationID}"
-//                                )
-//                                context.startActivity(intent)
-                            }
+                            it, modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
                         )
                     }
                 }
@@ -436,11 +433,11 @@ class EventCompose : ComponentActivity() {
         modifier: Modifier = Modifier
     ) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(10.dp))
                 .background(colorResource(id = R.color.secondaryColor))
-                .size(140.dp, 140.dp)
+                .size(200.dp, 200.dp)
                 .fillMaxSize()
         ) {
             Column(
@@ -456,9 +453,9 @@ class EventCompose : ComponentActivity() {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(120.dp)
-                            .width(120.dp)
-                            .padding(top = 10.dp)
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .height(100.dp)
+                            .fillMaxWidth()
                     )
                 } else {
                     Image(
@@ -466,8 +463,9 @@ class EventCompose : ComponentActivity() {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(90.dp)
-                            .width(120.dp)
+                            .padding(top = 10.dp, start = 10.dp, end = 10.dp)
+                            .height(100.dp)
+                            .fillMaxWidth()
                     )
                 }
                 Text(
@@ -479,13 +477,18 @@ class EventCompose : ComponentActivity() {
                 )
                 Button(
                     onClick = {
-                        // this button does nothing, the invite handling is done by the lazy row event listener
+                        sendEventInvite(
+                            LoadingEventView.eventIDa,
+                            LoadingEventView.locationIDa,
+                            teamMember.userID,
+                            currentcontext
+                        )
                     }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = colorResource(id = R.color.secondaryColor)
                     )
                 ) {
                     Text(
-                        text = "Create Event",
+                        text = "Invite",
                         color = colorResource(id = R.color.secondaryTextColor),
                         style = MaterialTheme.typography.h2,
                     )
@@ -498,90 +501,145 @@ class EventCompose : ComponentActivity() {
     @Composable
     private fun AttendButton() {
         Row(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp)
+                .padding(top = 20.dp)
         ) {
             Column(
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val attendButtonText = if (attending)
+                    "You are currently attending this event"
+                else
+                    "This event has space available!"
+                Text(
+                    text = attendButtonText,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    style = MaterialTheme.typography.h2,
+                )
                 Button(
                     onClick = {
-                        if (hosting) {
-                            MaterialDialog(currentcontext).show {
-                                title(text = "Are you sure you want to leave this event as host?")
-                                positiveButton(R.string.yes) {
-                                    LoadingEventView.hostLeaveEvent()
-                                }
-                                negativeButton(R.string.cancel)
-                            }
+                        if (attending) {
+                            LoadingEventView.removeAttendance()
+                            Toast.makeText(
+                                currentcontext,
+                                "Successfully left event",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            if (LoadingEventView.attending) {
-                                LoadingEventView.removeAttendance()
-                                Toast.makeText(
-                                    currentcontext,
-                                    "Successfully left event",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                LoadingEventView.addAttendance()
-                            }
+                            LoadingEventView.addAttendance()
                         }
 
                     }, colors = ButtonDefaults.textButtonColors(
                         backgroundColor = colorResource(id = R.color.secondaryColor)
                     )
                 ) {
-                    var joinButtonText = if (hosting)
-                        "Unhost Event"
+                    val joinButtonText = if (attending)
+                        "Leave Event"
                     else
-                        if (attending)
-                            "Leave Event"
-                        else
-                            "Join Event"
+                        "Join Event"
                     Text(
                         text = joinButtonText,
                         color = colorResource(id = R.color.secondaryTextColor),
-                        style = MaterialTheme.typography.h2,
+                        style = MaterialTheme.typography.h3,
                     )
                 }
 
 
-                if (!hasHost) {
-
-                    Text(
-                        text = "This event has no host!",
-                        color = colorResource(id = R.color.secondaryTextColor),
-                        style = MaterialTheme.typography.h2,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                    // become host button
-                    Button(
-                        onClick = {
-                            MaterialDialog(currentcontext).show {
-                                title(text = "Are you sure you want to become the host for this event?")
-                                positiveButton(R.string.yes) {
-                                    LoadingEventView.makeHost();
-
-                                }
-                                negativeButton(R.string.cancel)
-                            }
-                        }, colors = ButtonDefaults.textButtonColors(
-                            backgroundColor = colorResource(id = R.color.secondaryColor)
-                        ),
-                        modifier = Modifier.padding(10.dp)
-                    ) {
-                        Text(
-                            text = "Become Host",
-                            color = colorResource(id = R.color.secondaryTextColor),
-                            style = MaterialTheme.typography.h2,
-                        )
-                    }
-                }
             }
         }
 
+    }
+
+
+    @Composable
+    private fun LeaveHost() {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "You are the host for this event",
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    style = MaterialTheme.typography.h2,
+                )
+                // become host button
+                Button(
+                    onClick = {
+                        MaterialDialog(currentcontext).show {
+                            title(text = "Are you sure you want to leave this event as host?")
+                            positiveButton(R.string.yes) {
+                                LoadingEventView.hostLeaveEvent()
+                            }
+                            negativeButton(R.string.cancel)
+                        }
+                    }, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = colorResource(id = R.color.secondaryColor)
+                    ),
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        text = "Unhost",
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        style = MaterialTheme.typography.h2,
+                    )
+                }
+            }
+        }
+    }
+
+
+    @Composable
+    private fun BecomeHost() {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "This event has no host!",
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    style = MaterialTheme.typography.h2,
+                    modifier = Modifier.padding(10.dp)
+                )
+                // become host button
+                Button(
+                    onClick = {
+                        MaterialDialog(currentcontext).show {
+                            title(text = "Are you sure you want to become the host for this event?")
+                            positiveButton(R.string.yes) {
+                                LoadingEventView.makeHost()
+                            }
+                            negativeButton(R.string.cancel)
+                        }
+                    }, colors = ButtonDefaults.textButtonColors(
+                        backgroundColor = colorResource(id = R.color.secondaryColor)
+                    ),
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(
+                        text = "Become Host",
+                        color = colorResource(id = R.color.secondaryTextColor),
+                        style = MaterialTheme.typography.h2,
+                    )
+                }
+            }
+        }
     }
 }

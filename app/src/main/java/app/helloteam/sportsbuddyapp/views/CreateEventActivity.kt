@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.*
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
+import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -212,7 +213,7 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                             .get().addOnSuccessListener { loc ->
                                 if (loc.get("StreetView") == null) {
                                     Log.i("Helloooooooo", "making picture")
-                                    //FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
+                                    FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
                                 }
                             }
 

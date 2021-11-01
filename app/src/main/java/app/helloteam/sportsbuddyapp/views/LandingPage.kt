@@ -275,7 +275,6 @@ fun CurrentWeather() {
 
 /**
  * Horizontal scrolling cards for Recommended Events
- *
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -468,6 +467,10 @@ fun EventCard(
         ) {
             Column {
                 // banner image
+                Log.i(
+                    "LOG_TAG",
+                    "Landing: Is null ${event.imageId != "null"} - ${event.imageId != ""}"
+                )
                 if (event.imageId != "null" && event.imageId != "") {
                     Image(
                         painter = rememberImagePainter(event.imageId),

@@ -20,77 +20,48 @@ class LoadingEventView {
         var hosting = false
         var attending = false
 
-        // location info
+        // attendee info
+        var attendeeList: MutableList<AttendeesCard> = mutableListOf()
+        private var attendeeListDone = false
+        private var attendingListDataCounter = 0
+
+        // team members - using AttendeeCard since its the same data values
+        var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
+        private var teamMemberListDone = false
+        private var teamMemberListCounter = 0
+
+        // event data
         var locationName = "Location Name"
         var locationInfo = "No additional information on this location"
         var locationImage = "IDK"
         var locationLat: Double? = 1.1
         var locationLon: Double? = 1.1
-
-        // host info
-        var hostName = "Location Name"
-        var hostImage = "Location Name"
-        var hostRating = "Location Name"
-
-        // event info
+        var hostName = "host"
+        var hostImage = "host"
+        var hostRating = "host"
         lateinit var eventInfo: EventCard
+        private var isEventDone = false
         private var eventViewDataCounter = 0
 
-        // attendee info
-        var attendeeList: MutableList<AttendeesCard> = mutableListOf()
-        var attendeeListDone = false
-        private var attendingListDataCounter = 0
-
-
-        // team members - using AttendeeCard since its the same data values
-        var teamMemberList: MutableList<AttendeesCard> = mutableListOf()
-        var teamMemberListDone = false
-        private var teamMemberListCounter = 0
 
         // populate location event list
         var locationIDa = ""
         var eventIDa = ""
 
+
         // loading data for event view
         fun eventViewData(locationID: String, eventID: String) {
-            // reset variables
-            hasHost = true
-            hosting = false
-            attending = false
-
-            // location info
-            locationName = "Location Name"
-            locationInfo = "No additional information on this location"
-            locationImage = "IDK"
-            locationLat = 1.1
-            locationLon = 1.1
-
-            // host info
-            hostName = "hostName"
-            hostImage = "hostImage"
-            hostRating = "hostRating"
-
-
-            // lists
-            attendeeList.clear()
-            teamMemberList.clear()
-            eventViewDataCounter = 0
-            attendingListDataCounter = 0
-            attendeeListDone = false
-
-            // IDs
             locationIDa = locationID
             eventIDa = eventID
-            teamMemberListDone = false
 
+            resetVariables()
 
-
-            LoadingEventList.locationEventListDone = false
             val db = Firebase.firestore
             val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
             // location data = loc
             db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
+                // get location data
                 locationName = loc.get("Location Name").toString()
                 locationInfo = loc.get("locationInfo").toString()
                 locationImage = loc.get("StreetView").toString()
@@ -101,159 +72,224 @@ class LoadingEventView {
                     if (loc.get("Lon").toString() == "") 0.00 else loc.get("Lat").toString()
                         .toDoubleOrNull()
 
-
                 Log.i(
                     "LOG_TAG",
-                    "LOADING EVENT VIEW: Inside Location $locationName"
+                    "LOADING EVENT VIEW: Loading Location Data: $locationName"
                 )
-
-
-                // getting list of team members
-                db.collection("User").document(uid).collection("Team").get()
-                    .addOnSuccessListener { members ->
-
-                        // if the user has no team members
-                        if (teamMemberListCounter == members.size()) {
-                            teamMemberListDone = true
-                            toEventViewPage()
-                        }
-
-                        for (member in members) {
-
-                            Log.i(
-                                "LOG_TAG",
-                                "LOADING EVENT VIEW: Inside members : ${
-                                    member.get("userName").toString()
-                                }"
-                            )
-
-                            db.collection("User").document(member.id).get()
-                                .addOnSuccessListener { user ->
-                                    teamMemberList += AttendeesCard(
-                                        user.id,
-                                        user.get("userName").toString(),
-                                        user.get("photoUrl").toString(),
-                                    )
-                                    teamMemberListCounter++
-
-                                    if (teamMemberListCounter == members.size()) {
-                                        teamMemberListDone = true
-                                        toEventViewPage()
-                                    }
-                                }
-                        }
-                    }
 
                 // event data = event
                 db.collection("Location").document(locationID).collection("Events")
                     .document(eventID).get().addOnSuccessListener { event ->
-
-
                         Log.i(
                             "LOG_TAG",
                             "LOADING EVENT VIEW: Inside event ${event.get("title").toString()}"
                         )
 
-                        // host data = host
-                        db.collection("Users").document(event.get("hostID").toString()).get()
-                            .addOnSuccessListener { host ->
-                                hostName = host.get("userName").toString()
-                                hostImage = host.get("photoUrl").toString()
-                                hostRating = "4"
 
-                                if (host == null) {
-                                    hasHost = false
-                                }
-                                if (host.id == uid) {
-                                    hosting = true
-                                }
+                        if (event.get("hostID").toString() != "null") {
+                            Log.i(
+                                "LOG_TAG",
+                                "LOADING EVENT VIEW: Inside event - This event has a host!${
+                                    event.get(
+                                        "title"
+                                    ).toString()
+                                }"
+                            )
+                            hasHost = true
 
-                                val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
-                                val startTimeStamp: Timestamp =
-                                    event.get("date") as Timestamp
-                                val eventStartTime = sfd.format(Date(startTimeStamp.seconds * 1000))
+                            if (event.get("hostID").toString() == uid) {
+                                hosting = true
+                            }
 
-                                eventInfo =
-                                    EventCard(
-                                        event.get("title").toString(),
-                                        event.id,
-                                        loc.id,
-                                        loc.get("StreetView").toString(),
-                                        false,
-                                        if (hostName == "") "No Host" else hostName,
-                                        event.get("information").toString(),
-                                        event.get("eventSpace").toString().toInt(),
-                                        event.get("currentlyAttending").toString().toInt(),
-                                        event.get("activity").toString(),
-                                        "",
-                                        eventStartTime,
-                                        loc.get("Location Name").toString(),
+                            // getting the host's information
+                            db.collection("Users").document(event.get("hostID").toString()).get()
+                                .addOnSuccessListener { host ->
+
+
+                                    hostName = host.get("userName").toString()
+                                    hostImage = host.get("photoUrl").toString()
+                                    hostRating = "10"
+
+                                    Log.i(
+                                        "LOG_TAG",
+                                        "LOADING EVENT VIEW: Host info name: $hostName image $hostImage "
                                     )
 
-                                Log.i(
-                                    "LOG_TAG",
-                                    "LOADING EVENT VIEW: Got Event Info"
-                                )
+                                    val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                                    val startTimeStamp: Timestamp =
+                                        event.get("date") as Timestamp
+                                    val eventStartTime =
+                                        sfd.format(Date(startTimeStamp.seconds * 1000))
 
-                                // attendee data = attendees
-                                db.collection("Location").document(locationID).collection("Events")
-                                    .document(eventID).collection("Attendees").get()
-                                    .addOnSuccessListener { attendees ->
-
-                                        // intent check goes before as well since there coule be events with 0 attendees
-                                        Log.i(
-                                            "LOG_TAG",
-                                            "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                                    eventInfo =
+                                        EventCard(
+                                            event.get("title").toString(),
+                                            event.id,
+                                            loc.id,
+                                            loc.get("StreetView").toString(),
+                                            false,
+                                            if (hostName == "") "No Host" else hostName,
+                                            event.get("information").toString(),
+                                            event.get("eventSpace").toString().toInt(),
+                                            event.get("currentlyAttending").toString().toInt(),
+                                            event.get("activity").toString(),
+                                            "",
+                                            eventStartTime,
+                                            loc.get("Location Name").toString(),
                                         )
-                                        if (attendingListDataCounter == attendees.size()) {
-                                            attendeeListDone = true
-                                            toEventViewPage()
-                                        }
+                                    isEventDone = true
+                                    toEventViewPage()
+                                }
+                        } else {
+                            Log.i(
+                                "LOG_TAG",
+                                "LOADING EVENT VIEW: Inside event - This event has no host!${
+                                    event.get(
+                                        "title"
+                                    ).toString()
+                                }"
+                            )
 
-                                        for (attendee in attendees) {
-                                            // attending user data = user
-                                            db.collection("User")
-                                                .document(attendee.get("userID").toString())
-                                                .get().addOnSuccessListener { user ->
-                                                    Log.i(
-                                                        "LOG_TAG",
-                                                        "LOADING EVENT VIEW: Inside Attendees : ${
-                                                            user.get(
-                                                                "userName"
-                                                            ).toString()
-                                                        }"
-                                                    )
-
-                                                    if (attendee.id == uid) {
-                                                        attending = true
-                                                    }
-
-                                                    attendeeList +=
-                                                        AttendeesCard(
-                                                            user.id,
-                                                            user.get("userName").toString(),
-                                                            user.get("photoUrl").toString(),
-                                                        )
+                            // IF THE HOST DOESNT EXIST
+                            hasHost = false
 
 
+                            val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                            val startTimeStamp: Timestamp =
+                                event.get("date") as Timestamp
+                            val eventStartTime =
+                                sfd.format(Date(startTimeStamp.seconds * 1000))
 
-                                                    attendingListDataCounter++
-                                                    Log.i(
-                                                        "LOG_TAG",
-                                                        "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
-                                                    )
-                                                    if (attendingListDataCounter == attendees.size()) {
-                                                        attendeeListDone = true
-                                                        toEventViewPage()
-                                                    }
-                                                }
-                                        }
-                                    }
-                            }
+                            eventInfo =
+                                EventCard(
+                                    event.get("title").toString(),
+                                    event.id,
+                                    loc.id,
+                                    loc.get("StreetView").toString(),
+                                    false,
+                                    "No Host",
+                                    event.get("information").toString(),
+                                    event.get("eventSpace").toString().toInt(),
+                                    event.get("currentlyAttending").toString().toInt(),
+                                    event.get("activity").toString(),
+                                    "",
+                                    eventStartTime,
+                                    loc.get("Location Name").toString(),
+                                )
+                            isEventDone = true
+                            toEventViewPage()
+                        }
                     }
             }
+
+            // attendee data = attendees
+            db.collection("Location").document(locationID)
+                .collection("Events")
+                .document(eventID).collection("Attendees").get()
+                .addOnSuccessListener { attendees ->
+
+                    // intent check goes before as well since there coule be events with 0 attendees
+                    Log.i(
+                        "LOG_TAG",
+                        "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                    )
+                    if (attendingListDataCounter == attendees.size()) {
+                        attendeeListDone = true
+                        toEventViewPage()
+                    }
+
+                    for (attendee in attendees) {
+                        // attending user data = user
+                        db.collection("User")
+                            .document(attendee.get("userID").toString())
+                            .get().addOnSuccessListener { attendeeUser ->
+                                Log.i(
+                                    "LOG_TAG",
+                                    "LOADING EVENT VIEW: Inside Attendees : ${
+                                        attendeeUser.get(
+                                            "userName"
+                                        ).toString()
+                                    }"
+                                )
+
+                                // is the current user attending
+                                if (attendee.id == uid)
+                                    attending = true
+
+                                attendeeList +=
+                                    AttendeesCard(
+                                        attendeeUser.id,
+                                        attendeeUser.get("userName").toString(),
+                                        attendeeUser.get("photoUrl").toString(),
+                                    )
+                                attendingListDataCounter++
+                                Log.i(
+                                    "LOG_TAG",
+                                    "LOADING EVENT VIEW: Comparing $attendingListDataCounter - ${attendees.size()}"
+                                )
+                                if (attendingListDataCounter == attendees.size()) {
+                                    attendeeListDone = true
+                                    toEventViewPage()
+                                }
+                            }
+                    }
+                }
+
+            // getting the users team members
+            db.collection("User").document(uid).collection("Team").get()
+                .addOnSuccessListener { members ->
+                    // if the user has no team members
+                    if (teamMemberListCounter == members.size()) {
+                        teamMemberListDone = true
+                        toEventViewPage()
+                    }
+
+                    for (member in members) {
+                        db.collection("User").document(member.get("member").toString()).get()
+                            .addOnSuccessListener { user ->
+                                teamMemberList += AttendeesCard(
+                                    user.id,
+                                    user.get("userName").toString(),
+                                    user.get("photoUrl").toString(),
+                                )
+                                teamMemberListCounter++
+
+                                if (teamMemberListCounter == members.size()) {
+                                    teamMemberListDone = true
+                                    toEventViewPage()
+                                }
+                            }
+                    }
+                }
         }
 
+        private fun resetVariables() {
+            // reset variables
+            hasHost = true
+            hosting = false
+            attending = false
+
+            // event data
+            locationName = "Location Name"
+            locationInfo = "No additional information on this location"
+            locationImage = "IDK"
+            locationLat = 1.1
+            locationLon = 1.1
+            hostName = "hostName"
+            hostImage = "hostImage"
+            hostRating = "hostRating"
+            isEventDone = false
+            eventViewDataCounter = 0
+
+            // team member list
+            teamMemberList.clear()
+            teamMemberListDone = false
+            teamMemberListCounter = 0
+            // attendee list
+            attendeeList.clear()
+            attendeeListDone = false
+            attendingListDataCounter = 0
+        }
 
         // attend button handling
         fun hostLeaveEvent() {
@@ -273,13 +309,6 @@ class LoadingEventView {
                     }
                     reloadEventView()
                 }
-        }
-
-        private fun reloadEventView() {
-            val intent = Intent(eventViewContext, SplashLoadingEventView::class.java)
-            intent.putExtra("eventID", eventIDa)
-            intent.putExtra("locationID", locationIDa)
-            context.startActivity(intent)
         }
 
         // make the current user the host
@@ -432,10 +461,25 @@ class LoadingEventView {
 
         // to event list view
         private fun toEventViewPage() {
-            if (attendeeListDone && teamMemberListDone) {
+            Log.i(
+                "LOG_TAG",
+                "to event view page: eventList: $isEventDone - attendeeListDone: $attendeeListDone - teamMemberListDone: $teamMemberListDone"
+            )
+            if (attendeeListDone && teamMemberListDone && isEventDone) {
+                Log.i(
+                    "LOG_TAG", "host: $hosting - attending: $attending - hasHost: $hasHost - "
+                )
                 val intent = Intent(eventViewContext, EventCompose::class.java)
                 context.startActivity(intent)
             }
+        }
+
+        // reloads the event view
+        private fun reloadEventView() {
+            val intent = Intent(eventViewContext, SplashLoadingEventView::class.java)
+            intent.putExtra("eventID", eventIDa)
+            intent.putExtra("locationID", locationIDa)
+            context.startActivity(intent)
         }
     }
 }
