@@ -72,6 +72,10 @@ class EventListCompose : ComponentActivity() {
             }
         }
     }
+    override fun onBackPressed() {
+        val intent = Intent(this, map::class.java)
+        startActivity(intent)
+    }
 }
 
 // Composable Preview

@@ -125,6 +125,7 @@ class LoadingEventList {
         // to event list view
         private fun toEventListView() {
             val intent = Intent(EventListContext, EventListCompose::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
     }

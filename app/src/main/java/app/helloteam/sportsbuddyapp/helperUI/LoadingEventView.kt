@@ -470,6 +470,7 @@ class LoadingEventView {
                     "LOG_TAG", "host: $hosting - attending: $attending - hasHost: $hasHost - "
                 )
                 val intent = Intent(eventViewContext, EventCompose::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
         }

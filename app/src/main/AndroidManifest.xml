@@ -31,7 +31,7 @@
             android:theme="@style/Theme.SportsBuddyApp">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
 
         <service
@@ -88,7 +88,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
         <activity
             android:name=".views.EventInviteActivity"
@@ -112,7 +112,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
         <activity
             android:name=".views.HostEvents"
@@ -142,7 +142,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
         <activity
             android:name=".views.EditProfilePage"
@@ -179,7 +179,7 @@
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.LandingPage2" />
+                android:value=".views.SplashActivity" />
         </activity>
     </application>
 

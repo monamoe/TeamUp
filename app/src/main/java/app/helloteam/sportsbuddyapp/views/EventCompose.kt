@@ -69,6 +69,11 @@ class EventCompose : ComponentActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        val intent = Intent(this, SplashActivity::class.java)
+        startActivity(intent)
+    }
+
     // Composable Preview
     @Preview(showBackground = true)
     @Composable
