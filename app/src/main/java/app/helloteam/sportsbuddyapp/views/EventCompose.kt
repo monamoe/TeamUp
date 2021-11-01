@@ -28,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.widget.ConstraintLayout
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.InviteHandling.sendEventInvite
 import app.helloteam.sportsbuddyapp.helperUI.*
@@ -391,7 +390,7 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     )
                 }
-                LazyRow(modifier = Modifier.padding(end = 20.dp, bottom = 20.dp)) {
+                LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
                     items(LoadingEventView.teamMemberList) {
                         InviteTeamMemberCard(
                             it, modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
@@ -416,7 +415,7 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     )
                     Text(
-                        text = "You have no members in your team",
+                        text = "You have no members in your team. DO SOMETHING TO INVITE THEM",
                         style = MaterialTheme.typography.h3,
                         color = colorResource(id = R.color.secondaryTextColor),
                         modifier = Modifier
@@ -548,8 +547,11 @@ class EventCompose : ComponentActivity() {
                         style = MaterialTheme.typography.h3,
                     )
                 }
+
+
             }
         }
+
     }
 
 
@@ -614,6 +616,7 @@ class EventCompose : ComponentActivity() {
                     text = "This event has no host!",
                     color = colorResource(id = R.color.secondaryTextColor),
                     style = MaterialTheme.typography.h2,
+                    modifier = Modifier.padding(10.dp)
                 )
                 // become host button
                 Button(
@@ -639,37 +642,4 @@ class EventCompose : ComponentActivity() {
             }
         }
     }
-
-//    @Composable
-//    private fun AppTopBar() {
-//        TopAppBar(
-//            elevation = 10.dp,
-//        ) {
-//            Text(
-//                text = "AppBarsSample",
-//                style = MaterialTheme.typography.h5,
-//                modifier = Modifier
-//                    .constrainAs(title) {
-//                        top.linkTo(parent.top)
-//                        bottom.linkTo(parent.bottom)
-//                        start.linkTo(parent.start)
-//                        end.linkTo(search.start)
-//                        width = Dimension.fillToConstraints
-//                    }
-//            )
-//            IconButton(
-//                onClick = {
-//                    /* doSomething() */
-//                },
-//                modifier = Modifier
-//                    .constrainAs(search) {
-//                        top.linkTo(parent.top)
-//                        bottom.linkTo(parent.bottom)
-//                        end.linkTo(parent.end)
-//                    }
-//            ) {
-//                Icon(Icons.Filled.Search, "Search")
-//            }
-//        }
-//    }
 }
