@@ -31,7 +31,7 @@ fun InsetAwareTopAppBar(
             title = title,
             actions = actions,
             navigationIcon = navigationIcon,
-            backgroundColor = Color(0xFF264EDF),
+            backgroundColor = Color(0xFF005B9D),
             contentColor = contentColor,
             elevation = 0.dp,
         )

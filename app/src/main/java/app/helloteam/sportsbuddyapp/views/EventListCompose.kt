@@ -100,7 +100,7 @@ private fun EventList() {
                         style = MaterialTheme.typography.h1,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start,
-                        color = colorResource(R.color.secondaryTextColor)
+                        color = colorResource(R.color.primaryTextColor)
                     )
                 },
                 navigationIcon = {
