@@ -20,9 +20,6 @@ import com.google.firebase.ktx.Firebase
 import android.widget.Toast
 
 
-
-
-
 class TeamsActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
@@ -32,21 +29,21 @@ class TeamsActivity : AppCompatActivity() {
 
         val listview = findViewById<ListView>(R.id.listView)
 
-        TeamHandling.getTeam(listview,this, "Team", "", "")
+        TeamHandling.getTeam(listview, this, "Team", "", "")
         actionBar?.setIcon(R.drawable.ic_baseline_send_24)
-        supportActionBar?.title = "Team Memebers"
+        supportActionBar?.title = "Team Members"
 
         val context = this
         findViewById<FloatingActionButton>(R.id.addMemberButton).setOnClickListener {
-           MaterialDialog(this).show {
+            MaterialDialog(this).show {
                 title(R.string.invite_title)
-                input(hint = "6 characters long"){ dialog, text ->
+                input(hint = "6 characters long") { dialog, text ->
                     var code = text.toString().trim()
                     InviteHandling.sendTeamInvite(code, context)
                 }
                 positiveButton(R.string.submit)
                 negativeButton(R.string.cancel)
-           }
+            }
         }
     }
 
