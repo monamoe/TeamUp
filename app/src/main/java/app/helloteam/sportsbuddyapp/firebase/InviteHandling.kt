@@ -116,6 +116,7 @@ object InviteHandling {
 
     //
     fun sendEventInvite(event: String, location: String, receiver: String, context: Context) {
+        val senderName = FirebaseAuth.getInstance().currentUser?.displayName
         db.collection("User").document(receiver)
             .collection("Invites")
             .whereEqualTo("sender", FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -146,7 +147,7 @@ object InviteHandling {
                                     PushNotification(
                                         NotificationData( //creates invite message
                                             "Event Invite",
-                                            "You have been invited to ${FirebaseAuth.getInstance().currentUser?.displayName}'s game."
+                                            "You have been invited to ${senderName}'s game."
                                         ),
                                         reciever.get("token").toString() //gets token
                                     ).also {
