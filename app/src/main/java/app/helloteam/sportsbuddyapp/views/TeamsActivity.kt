@@ -34,7 +34,7 @@ class TeamsActivity : AppCompatActivity() {
 
         TeamHandling.getTeam(listview,this, "Team", "", "")
         actionBar?.setIcon(R.drawable.ic_baseline_send_24)
-        supportActionBar?.title = "Team Memebers"
+        supportActionBar?.title = "Team Members"
 
         val context = this
         findViewById<FloatingActionButton>(R.id.addMemberButton).setOnClickListener {

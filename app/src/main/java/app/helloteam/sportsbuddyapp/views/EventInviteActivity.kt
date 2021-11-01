@@ -36,7 +36,7 @@ class EventInviteActivity : AppCompatActivity() {
         getInvites(listview)
 
         listview.setOnItemClickListener { _, _, position, _ ->
-            val intent = Intent(this, ViewEvent::class.java)
+            val intent = Intent(this, SplashLoadingEventView::class.java)
             intent.putExtra("locationID", eventList.get(position).locationID)
             intent.putExtra("eventID", eventList.get(position).eventID)
             startActivity(intent)
