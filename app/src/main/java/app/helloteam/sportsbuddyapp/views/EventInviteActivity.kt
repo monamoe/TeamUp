@@ -71,6 +71,10 @@ class EventInviteActivity : AppCompatActivity() {
                                                 db.collection("User")
                                                     .document(event.get("hostID").toString())
                                                     .get().addOnSuccessListener { host ->
+                                                        var hostUser = host.get("userName").toString();
+                                                        if(hostUser == "null" || hostUser == ""){
+                                                            hostUser = "No Host"
+                                                        }
                                                         val eventObj = EventInviteDisplayer(
                                                             invite.id,
                                                             invite.get("eventID").toString(),
@@ -78,7 +82,7 @@ class EventInviteActivity : AppCompatActivity() {
                                                             event.get("title").toString(),
                                                             loc.get("Location Name").toString(),
                                                             event.get("date") as Timestamp,
-                                                            host.get("userName").toString(),
+                                                            hostUser,
                                                             user.get("userName").toString()
                                                         )
                                                         eventList.add(eventObj)
