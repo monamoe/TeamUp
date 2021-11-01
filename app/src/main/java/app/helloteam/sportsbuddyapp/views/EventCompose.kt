@@ -6,25 +6,31 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +39,7 @@ import app.helloteam.sportsbuddyapp.firebase.InviteHandling.sendEventInvite
 import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attendeeList
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attending
+import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.eventInfo
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hosting
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
@@ -81,6 +88,35 @@ class EventCompose : ComponentActivity() {
     @Composable
     fun EventViewCompose() {
         Scaffold(
+            topBar = {
+                InsetAwareTopAppBar(
+                    title = {
+                        Text(
+                            text = eventInfo.title,
+                            style = MaterialTheme.typography.h1,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start,
+                            color = colorResource(R.color.secondaryTextColor)
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                val intent = Intent(context, LandingPage2::class.java)
+                                intent.flags =
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                                contentDescription = "Activity Icon",
+                            )
+                        }
+                    },
+                    elevation = 10.dp
+                )
+            },
             content = {
                 Box(
                     modifier = Modifier
@@ -135,8 +171,7 @@ class EventCompose : ComponentActivity() {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .background(colorResource(id = R.color.black))
-                .padding(bottom = 20.dp)
-                .fillMaxSize()
+                .fillMaxWidth()
         ) {
             Column(
                 modifier = Modifier
@@ -150,7 +185,7 @@ class EventCompose : ComponentActivity() {
                     Image(
                         painter = painterResource(R.drawable.ic_baseline_broken_image_24),
                         contentDescription = null, // decorative
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .height(200.dp)
                             .fillMaxWidth()
@@ -159,7 +194,7 @@ class EventCompose : ComponentActivity() {
                     Image(
                         painter = rememberImagePainter(LoadingEventView.locationImage),
                         contentDescription = null, // decorative
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .height(200.dp)
                             .fillMaxWidth()
@@ -192,11 +227,11 @@ class EventCompose : ComponentActivity() {
                         style = MaterialTheme.typography.h2,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
-//                    Text(
-//                        text = LoadingEventView.locationInfo,
-//                        style = MaterialTheme.typography.h3,
-//                        color = colorResource(id = R.color.secondaryTextColor)
-//                    )
+                    Text(
+                        text = eventInfo.title,
+                        style = MaterialTheme.typography.h3,
+                        color = colorResource(id = R.color.secondaryTextColor)
+                    )
                     Box(modifier = Modifier.padding(top = 10.dp)) {
                         Column(
                             verticalArrangement = Arrangement.Center,
@@ -212,7 +247,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Activity Icon",
                                 )
                                 Text(
-                                    text = LoadingEventView.eventInfo.activityType,
+                                    text = eventInfo.activityType,
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -230,7 +265,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Schedule Icon",
                                 )
                                 Text(
-                                    text = "${LoadingEventView.eventInfo.startingDate}   ${LoadingEventView.eventInfo.startingTime}",
+                                    text = "${eventInfo.startingDate}   ${eventInfo.startingTime}",
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -248,7 +283,7 @@ class EventCompose : ComponentActivity() {
                                     contentDescription = "Place Icon",
                                 )
                                 Text(
-                                    text = LoadingEventView.eventInfo.locationName,
+                                    text = eventInfo.locationName,
                                     style = MaterialTheme.typography.h4,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -280,7 +315,7 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     )
                     Text(
-                        text = "${attendeeList.size} / ${LoadingEventView.eventInfo.space}",
+                        text = "${attendeeList.size} / ${eventInfo.space}",
                         style = MaterialTheme.typography.h3,
                         color = colorResource(id = R.color.secondaryTextColor),
                         modifier = Modifier

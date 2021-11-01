@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -91,6 +92,35 @@ fun DefaultPreview() {
 private fun EventList() {
     val navController = rememberNavController()
     Scaffold(
+        topBar = {
+            InsetAwareTopAppBar(
+                title = {
+                    Text(
+                        text = locationName,
+                        style = MaterialTheme.typography.h1,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        color = colorResource(R.color.secondaryTextColor)
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            val intent = Intent(context, LandingPage2::class.java)
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_arrow_back_24),
+                            contentDescription = "Activity Icon",
+                        )
+                    }
+                },
+                elevation = 10.dp
+            )
+        },
         content = {
             Box(
                 modifier = Modifier
@@ -156,11 +186,11 @@ private fun LocationInfo() {
                         style = MaterialTheme.typography.h1,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
-                    Text(
-                        text = locationInfo,
-                        style = MaterialTheme.typography.h2,
-                        color = colorResource(id = R.color.secondaryTextColor)
-                    )
+//                    Text(
+//                        text = locationInfo,
+//                        style = MaterialTheme.typography.h2,
+//                        color = colorResource(id = R.color.secondaryTextColor)
+//                    )
                 }
             }
         }
