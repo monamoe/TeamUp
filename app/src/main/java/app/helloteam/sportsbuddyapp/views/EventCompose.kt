@@ -287,7 +287,7 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp)
                     )
                 }
-                LazyRow(modifier = Modifier.padding(end = 20.dp, bottom = 20.dp)) {
+                LazyRow(modifier = Modifier.padding(start = 4.dp, end = 20.dp, bottom = 20.dp)) {
                     items(attendeeList) {
                         AttendeeCard(it, modifier = Modifier.padding(start = 16.dp, bottom = 16.dp))
                     }
@@ -390,7 +390,7 @@ class EventCompose : ComponentActivity() {
                             .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     )
                 }
-                LazyRow(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
+                LazyRow(modifier = Modifier.padding(start = 4.dp, end = 20.dp, bottom = 20.dp)) {
                     items(LoadingEventView.teamMemberList) {
                         InviteTeamMemberCard(
                             it, modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
@@ -434,11 +434,8 @@ class EventCompose : ComponentActivity() {
     ) {
         Card(
             modifier = modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(colorResource(id = R.color.secondaryColor))
                 .size(200.dp, 200.dp)
-                .fillMaxSize()
+                .fillMaxWidth()
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
