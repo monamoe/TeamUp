@@ -52,8 +52,17 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             LandingPageKt.setForecast(cast.toUpperCase());
             LandingPageKt.setWeatherIcon(iconUrl);
 
+
         } catch (Exception ignored) {
 
         }
+    }
+
+    public static Boolean weatherDone(){
+            if(LandingPageKt.getTemp() != "") {
+                return true;
+            } else {
+                return false;
+            }
     }
 }

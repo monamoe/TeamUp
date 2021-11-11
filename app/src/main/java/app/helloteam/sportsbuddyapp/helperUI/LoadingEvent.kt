@@ -9,6 +9,7 @@ import android.location.Location
 import android.util.Log
 import androidx.compose.ui.input.key.Key.Companion.Sleep
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
+import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.LandingPage2
 import app.helloteam.sportsbuddyapp.views.context
 import app.helloteam.sportsbuddyapp.views.loggedIn
@@ -420,9 +421,16 @@ class LoadingEvent {
         private fun toLanding() {
             Log.i(logi, "To Landing: $loggedIn $recEventsDone $yourEventsDone $yourHostDone")
             if (loggedIn && recEventsDone && yourEventsDone && yourHostDone) {
-                val intent = Intent(context, LandingPage2::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
+                if (weatherTask.weatherDone() == true) {
+                    val intent = Intent(context, LandingPage2::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                } else {
+                    Thread.sleep(300)
+                    val intent = Intent(context, LandingPage2::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
+                }
             }
         }
     }
