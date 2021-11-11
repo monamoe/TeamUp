@@ -71,8 +71,9 @@ class EventInviteActivity : AppCompatActivity() {
                                                 db.collection("User")
                                                     .document(event.get("hostID").toString())
                                                     .get().addOnSuccessListener { host ->
-                                                        var hostUser = host.get("userName").toString();
-                                                        if(hostUser == "null" || hostUser == ""){
+                                                        var hostUser =
+                                                            host.get("userName").toString()
+                                                        if (hostUser == "null" || hostUser == "") {
                                                             hostUser = "No Host"
                                                         }
                                                         val eventObj = EventInviteDisplayer(
@@ -141,14 +142,14 @@ class EventInviteActivity : AppCompatActivity() {
             val eventSender = rowMain.findViewById<TextView>(R.id.invitedBy)
 
             val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
-            val startTimeStamp: Timestamp = eventList.get(position).time as Timestamp
+            val startTimeStamp: Timestamp = eventList.get(position).time
             val eventStartTime = sfd.format(Date(startTimeStamp.seconds * 1000))
 
             eventTitle.text = (eventList.get(position).name)
             eventAddress.text = (eventList.get(position).address)
             eventTime.text = (eventStartTime)
             eventHost.text = (eventList.get(position).host)
-            eventSender.text = ("Invited by: " + eventList.get(position).sender)
+            eventSender.text = ("Invite From: " + eventList.get(position).sender)
             rowMain.findViewById<Button>(R.id.deleteButton).setOnClickListener {
                 Log.i("Invite ID", eventList.get(position).id)
                 db.collection("User")
