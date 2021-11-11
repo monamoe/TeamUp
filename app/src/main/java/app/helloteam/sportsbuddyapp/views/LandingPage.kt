@@ -36,7 +36,10 @@ import app.helloteam.sportsbuddyapp.helperUI.*
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import org.joda.time.DateTime
 import org.joda.time.LocalTime
 
@@ -79,6 +82,24 @@ class LandingPage2 : ComponentActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
+
+        Firebase.firestore.collection("User").document(userID)
+            .get().addOnSuccessListener { user ->
+                if(user.get("newUser").toString().toBoolean()){
+                    Firebase.firestore.collection("User").document(userID)
+                        .update("newUser", false)
+
+                    MaterialDialog(currentcontext).show {
+                        title(text = "Set up your profile now to stand out from the crowd!")
+                        positiveButton(R.string.yes) {
+                            val intent = Intent(currentcontext, EditProfilePage::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                        }
+                        negativeButton(R.string.cancel)
+                    }
+                }
+            }
 
         // init variables
         val dt = DateTime()

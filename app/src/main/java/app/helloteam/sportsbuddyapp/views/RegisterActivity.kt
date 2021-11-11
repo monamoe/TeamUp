@@ -74,7 +74,8 @@ class RegisterActivity : AppCompatActivity() {
                                     "testUser" to testUser,
                                     "dateCreated" to Timestamp(Date()),
                                     "favouriteSport" to "none",
-                                    "distance" to 20
+                                    "distance" to 20,
+                                    "newUser" to true
                                 )
                                 Firebase.firestore.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())
