@@ -23,17 +23,24 @@ import java.util.*
 
 private lateinit var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
 
+private lateinit var listViewtitle: TextView
+
+
 class EventInviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_invite)
         val listview = findViewById<ListView>(R.id.inviteList)
+
+
         // events array list
         eventList = ArrayList()
         supportActionBar?.title = "Event Invites"
 
         // populate array list with events that match the location ID of the marker selected
         getInvites(listview)
+
+        listViewtitle = findViewById(R.id.listTitle)
 
         listview.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, ViewEvent::class.java)
@@ -84,9 +91,11 @@ class EventInviteActivity : AppCompatActivity() {
                                                             loc.get("Location Name").toString(),
                                                             event.get("date") as Timestamp,
                                                             hostUser,
-                                                            user.get("userName").toString()
+                                                            user.get("userName").toString(),
+                                                            event.get("activity").toString()
                                                         )
                                                         eventList.add(eventObj)
+                                                        updateTitleText()
 
                                                         // list view adapter
                                                         listview.adapter =
@@ -111,6 +120,17 @@ class EventInviteActivity : AppCompatActivity() {
             }
     }
 
+
+    private fun updateTitleText() {
+        if (eventList.size == 0) {
+            listViewtitle.text = "You have no event invites!"
+        } else if (eventList.size == 1) {
+            listViewtitle.text = "You have ${eventList.size} event invite!"
+        } else {
+            listViewtitle.text = "You have ${eventList.size} event invites!"
+
+        }
+    }
 
     // Event Array List Adapter
     internal class EventInviteListAdapter(context: Context) : BaseAdapter() {
@@ -137,9 +157,10 @@ class EventInviteActivity : AppCompatActivity() {
 
             val eventTitle = rowMain.findViewById<TextView>(R.id.eventTitle)
             val eventAddress = rowMain.findViewById<TextView>(R.id.eventAddress)
-            val eventTime = rowMain.findViewById<TextView>(R.id.memberSport)
+            val eventTime = rowMain.findViewById<TextView>(R.id.memberTime)
             val eventHost = rowMain.findViewById<TextView>(R.id.eventHost)
             val eventSender = rowMain.findViewById<TextView>(R.id.invitedBy)
+            val activity = rowMain.findViewById<TextView>(R.id.memberActivity)
 
             val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
             val startTimeStamp: Timestamp = eventList.get(position).time
@@ -150,6 +171,8 @@ class EventInviteActivity : AppCompatActivity() {
             eventTime.text = (eventStartTime)
             eventHost.text = (eventList.get(position).host)
             eventSender.text = ("Invite From: " + eventList.get(position).sender)
+            activity.text = (eventList.get(position).activity)
+
             rowMain.findViewById<Button>(R.id.deleteButton).setOnClickListener {
                 Log.i("Invite ID", eventList.get(position).id)
                 db.collection("User")
@@ -160,7 +183,6 @@ class EventInviteActivity : AppCompatActivity() {
                         val intent = Intent(mContext, EventInviteActivity::class.java)
                         mContext.startActivity(intent)
                     }
-
             }
             return rowMain
         }
@@ -176,10 +198,8 @@ class EventInviteActivity : AppCompatActivity() {
         var time: Timestamp
         var host: String = ""
         var sender: String = ""
+        var activity: String = ""
 
-        fun getID(): String {
-            return this.id
-        }
 
         // main constuctor
         constructor(
@@ -190,7 +210,8 @@ class EventInviteActivity : AppCompatActivity() {
             address: String,
             time: Timestamp,
             host: String,
-            sender: String
+            sender: String,
+            activity: String
         ) {
             this.id = id
             this.eventID = eventID
@@ -200,6 +221,7 @@ class EventInviteActivity : AppCompatActivity() {
             this.time = time
             this.host = host
             this.sender = sender
+            this.activity = activity
         }
     }
 }

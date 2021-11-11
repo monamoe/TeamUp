@@ -5,21 +5,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="#E61212">
+    android:backgroundTint="#E61212"
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:background="@drawable/customboard"
         android:orientation="vertical"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
         android:paddingEnd="10dp"
-        android:paddingBottom="0dp"
+        android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/quantum_grey500">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,9 +34,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:text="Invited By:"
-                android:textAlignment="center" />
-
+                android:text="Invite From:"
+                android:textAlignment="center"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -62,7 +64,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="eventTitle"
-                        android:textAlignment="viewStart" />
+                        android:textAlignment="viewStart"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -71,27 +75,64 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/memberSport"
+                    <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="#00B30B0B"
+                        android:backgroundTint="@color/black"
+                        android:src="@drawable/baseline_schedule_24" />
+
+                    <TextView
+                        android:id="@+id/memberTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="eventTime"
-                        android:textAlignment="textStart" />
+                        android:gravity="center_vertical"
+                        android:text="eventTime" />
                 </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00B30B0B"
+                        android:backgroundTint="@color/black"
+                        android:src="@drawable/baseline_sports_soccer_24" />
+
+                    <TextView
+                        android:id="@+id/memberActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="activity" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00B30B0B"
+                        android:backgroundTint="@color/black"
+                        android:src="@drawable/baseline_person_24" />
 
                     <TextView
                         android:id="@+id/eventHost"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="eventHost"
-                        android:textAlignment="textStart" />
+                        android:gravity="center_vertical"
+                        android:text="eventHost" />
 
 
                 </LinearLayout>
@@ -101,13 +142,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00B30B0B"
+                        android:backgroundTint="@color/black"
+                        android:src="@drawable/baseline_place_24" />
+
                     <TextView
                         android:id="@+id/eventAddress"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:text="eventAddress"
-                        android:textAlignment="textStart" />
+                        android:gravity="center_vertical"
+                        android:text="eventAddress" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -119,7 +167,6 @@
                 android:background="#00B30B0B"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:gravity="bottom"
                 app:icon="@drawable/ic_baseline_delete_forever_24"
                 app:iconGravity="end"
                 app:iconTint="#FF0000"
