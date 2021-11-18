@@ -46,7 +46,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="250dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingStart="10dp"
@@ -163,13 +163,13 @@
 
             <Button
                 android:id="@+id/deleteButton"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="#00B30B0B"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 app:icon="@drawable/ic_baseline_delete_forever_24"
-                app:iconGravity="start"
+                app:iconGravity="end"
                 app:iconTint="#FF0000"
                 tools:ignore="SpeakableTextPresentCheck" />
         </LinearLayout>
