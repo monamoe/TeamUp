@@ -24,12 +24,6 @@ import java.text.SimpleDateFormat
 import kotlin.Unit
 
 
-
-
-
-
-
-
 class ProfilePage : AppCompatActivity() {
 
     // FIREBASE MIGRATION //
@@ -58,32 +52,36 @@ class ProfilePage : AppCompatActivity() {
                 }
                 val user = Firebase.auth.currentUser
 
-                 if (user?.photoUrl != null) {
+                if (user?.photoUrl != null) {
 
-                     Glide.with(this).load(user.photoUrl).into(binding.profilepic)
+                    Glide.with(this).load(user.photoUrl).into(binding.profilepic)
 
 
                 }
-                db.collection("User/"+User.id+"/FriendCode").whereEqualTo("user", User.id)
+                db.collection("User/" + User.id + "/FriendCode").whereEqualTo("user", User.id)
                     .get()
                     .addOnSuccessListener { codes ->
-                        var friendCode =""
-                    for(code in codes){
-                        friendCode = code.get("code").toString()
-                        if (friendCode != "null") binding.friendCodeEdit.text = friendCode
-                    }
+                        var friendCode = ""
+                        for (code in codes) {
+                            friendCode = code.get("code").toString()
+                            if (friendCode != "null") binding.friendCodeEdit.text = friendCode
+                        }
 
                     }
                 if (userName != null) binding.userNameEdit.text = userName.toString()
                 if (getTime != null) binding.dateText.text = getTime.toString()
-                if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text = bio.toString()
-                if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text = favouriteSport.toString()
-                if (maxDistance != null) binding.maxDistanceEdit.text = maxDistance.toString() + "KM"
+                if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text =
+                    bio.toString()
+                if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text =
+                    favouriteSport.toString()
+                if (maxDistance != null) binding.maxDistanceEdit.text =
+                    maxDistance.toString() + "KM"
             }
 
         binding.copyButton.setOnClickListener {
             var clip = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            var clipData = ClipData.newPlainText("friendCode", binding.friendCodeEdit.text.toString())
+            var clipData =
+                ClipData.newPlainText("friendCode", binding.friendCodeEdit.text.toString())
             clip.setPrimaryClip(clipData)
             Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
         }

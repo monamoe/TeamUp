@@ -26,23 +26,27 @@ object EventHandling {
                 textView.setText("Space Left: " + (totalSpace - users.size()))
             }
     }
+
     fun getSpacesLeft(locationID: String, eventID: String, totalSpace: Int, button: Button) {
         db.collection("Location/" + locationID + "/Events/" + eventID + "/Attendees")
             .get()
             .addOnSuccessListener { users ->
-                if(users.size() == totalSpace){
+                if (users.size() == totalSpace) {
                     button.text = "Event Full"
                     button.isEnabled = false
                 }
                 for (user in users) {
-                    if (user.get("userID").toString() == FirebaseAuth.getInstance().currentUser?.uid) {
+                    if (user.get("userID")
+                            .toString() == FirebaseAuth.getInstance().currentUser?.uid
+                    ) {
                         button.text = "Leave"
                         button.isEnabled = true
                     }
                 }
             }
     }
-    fun getAttendees(listview: ListView, context: Context, locID: String, eventID: String){
+
+    fun getAttendees(listview: ListView, context: Context, locID: String, eventID: String) {
         attendeeList = ArrayList()
         // FIREBASE MIGRATION //
         val db = Firebase.firestore
@@ -66,20 +70,23 @@ object EventHandling {
                         }
                 }
             }
+
         listview.setOnItemClickListener { _, _, position, _ ->
-                val teamID = attendeeList.get(position).getID()
-                val memberID = attendeeList.get(position).getMemberID()
-                var intent = Intent(context, ViewMemberProfileActivity::class.java)
-            if(attendeeList.get(position).getMemberID() == FirebaseAuth.getInstance().currentUser?.uid){
+            val teamID = attendeeList.get(position).getID()
+            val memberID = attendeeList.get(position).getMemberID()
+            var intent = Intent(context, ViewMemberProfileActivity::class.java)
+            if (attendeeList.get(position)
+                    .getMemberID() == FirebaseAuth.getInstance().currentUser?.uid
+            ) {
                 intent = Intent(context, ProfilePage::class.java)
-            }else{
+            } else {
                 intent.putExtra("event", "event")
             }
-                intent.putExtra("member", memberID)
-                intent.putExtra("invite", teamID)
-                context.startActivity(intent)
-            }
+            intent.putExtra("member", memberID)
+            intent.putExtra("invite", teamID)
+            context.startActivity(intent)
         }
+    }
 
     // Event Array List Adapter
     internal class AttendeeListAdapter(context: Context) : BaseAdapter() {

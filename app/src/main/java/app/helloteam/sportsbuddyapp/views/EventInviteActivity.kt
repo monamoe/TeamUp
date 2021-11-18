@@ -42,10 +42,12 @@ class EventInviteActivity : AppCompatActivity() {
 
         listViewtitle = findViewById(R.id.listTitle)
 
-        listview.setOnItemClickListener { _, _, position, _ ->
+
+        listview.setOnItemClickListener { parent, view, position, id ->
+            Log.i("LOG_TAG", "LOADING EVENT FROM INVITE")
             val intent = Intent(this, SplashLoadingEventView::class.java)
-            intent.putExtra("locationID", eventList.get(position).locationID)
-            intent.putExtra("eventID", eventList.get(position).eventID)
+            intent.putExtra("locationID", eventList[position].locationID)
+            intent.putExtra("eventID", eventList[position].eventID)
             startActivity(intent)
         }
 
