@@ -66,7 +66,7 @@ object EventHandling {
                         }
                 }
             }
-        listview.setOnItemClickListener { parent, view, position, id ->
+        listview.setOnItemClickListener { _, _, position, _ ->
                 val teamID = attendeeList.get(position).getID()
                 val memberID = attendeeList.get(position).getMemberID()
                 var intent = Intent(context, ViewMemberProfileActivity::class.java)
