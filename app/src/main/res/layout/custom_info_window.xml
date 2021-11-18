@@ -6,11 +6,13 @@
     android:background="@color/primaryLightColor"
     tools:context=".views.map">
 
-
     <TextView
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location" />
+        android:padding="10dp"
+        android:text="Location"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -267,8 +267,8 @@ class map : AppCompatActivity(), GoogleMap.OnInfoWindowClickListener, OnMapReady
         mMap.animateCamera(
             CameraUpdateFactory.newCameraPosition(
                 CameraPosition.Builder().target(userlocation)
-                    .zoom(21f)
-                    .tilt(72f) // viewing angle
+                    .zoom(17f)
+                    .tilt(72f)
                     .build()
             )
         )
