@@ -85,7 +85,7 @@ class LandingPage2 : ComponentActivity() {
 
         Firebase.firestore.collection("User").document(userID)
             .get().addOnSuccessListener { user ->
-                if(user.get("newUser").toString().toBoolean()){
+                if (user.get("newUser").toString().toBoolean()) {
                     Firebase.firestore.collection("User").document(userID)
                         .update("newUser", false)
 
@@ -93,7 +93,8 @@ class LandingPage2 : ComponentActivity() {
                         title(text = "Set up your profile now to stand out from the crowd!")
                         positiveButton(R.string.yes) {
                             val intent = Intent(currentcontext, EditProfilePage::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
                         }
                         negativeButton(R.string.cancel)
@@ -197,6 +198,8 @@ fun CreateEventButton() {
         Column(
             verticalArrangement = Arrangement.Center
         ) {
+
+
             Button(
                 onClick = {
                     val intent = Intent(currentcontext, CreateEventActivity::class.java)
@@ -394,17 +397,24 @@ fun EventScroll() {
                 color = colorResource(id = R.color.secondaryTextColor),
                 modifier = Modifier.padding(15.dp),
             )
-            Text(
-                text = "View Invites",
-                style = MaterialTheme.typography.h4,
-                color = colorResource(id = R.color.secondaryTextColor),
+
+            Box(
                 modifier = Modifier
-                    .padding(15.dp)
+                    .padding(5.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colorResource(id = R.color.secondaryColor))
                     .clickable {
                         val intent = Intent(context, EventInviteActivity::class.java)
                         context.startActivity(intent)
                     }
-            )
+            ) {
+                Text(
+                    text = "View Invites",
+                    style = MaterialTheme.typography.h4,
+                    color = colorResource(id = R.color.secondaryTextColor),
+                    modifier = Modifier.padding(5.dp)
+                )
+            }
         }
 
         if (hostingAttendingEventList.size == 0) {
