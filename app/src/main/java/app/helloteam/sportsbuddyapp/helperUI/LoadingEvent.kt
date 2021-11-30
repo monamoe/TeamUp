@@ -363,7 +363,7 @@ class LoadingEvent {
                                                 } else {
                                                     a++
                                                     var hostName = "No Host"
-
+                                                    if(event.exists())
                                                     hostingAttendingEventList.add(
                                                         EventCard(
                                                             event.get("title").toString(),
