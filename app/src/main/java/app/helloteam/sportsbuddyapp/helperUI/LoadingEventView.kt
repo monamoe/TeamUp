@@ -459,11 +459,14 @@ class LoadingEventView {
                 }
         }
 
+
         // to event list view
         private fun toEventViewPage() {
             Log.i(
                 "LOG_TAG",
-                "to event view page: eventList: $isEventDone - attendeeListDone: $attendeeListDone - teamMemberListDone: $teamMemberListDone"
+                "to event view page: eventList: $isEventDone - " +
+                        "attendeeListDone: $attendeeListDone - " +
+                        "teamMemberListDone: $teamMemberListDone"
             )
             if (attendeeListDone && teamMemberListDone && isEventDone) {
                 Log.i(

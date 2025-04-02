@@ -23,6 +23,7 @@
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_login.xml" value="0.22" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_map.xml" value="0.22" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_profile_page.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_team_invites.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_view_member_profile.xml" value="0.31979166666666664" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/activity_view_player_events.xml" value="0.31979166666666664" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/chat_to_row.xml" value="0.33" />
@@ -30,6 +31,7 @@
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/event_invite_list_adapter.xml" value="0.33" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/event_list_adapter_view.xml" value="0.19746376811594202" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/fragment_landing_page.xml" value="0.346875" />
+        <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/layout/invite_list_adapter_view.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/menu/bottom_app_bar.xml" value="0.1" />
         <entry key="..\:/Users/monamoe/Documents/1_Programming/AndroidApps/TeamUp/app/src/main/res/menu/menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/monamoe/Documents/1_Work_Stuff/5_Semester/Capstone/parseproject/SportsBuddy/app/src/main/res/layout/activity_create_event.xml" value="0.28125" />
@@ -43,7 +45,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
