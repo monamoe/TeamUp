@@ -1,9 +1,8 @@
-# HelloTeam / TeamUp 
-Activity organization platform for small scale event scheduling! 
+# TeamUp - Outdoor Activity Planner 🌞
+TeamUp is an event scheduling Android app developed by HelloTeam Inc., designed to bring people together effortlessly. With a sleek, intuitive interface and powerful automation, TeamUp makes planning meetups, sports games, and social gatherings easier than ever.
 
-An app that helps you go outside and play! 🌞
 
-## Features
+## ✨ Features
 - User authentication with Firebase
 - Real-time event scheduling and management
 - Location-based activity discovery using Google Maps
@@ -12,7 +11,7 @@ An app that helps you go outside and play! 🌞
 - Push notifications for event updates
 - Profile management and social features
 
-## Technical Stack
+## 🛠️ Technical Stack
 - **Language**: Kotlin
 - **Architecture**: MVVM with Jetpack Compose
 - **Backend**: Firebase
@@ -25,21 +24,21 @@ An app that helps you go outside and play! 🌞
 - **Weather Data**: OpenWeather API
 - **UI Components**: Material Design 3
 
-## Requirements
+## 🔑 Requirements
 - Android Studio Arctic Fox (or newer)
 - Minimum SDK: 26 (Android 8.0)
 - Target SDK: 30
 - Google Play Services
 - Firebase project setup
 
-## Setup
+## ⚙️ Setup
 1. Clone the repository
 2. Set up a Firebase project and add `google-services.json` to the app directory
 3. Configure Google Maps API key in `AndroidManifest.xml`
 4. Set up OpenWeather API key
 5. Build and run the project
 
-## Contributors
+## 👥 Contributors
 [monamoe](https://github.com/monamoe) 
 
 [rileylgray](https://github.com/rileylgray)
@@ -48,7 +47,7 @@ An app that helps you go outside and play! 🌞
 
 [soussamu](https://github.com/soussamu)
 
-## Libraries, SDKs & APIs
+## 📚 Libraries, SDKs & APIs
 - [Firebase](https://firebase.google.com/)
 - [Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
 - [Places SDK for Android](https://developers.google.com/maps/documentation/places/android-sdk/overview)
