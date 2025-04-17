@@ -1,6 +1,17 @@
 # TeamUp - Outdoor Activity Planner 🌞
 TeamUp is an event scheduling Android app developed by HelloTeam Inc., designed to bring people together effortlessly. With a sleek, intuitive interface and powerful automation, TeamUp makes planning meetups, sports games, and social gatherings easier than ever.
 
+<p align="center">
+<!--   <img src="https://github.com/user-attachments/assets/50f5b316-2276-4f5e-a376-4ce508ff4afe" width="250px" /> -->
+  <img src="https://github.com/user-attachments/assets/c30de4fb-5ad9-44df-9037-86f55e5347ab" width="250px" />
+  <img src="https://github.com/user-attachments/assets/4de9fa38-77b3-40bc-a109-3837b46d15ff" width="250px" />
+  <br>
+<img src="https://github.com/user-attachments/assets/f7c117b8-64e0-40b6-9a6a-37ac662f4983" width="500px" />
+  
+</p>
+
+
+
 
 ## ✨ Features
 - User authentication with Firebase
