@@ -363,34 +363,34 @@ class LoadingEvent {
                                                 } else {
                                                     a++
                                                     var hostName = "No Host"
-                                                    if(event.exists())
-                                                    hostingAttendingEventList.add(
-                                                        EventCard(
-                                                            event.get("title").toString(),
-                                                            event.id,
-                                                            loc.id,
-                                                            loc.get("StreetView")
-                                                                .toString(),
-                                                            false,
-                                                            hostName,
-                                                            event.get("information")
-                                                                .toString(),
-                                                            event.get("eventSpace")
-                                                                .toString()
-                                                                .toInt(),
-                                                            event.get("currentlyAttending")
-                                                                .toString()
-                                                                .toInt(),
-                                                            event.get("activity")
-                                                                .toString(),
-                                                            event.get("date")
-                                                                .toString(),
-                                                            loc.get("endDate")
-                                                                .toString(),
-                                                            loc.get("Location Name")
-                                                                .toString(),
+                                                    if (event.exists())
+                                                        hostingAttendingEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.id,
+                                                                loc.id,
+                                                                loc.get("StreetView")
+                                                                    .toString(),
+                                                                false,
+                                                                hostName,
+                                                                event.get("information")
+                                                                    .toString(),
+                                                                event.get("eventSpace")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("activity")
+                                                                    .toString(),
+                                                                event.get("date")
+                                                                    .toString(),
+                                                                loc.get("endDate")
+                                                                    .toString(),
+                                                                loc.get("Location Name")
+                                                                    .toString(),
+                                                            )
                                                         )
-                                                    )
                                                     Log.i(
                                                         logi,
                                                         "Comparing a: $a - ${attendingList.size()}"

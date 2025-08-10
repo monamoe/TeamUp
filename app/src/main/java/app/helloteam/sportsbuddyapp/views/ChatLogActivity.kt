@@ -198,7 +198,6 @@ class ChatLogActivity : AppCompatActivity() {
         val timestamp: Long,
         var read: Boolean
     ) {
-        constructor() : this("", "", "", "", -1, true)
     }
 
     private fun performSendMessage() {
@@ -247,7 +246,7 @@ class CustomAdapter(context: Context, list: ArrayList<MessageModel>, reciver: St
     var list: ArrayList<MessageModel>
     private val reciver: String
 
-    private inner class MessageInViewHolder internal constructor(itemView: View) :
+    private inner class MessageInViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var messageTV: TextView = itemView.findViewById(R.id.message_text)
         var image: ImageView = itemView.findViewById(R.id.profilepic)
@@ -262,7 +261,7 @@ class CustomAdapter(context: Context, list: ArrayList<MessageModel>, reciver: St
         }
     }
 
-    private inner class MessageOutViewHolder internal constructor(itemView: View) :
+    private inner class MessageOutViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var messageTV: TextView = itemView.findViewById(R.id.message_text)
         var image: ImageView = itemView.findViewById(R.id.profilepic)

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="app.helloteam.sportsbuddyapp">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -58,7 +59,7 @@
             android:theme="@style/Theme.SportsBuddyApp">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".views.map" />
+                android:value=".views.MapActivity" />
         </activity>
         <activity
             android:name=".views.LandingPage2"
@@ -181,7 +182,7 @@
         </activity>
 
         <activity
-            android:name=".views.map"
+            android:name=".views.MapActivity"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait">
             <meta-data

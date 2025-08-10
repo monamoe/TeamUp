@@ -10,4 +10,7 @@
     <string name="title_activity_create_event">CreateEvent</string>
     <string name="title_activity_event_list_compose">EventListCompose</string>
     <string name="title_activity_event_compose">EventCompose</string>
+    <string name="location">Location:</string>
+    <string name="select_start_time">Select Start Time</string>
+    <string name="select_activity">Select Activity:</string>
 </resources>

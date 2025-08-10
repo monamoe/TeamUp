@@ -7,8 +7,8 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.RadioGroup
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +25,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.ramotion.fluidslider.FluidSlider
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class EditProfilePage : AppCompatActivity() {
 
@@ -104,12 +104,13 @@ class EditProfilePage : AppCompatActivity() {
                         }
                     }
                 if (userName != "null") userNameEdit.text = userName
-                if (dateCreated != null) dateText.text = dateCreated.toString()
+                dateText.text = dateCreated.toString()
                 if (bio != "null" && bio.isNotEmpty()) aboutMeEdit.text = bio
                 sport = User.get("favouriteSport").toString()
 
                 btnLoadPicture.setOnClickListener {
-                    val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                    val gallery =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                     startActivityForResult(gallery, pickImage)
                 }
 
@@ -141,7 +142,10 @@ class EditProfilePage : AppCompatActivity() {
             MaterialDialog(this).show {
                 title(text = "Are you sure you want to delete your account?")
                 positiveButton(R.string.yes) { _ ->
-                    UserHandling.userDelete(FirebaseAuth.getInstance().currentUser, this@EditProfilePage)
+                    UserHandling.userDelete(
+                        FirebaseAuth.getInstance().currentUser,
+                        this@EditProfilePage
+                    )
                 }
                 negativeButton(R.string.cancel)
             }
@@ -175,6 +179,7 @@ class EditProfilePage : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
@@ -182,4 +187,5 @@ class EditProfilePage : AppCompatActivity() {
             Glide.with(this).load(imageUri).into(profilepic)
         }
     }
+
 }
