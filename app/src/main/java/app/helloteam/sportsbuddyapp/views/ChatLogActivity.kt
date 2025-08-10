@@ -8,11 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.models.MessageModel
-import com.baoyz.widget.PullRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -23,12 +22,12 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-
 class ChatLogActivity : AppCompatActivity() {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var messagesList = ArrayList<MessageModel>()
     var messageAmount = 20
     val maxArchives = 60
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
@@ -44,13 +43,12 @@ class ChatLogActivity : AppCompatActivity() {
                 }
             }
 
-
         findViewById<Button>(R.id.chatButton).setOnClickListener {
             performSendMessage()
             findViewById<EditText>(R.id.messageText).setText("")
         }
 
-        val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
+        val layout = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
         layout.setOnRefreshListener {
             messagesList.clear()
             Firebase.firestore.collection("User_Messages_Archive")
@@ -59,10 +57,9 @@ class ChatLogActivity : AppCompatActivity() {
                 .collection("archives").orderBy("date", Query.Direction.DESCENDING)
                 .limit(messageAmount.toLong())
                 .get().addOnSuccessListener { messages ->
-                    messageAmount = messageAmount + messageAmount
+                    messageAmount += messageAmount
                     for (message in messages) {
-
-                        var m = MessageModel(
+                        val m = MessageModel(
                             message.get("id").toString(),
                             message.get("message").toString(),
                             message.get("messageType").toString().toInt(),
@@ -72,52 +69,45 @@ class ChatLogActivity : AppCompatActivity() {
                         messagesList.add(m)
                     }
                     FirebaseDatabase.getInstance().getReference(
-                        "/user-messages/${currentUser?.uid}/${
-                            intent.getStringExtra("member").toString()
-                        }"
+                        "/user-messages/${currentUser?.uid}/${intent.getStringExtra("member")}"
                     )
                         .get().addOnSuccessListener { realTimeMessages ->
                             for (message in realTimeMessages.children) {
-                                var m = MessageModel(
+                                val m = MessageModel(
                                     message.child("id").value.toString(),
                                     message.child("text").value.toString(),
-                                    if (message.child("fromId").value.toString() == currentUser?.uid) CustomAdapter.MESSAGE_TYPE_IN else CustomAdapter.MESSAGE_TYPE_OUT,
+                                    if (message.child("fromId").value.toString() == currentUser?.uid)
+                                        CustomAdapter.MESSAGE_TYPE_IN else CustomAdapter.MESSAGE_TYPE_OUT,
                                     R.drawable.logoteamupsmall,
                                     message.child("timestamp").value.toString().toLong()
                                 )
                                 messagesList.add(m)
                             }
-                            var sorted = messagesList.sortedBy { messagesList -> messagesList.date }
+                            val sorted = messagesList.sortedBy { it.date }
                             messagesList.clear()
-                            for (sort in sorted) {
-                                messagesList.add(sort)
-                            }
-                            layout.setRefreshing(false)
-                            var adapter = CustomAdapter(
+                            messagesList.addAll(sorted)
+                            layout.isRefreshing = false
+                            val adapter = CustomAdapter(
                                 this,
                                 messagesList,
                                 intent.getStringExtra("member").toString()
                             )
-                            var recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
-                            recyclerView.setAdapter(adapter)
+                            val recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
+                            recyclerView.adapter = adapter
                         }
                 }
         }
-
     }
 
     private fun listenForMessages(context: Context) {
         val ref = FirebaseDatabase.getInstance().getReference(
-            "/user-messages/${currentUser?.uid}/${
-                intent.getStringExtra("member").toString()
-            }"
+            "/user-messages/${currentUser?.uid}/${intent.getStringExtra("member").toString()}"
         )
 
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatMessage::class.java)
                 if (chatMessage != null) {
-
                     messagesList.add(
                         MessageModel(
                             chatMessage.id,
@@ -127,22 +117,19 @@ class ChatLogActivity : AppCompatActivity() {
                             chatMessage.timestamp
                         )
                     )
-                    var sorted = messagesList.sortedBy { messagesList -> messagesList.date }
+                    val sorted = messagesList.sortedBy { it.date }
                     messagesList.clear()
-                    for (sort in sorted) {
-                        messagesList.add(sort)
-                    }
-                    if (messagesList.size > messageAmount) {
-                        var chat = messagesList.get(0)
-                        messagesList.removeAt(0)
-                        Log.i("aaaaaaaa", "in if")
-                        FirebaseDatabase.getInstance().getReference(
-                            "/user-messages/${currentUser?.uid}/${
-                                intent.getStringExtra("member").toString()
-                            }"
-                        ).child(chat.id).removeValue()
-                        Log.i("delete", chat.id)
+                    messagesList.addAll(sorted)
 
+                    if (messagesList.size > messageAmount) {
+                        val chat = messagesList[0]
+                        messagesList.removeAt(0)
+                        Log.i("ChatLogActivity", "Removing oldest message to keep limit")
+
+                        FirebaseDatabase.getInstance().getReference(
+                            "/user-messages/${currentUser?.uid}/${intent.getStringExtra("member")}"
+                        ).child(chat.id).removeValue()
+                        Log.i("ChatLogActivity", "Deleted message id: ${chat.id}")
 
                         val db = Firebase.firestore.collection("User_Messages_Archive")
 
@@ -158,6 +145,7 @@ class ChatLogActivity : AppCompatActivity() {
                                 }
                             }
                     }
+
                     Firebase.firestore.collection("User_Messages_Archive")
                         .document(currentUser?.uid.toString())
                         .collection("To").document(intent.getStringExtra("member").toString())
@@ -179,37 +167,26 @@ class ChatLogActivity : AppCompatActivity() {
                                                 )
                                                 .collection("archives").document(remove.id).delete()
                                                 .addOnSuccessListener {
-                                                    Log.i("deletinggg", "here")
+                                                    Log.i("ChatLogActivity", "Deleted archive message")
                                                 }
                                         }
                                     }
                             }
                         }
-
-
                 }
-                var adapter =
-                    CustomAdapter(context, messagesList, intent.getStringExtra("member").toString())
-                var recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
-                recyclerView.setAdapter(adapter)
-                findViewById<RecyclerView>(R.id.recycleChat).smoothScrollToPosition(messagesList.size)
+                val adapter = CustomAdapter(context, messagesList, intent.getStringExtra("member").toString())
+                val recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
+                recyclerView.adapter = adapter
+                recyclerView.smoothScrollToPosition(messagesList.size)
             }
 
-            override fun onCancelled(error: DatabaseError) {
+            override fun onCancelled(error: DatabaseError) {}
 
-            }
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-
-            }
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
         })
     }
 
@@ -228,8 +205,7 @@ class ChatLogActivity : AppCompatActivity() {
         val text = findViewById<EditText>(R.id.messageText).text.toString()
         val fromId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val toId = intent.getStringExtra("member").toString()
-        val dbFrom =
-            FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val dbFrom = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
         val chatMessage = ChatMessage(
             dbFrom.key.toString(),
@@ -240,19 +216,17 @@ class ChatLogActivity : AppCompatActivity() {
             true
         )
         dbFrom.setValue(chatMessage).addOnSuccessListener {
-            Log.d("Messagee", dbFrom.key.toString())
+            Log.d("ChatLogActivity", "Sent message id: ${dbFrom.key}")
         }
 
         val dbTo = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId")
             .child(dbFrom.key.toString())
         dbTo.setValue(chatMessage).addOnSuccessListener {
-            Log.d("Messagee", dbFrom.key.toString())
+            Log.d("ChatLogActivity", "Sent message to recipient id: ${dbFrom.key}")
         }
 
-        val latestMessageRef =
-            FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
-        val latestMessageRefTo =
-            FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        val latestMessageRefTo = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
 
         val chatMessageTo = ChatMessage(
             dbFrom.key.toString(),
@@ -264,10 +238,8 @@ class ChatLogActivity : AppCompatActivity() {
         )
         latestMessageRef.setValue(chatMessage)
         latestMessageRefTo.setValue(chatMessageTo)
-
     }
 }
-
 
 class CustomAdapter(context: Context, list: ArrayList<MessageModel>, reciver: String) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -277,80 +249,62 @@ class CustomAdapter(context: Context, list: ArrayList<MessageModel>, reciver: St
 
     private inner class MessageInViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var messageTV: TextView
-        var image: ImageView
+        var messageTV: TextView = itemView.findViewById(R.id.message_text)
+        var image: ImageView = itemView.findViewById(R.id.profilepic)
+
         fun bind(position: Int) {
             val messageModel: MessageModel = list[position]
-            messageTV.setText(messageModel.message)
+            messageTV.text = messageModel.message
 
-            if (FirebaseAuth.getInstance().currentUser?.photoUrl != null) {
-                Glide.with(context).load(FirebaseAuth.getInstance().currentUser?.photoUrl)
-                    .into(image)
+            FirebaseAuth.getInstance().currentUser?.photoUrl?.let {
+                Glide.with(context).load(it).into(image)
             }
-        }
-
-        init {
-            messageTV = itemView.findViewById(R.id.message_text)
-            image = itemView.findViewById(R.id.profilepic)
-
         }
     }
 
     private inner class MessageOutViewHolder internal constructor(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
-        var messageTV: TextView
-        var image: ImageView
+        var messageTV: TextView = itemView.findViewById(R.id.message_text)
+        var image: ImageView = itemView.findViewById(R.id.profilepic)
+
         fun bind(position: Int) {
             Firebase.firestore.collection("User").document(reciver)
                 .get().addOnSuccessListener { user ->
                     val messageModel: MessageModel = list[position]
-                    messageTV.setText(messageModel.message)
-                    if (user.get("photoUrl") != null) {
-                        Glide.with(context).load(user.get("photoUrl"))
-                            .into(image)
+                    messageTV.text = messageModel.message
+                    user.get("photoUrl")?.let {
+                        Glide.with(context).load(it).into(image)
                     }
                 }
-        }
-
-        init {
-            messageTV = itemView.findViewById(R.id.message_text)
-            image = itemView.findViewById(R.id.profilepic)
-
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == MESSAGE_TYPE_IN) {
-            MessageInViewHolder(
-                LayoutInflater.from(context).inflate(R.layout.chat_from_row, parent, false)
-            )
-        } else MessageOutViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.chat_to_row, parent, false)
-        )
+            MessageInViewHolder(LayoutInflater.from(context).inflate(R.layout.chat_from_row, parent, false))
+        } else {
+            MessageOutViewHolder(LayoutInflater.from(context).inflate(R.layout.chat_to_row, parent, false))
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (list[position].messageType === MESSAGE_TYPE_IN) {
+        if (list[position].messageType == MESSAGE_TYPE_IN) {
             (holder as MessageInViewHolder).bind(position)
         } else {
             (holder as MessageOutViewHolder).bind(position)
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount(): Int = list.size
 
-    override fun getItemViewType(position: Int): Int {
-        return list[position].messageType
-    }
+    override fun getItemViewType(position: Int): Int = list[position].messageType
 
     companion object {
         const val MESSAGE_TYPE_IN = 1
         const val MESSAGE_TYPE_OUT = 2
     }
 
-    init { // you can pass other parameters in constructor
+    init {
         this.context = context
         this.list = list
         this.reciver = reciver

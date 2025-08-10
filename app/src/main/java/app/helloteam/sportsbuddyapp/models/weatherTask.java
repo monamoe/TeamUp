@@ -1,68 +1,67 @@
 package app.helloteam.sportsbuddyapp.models;
 
-
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.androdocs.httprequest.HttpRequest;
-
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONObject;
-
 import app.helloteam.sportsbuddyapp.views.LandingPageKt;
-
 
 public class weatherTask extends AsyncTask<String, Void, String> {
 
+    private OkHttpClient client = new OkHttpClient();
 
-    public weatherTask() {
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
+    public weatherTask() {}
 
     @Override
-    protected String doInBackground(String... strings) {
-        String response = HttpRequest.excuteGet("https://api.openweathermap.org/data/2.5/weather?lat=" + strings[0] + "&lon=" + strings[1] + "&units=metric&appid=" + strings[2]);
-        return response;
-    }
+    protected String doInBackground(String... params) {
+        String lat = params[0];
+        String lon = params[1];
+        String appId = params[2];
 
+        String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat +
+                "&lon=" + lon + "&units=metric&appid=" + appId;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful() && response.body() != null) {
+                return response.body().string();
+            }
+        } catch (Exception e) {
+            Log.e("weatherTask", "Request failed", e);
+        }
+        return null;
+    }
 
     @Override
     protected void onPostExecute(String result) {
+        if (result == null) {
+            Log.e("weatherTask", "No response received");
+            return;
+        }
         try {
-
             JSONObject jsonObj = new JSONObject(result);
-
             JSONObject main = jsonObj.getJSONObject("main");
             JSONObject weather = jsonObj.getJSONArray("weather").getJSONObject(0);
-            Log.i("weather", weather.toString());
-            // JSONObject sys = jsonObj.getJSONObject("sys");
-            // String city_name = jsonObj.getString("name");
-            Log.i("weather", "hi2");
 
-            // String countryname = sys.getString("country");
             String temperature = main.getString("temp");
             String cast = weather.getString("description");
             String iconUrl = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
-
 
             LandingPageKt.setTemp(temperature + "°C");
             LandingPageKt.setForecast(cast.toUpperCase());
             LandingPageKt.setWeatherIcon(iconUrl);
 
-
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            Log.e("weatherTask", "JSON parsing error", e);
         }
     }
 
-    public static Boolean weatherDone(){
-            if(LandingPageKt.getTemp() != "") {
-                return true;
-            } else {
-                return false;
-            }
+    public static boolean weatherDone() {
+        return !LandingPageKt.getTemp().isEmpty();
     }
 }

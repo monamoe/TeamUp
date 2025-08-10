@@ -4,40 +4,75 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import app.helloteam.sportsbuddyapp.R
-import com.baoyz.widget.PullRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import app.helloteam.sportsbuddyapp.R
+
 
 private lateinit var inviteList: ArrayList<TeamInvites.InviteDisplayer>
 
-
 class TeamInvites : AppCompatActivity() {
+
+    private lateinit var listview: ListView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_team_invites)
-        val listview = findViewById<ListView>(R.id.listView)
+
+        listview = findViewById(R.id.listView)
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         inviteList = ArrayList()
 
         supportActionBar?.title = "Team Invites"
 
+        loadInvites()
 
-        // FIREBASE MIGRATION //
+        listview.setOnItemClickListener { _, _, position, _ ->
+            val memberID = inviteList[position].getID()
+            val inviteID = inviteList[position].getInviteID()
+            val intent = Intent(this, ViewMemberProfileActivity::class.java)
+            intent.putExtra("member", memberID)
+            intent.putExtra("invite", inviteID)
+            startActivity(intent)
+            finish()
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            loadInvites()
+        }
+    }
+
+    private fun loadInvites() {
+        inviteList.clear()  // Clear existing list before loading new data
         val db = Firebase.firestore
-        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        db.collection("User").document(currentUserId)
             .collection("Invites").whereEqualTo("inviteType", "Team")
-            .get().addOnSuccessListener { invites ->
-                for (invite in invites){
-                    db.collection("User").document(invite.get("sender").toString())
-                        .get().addOnSuccessListener { user ->
+            .get()
+            .addOnSuccessListener { invites ->
+                if (invites.isEmpty) {
+                    // Optionally handle empty case, e.g., show empty message
+                    inviteList.clear()
+                    listview.adapter = TeamListAdapter(this)
+                    swipeRefreshLayout.isRefreshing = false
+                    return@addOnSuccessListener
+                }
+
+                var processedCount = 0
+                for (invite in invites) {
+                    val senderId = invite.get("sender").toString()
+                    db.collection("User").document(senderId)
+                        .get()
+                        .addOnSuccessListener { user ->
                             val eventObj = InviteDisplayer(
                                 user.id,
                                 invite.id,
@@ -46,110 +81,64 @@ class TeamInvites : AppCompatActivity() {
                             )
                             inviteList.add(eventObj)
 
-                            // list view adapter
-                            listview.adapter = TeamListAdapter(this)
+                            processedCount++
+                            // Only update adapter and stop refreshing when all invites are processed
+                            if (processedCount == invites.size()) {
+                                listview.adapter = TeamListAdapter(this)
+                                swipeRefreshLayout.isRefreshing = false
+                            }
+                        }
+                        .addOnFailureListener {
+                            processedCount++
+                            if (processedCount == invites.size()) {
+                                listview.adapter = TeamListAdapter(this)
+                                swipeRefreshLayout.isRefreshing = false
+                            }
                         }
                 }
             }
-
-
-        listview.setOnItemClickListener { parent, view, position, id ->
-            val memberID = inviteList.get(position).getID()
-            val inviteID = inviteList.get(position).getInviteID()
-            val intent = Intent(this, ViewMemberProfileActivity::class.java)
-            intent.putExtra("member", memberID)
-            intent.putExtra("invite", inviteID)
-            startActivity(intent)
-            finish()
-        }
-       val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
-        layout.setOnRefreshListener {
-            db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                .collection("Invites").whereEqualTo("inviteType", "Team")
-                .get().addOnSuccessListener { invites ->
-                    for (invite in invites){
-                        db.collection("User").document(invite.get("sender").toString())
-                            .get().addOnSuccessListener { user ->
-                                val eventObj = InviteDisplayer(
-                                    user.id,
-                                    invite.id,
-                                    user.get("userName").toString(),
-                                    user.get("photoUrl").toString()
-                                )
-                                inviteList.add(eventObj)
-
-                                // list view adapter
-                                listview.adapter = TeamListAdapter(this)
-                            }
-                    }
-                    layout.setRefreshing(false)
-
-                }
-        }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to load invites.", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }
     }
 
-
-    // Event Array List Adapter
     internal class TeamListAdapter(context: Context) : BaseAdapter() {
-
         private val mContext: Context = context
 
-        // overrides
-        override fun getCount(): Int {
-            return inviteList.size
-        }
+        override fun getCount(): Int = inviteList.size
 
-        override fun getItem(position: Int): Any {
-            return "return override"
-        }
+        override fun getItem(position: Int): Any = inviteList[position]
 
-        override fun getItemId(position: Int): Long {
-            return position.toLong()
-        }
+        override fun getItemId(position: Int): Long = position.toLong()
 
-        // render each row
-        override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.invite_list_adapter_view, viewGroup, false)
+            val rowMain = convertView ?: lI.inflate(R.layout.invite_list_adapter_view, parent, false)
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
             val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
 
-            name.text = (inviteList.get(position).name)
-            if (inviteList.get(position).image != null && inviteList.get(position).image != "null") {
+            val invite = inviteList[position]
 
-                if (viewGroup != null) {
-                    Glide.with(viewGroup).load(inviteList.get(position).image).into(profileImage)
-                }
-
+            name.text = invite.name
+            if (invite.image.isNotEmpty() && invite.image != "null") {
+                Glide.with(mContext).load(invite.image).into(profileImage)
+            } else {
+                profileImage.setImageResource(R.drawable.soccer) // fallback image
             }
 
             return rowMain
         }
     }
 
-    // Event Displayer class ( for array list)
-    class InviteDisplayer {
-        var id: String = ""
-        var inviteId: String = " "
-        var name: String = ""
-        var image: String = ""
-
-        fun getID(): String {
-            return this.id
-        }
-
-        fun getInviteID(): String {
-            return this.inviteId
-        }
-
-
-        // main constuctor
-        constructor(id: String, inviteId: String, name: String, image: String) {
-            this.id = id
-            this.inviteId = inviteId
-            this.name = name
-            this.image = image
-        }
+    class InviteDisplayer(
+        private val id: String,
+        private val inviteId: String,
+        val name: String,
+        val image: String
+    ) {
+        fun getID(): String = id
+        fun getInviteID(): String = inviteId
     }
 }

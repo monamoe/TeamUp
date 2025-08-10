@@ -12,8 +12,6 @@ import com.google.android.gms.maps.model.LatLng
 
 
 class ParkLocationMarker {
-
-
     // ID of the location in the Locations Table
     private var id: String? = ""
 

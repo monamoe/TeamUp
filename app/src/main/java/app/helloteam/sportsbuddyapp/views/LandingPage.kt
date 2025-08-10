@@ -1,8 +1,3 @@
-/*
- * monamoe
- * 10/21/21
- * Landing Page Compose
- */
 package app.helloteam.sportsbuddyapp.views
 
 import android.annotation.SuppressLint
@@ -40,11 +35,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import org.joda.time.DateTime
-import org.joda.time.LocalTime
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
-
-//context
+// context
 @SuppressLint("StaticFieldLeak")
 private lateinit var currentcontext: Context
 
@@ -70,17 +65,18 @@ private var hostingAttendingEventList: MutableList<EventCard> = mutableListOf()
 private var recommendedEventList: MutableList<EventCard> = mutableListOf()
 lateinit var todayWithZeroTime: String
 
-
 class LandingPage2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // check if the user is logged in
         userID = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        if (userID.equals(null)) {
+        if (userID == "null" || userID.isEmpty()) {
             val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
+            finish()
+            return
         }
 
         Firebase.firestore.collection("User").document(userID)
@@ -93,31 +89,26 @@ class LandingPage2 : ComponentActivity() {
                         title(text = "Set up your profile now to stand out from the crowd!")
                         positiveButton(R.string.yes) {
                             val intent = Intent(currentcontext, EditProfilePage::class.java)
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(intent)
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            currentcontext.startActivity(intent)
                         }
                         negativeButton(R.string.cancel)
                     }
                 }
             }
 
-        // init variables
-        val dt = DateTime()
+        val dt = LocalDateTime.now()
         hostingAttendingEventList = LoadingEvent.hostingAttendingEventList
         recommendedEventList = LoadingEvent.recommendedEventList
-        todayWithZeroTime =
-            dt.monthOfYear().asText + " " + dt.dayOfMonth().asText + ", " + dt.year().asText
-        val lt = LocalTime()
-        if (lt < lt.withHourOfDay(12)) {
-            welcomeMessage = "Good Morning"
-        } else if (lt > lt.withHourOfDay(12) && lt < lt.withHourOfDay(17)) {
-            welcomeMessage = "Good Afternoon"
-        } else if (lt >= lt.withHourOfDay(17)) {
-            welcomeMessage = "Good Evening"
+        todayWithZeroTime = dt.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"))
+
+        val lt = LocalTime.now()
+        welcomeMessage = when {
+            lt.isBefore(LocalTime.NOON) -> "Good Morning"
+            lt.isBefore(LocalTime.of(17, 0)) -> "Good Afternoon"
+            else -> "Good Evening"
         }
 
-        // set content
         setContent {
             currentcontext = LocalContext.current
 
@@ -146,15 +137,15 @@ class LandingPage2 : ComponentActivity() {
     fun LandingPageCompose() {
         val navController = rememberNavController()
         Scaffold(
-            content = {
+            content = { paddingValues ->
                 Box(
                     modifier = Modifier
                         .background(colorResource(id = R.color.landingPageBackground))
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
+                        .padding(paddingValues) // to respect Scaffold's inner padding
                 ) {
                     Column {
-                        // greeting
                         GreetingSection(username)
                         CurrentWeather()
                         ContentDivider()
@@ -162,15 +153,13 @@ class LandingPage2 : ComponentActivity() {
                         ContentDivider()
                         CreateEventButton()
 
-                        // your events
                         ContentDivider()
                         EventScroll()
-                        // recommended events
+
                         ContentDivider()
                         RecommendedEventScroll()
 
                         ContentDivider()
-
                         ExtraPadding()
                     }
                 }
@@ -185,7 +174,6 @@ class LandingPage2 : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun CreateEventButton() {
     Row(
@@ -198,8 +186,6 @@ fun CreateEventButton() {
         Column(
             verticalArrangement = Arrangement.Center
         ) {
-
-
             Button(
                 onClick = {
                     val intent = Intent(currentcontext, CreateEventActivity::class.java)
@@ -217,7 +203,6 @@ fun CreateEventButton() {
         }
     }
 }
-
 
 /**
  * Horizontal scrolling cards for Recommended Events
@@ -317,7 +302,7 @@ fun RecommendedEventScroll() {
             )
         }
         Log.i("LOG_CAT", "RECOMMENDED LIST: $recommendedEventList")
-        if (recommendedEventList.size == 0) {
+        if (recommendedEventList.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -358,7 +343,7 @@ fun RecommendedEventScroll() {
                         .padding(start = 16.dp, bottom = 16.dp)
                         .clickable {
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            val intent = Intent(context, SplashLoadingEventView::class.java)
+                            val intent = Intent(currentcontext, SplashLoadingEventView::class.java)
                             Log.i(
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: eventID ${e.eventID}"
@@ -369,14 +354,13 @@ fun RecommendedEventScroll() {
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: locationID ${e.locationID}"
                             )
-                            context.startActivity(intent)
+                            currentcontext.startActivity(intent)
                         }
                 )
             }
         }
     }
 }
-
 
 /**
  * Horizontal scrolling cards for your events
@@ -404,8 +388,8 @@ fun EventScroll() {
                     .clip(RoundedCornerShape(10.dp))
                     .background(colorResource(id = R.color.secondaryColor))
                     .clickable {
-                        val intent = Intent(context, EventInviteActivity::class.java)
-                        context.startActivity(intent)
+                        val intent = Intent(currentcontext, EventInviteActivity::class.java)
+                        currentcontext.startActivity(intent)
                     }
             ) {
                 Text(
@@ -417,7 +401,7 @@ fun EventScroll() {
             }
         }
 
-        if (hostingAttendingEventList.size == 0) {
+        if (hostingAttendingEventList.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -456,10 +440,8 @@ fun EventScroll() {
                     Modifier
                         .padding(start = 16.dp, bottom = 16.dp)
                         .clickable {
-                            // updates current event in view model (doesn't use view model for intent but im keeping it here)
-                            // navigates to the event page
                             Log.i("LOG_TAG", "VIEW EVENT: IT ${e.eventID}, ${e.title}")
-                            val intent = Intent(context, SplashLoadingEventView::class.java)
+                            val intent = Intent(currentcontext, SplashLoadingEventView::class.java)
                             Log.i(
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: eventID ${e.eventID}"
@@ -470,14 +452,13 @@ fun EventScroll() {
                                 "LOG_TAG",
                                 "VIEW EVENT: BEFORE: locationID ${e.locationID}"
                             )
-                            context.startActivity(intent)
+                            currentcontext.startActivity(intent)
                         }
                 )
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoilApi::class)
 @Composable
@@ -490,7 +471,7 @@ fun EventCard(
         modifier = modifier
             .size(280.dp, 240.dp)
     ) {
-        BoxWithConstraints(
+        Box(
             modifier = Modifier
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(20.dp))
@@ -528,8 +509,7 @@ fun EventCard(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
-                    )
-                    {
+                    ) {
                         Text(
                             text = event.title,
                             style = MaterialTheme.typography.h3,
@@ -537,23 +517,22 @@ fun EventCard(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Space: " + event.currentlyAttending.toString() + "/" + event.space.toString(),
+                            text = "Space: ${event.currentlyAttending}/${event.space}",
                             style = MaterialTheme.typography.h4,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
 
-
                     val eventhostline =
-                        if (event.isHosting) "Hosted By You" else "Hosted by: " + event.hostName
+                        if (event.isHosting) "Hosted By You" else "Hosted by: ${event.hostName}"
                     Text(
                         text = eventhostline,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2
                     )
-                    if (event.eventDesc == "" || event.eventDesc == "null") {
+                    if (event.eventDesc.isNullOrBlank() || event.eventDesc == "null") {
                         Text(
                             text = "No Description",
                             style = MaterialTheme.typography.body2
@@ -568,5 +547,4 @@ fun EventCard(
             }
         }
     }
-
 }

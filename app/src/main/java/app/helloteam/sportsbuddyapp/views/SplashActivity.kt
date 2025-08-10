@@ -44,10 +44,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.delay
-import org.joda.time.DateTime
-import org.joda.time.LocalTime
 import java.util.*
+
 
 
 var loggedIn = false
@@ -125,22 +123,37 @@ class SplashActivity : ComponentActivity() {
                 if (location != null) {
                     Log.i("hellooooo", "l not empty")
 
-                    //update user interface
+                    // Update user location variables
                     userLocationLat = location.latitude
                     userLocationLon = location.longitude
                     Log.i("hellooooo", "lat: $userLocationLat ,  Long: $userLocationLon")
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val addresses: List<Address> =
-                        geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
-                    cityName = addresses[0].getLocality()
-                    prov = addresses[0].adminArea
-                    //render the marker on the users location.
+
+                    try {
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        val addresses: List<Address>? = geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
+                        if (!addresses.isNullOrEmpty()) {
+                            cityName = addresses[0].locality ?: ""
+                            prov = addresses[0].adminArea ?: ""
+                        } else {
+                            cityName = ""
+                            prov = ""
+                            Log.w("Geocoder", "No address found for location")
+                        }
+                    } catch (e: Exception) {
+                        cityName = ""
+                        prov = ""
+                        Log.e("Geocoder", "Failed to get address from location", e)
+                    }
+
+
+                    // Call weatherTask with location and API key
                     weatherTask().execute(
                         userLocationLat.toString(),
                         userLocationLon.toString(),
                         getString(R.string.weather_api)
                     )
                 }
+
                 recEventsDone = false
                 yourEventsDone = false
                 yourHostDone = false

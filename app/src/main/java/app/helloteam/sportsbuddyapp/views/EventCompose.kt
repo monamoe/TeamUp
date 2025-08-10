@@ -43,7 +43,11 @@ import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.eventInf
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hosting
 import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.afollestad.materialdialogs.MaterialDialog
 
 
@@ -70,9 +74,12 @@ class EventCompose : ComponentActivity() {
     }
 
     override fun onBackPressed() {
+        super.onBackPressed()
         val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
     }
+
+
 
     // Composable Preview
     @Preview(showBackground = true)
@@ -122,14 +129,18 @@ class EventCompose : ComponentActivity() {
                     elevation = 10.dp
                 )
             },
-            content = {
+            content = { paddingValues ->
                 Box(
                     modifier = Modifier
                         .background(colorResource(id = R.color.landingPageBackground))
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                        .padding(paddingValues)  // apply scaffold padding if inside Scaffold
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxWidth()
+                    ) {
                         // image banner
                         ImageBanner()
                         ContentDivider()
@@ -138,11 +149,11 @@ class EventCompose : ComponentActivity() {
                         EventInformation()
                         ContentDivider()
 
-                        //Attendee List
+                        // Attendee List
                         AttendeeList()
                         ContentDivider()
 
-                        //TO DO Team Members
+                        // TO DO Team Members
                         InviteTeamMembers()
                         ContentDivider()
 
@@ -160,10 +171,12 @@ class EventCompose : ComponentActivity() {
                         if (!hasHost) {
                             BecomeHost()
                         }
+
                         ExtraPadding()
                     }
                 }
             }
+
         )
     }
 
@@ -197,7 +210,7 @@ class EventCompose : ComponentActivity() {
                     )
                 } else {
                     Image(
-                        painter = rememberImagePainter(LoadingEventView.locationImage),
+                        painter = rememberAsyncImagePainter(LoadingEventView.locationImage),
                         contentDescription = null, // decorative
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

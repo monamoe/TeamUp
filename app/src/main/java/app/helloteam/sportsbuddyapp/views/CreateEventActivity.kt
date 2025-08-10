@@ -30,28 +30,27 @@ import java.util.*
 
 class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
-
-    //time attributes
+    // Time attributes
     var hour: Int = 0
     var min: Int = 0
     var endHour: Int = 0
     var endMin: Int = 0
     var endTimeBool: Boolean = false
     var yearPicked: Int = Calendar.getInstance().get(Calendar.YEAR)
-    var monthPicked: Int = (Calendar.getInstance().get(Calendar.MONTH))
+    var monthPicked: Int = Calendar.getInstance().get(Calendar.MONTH)
     var dayPicked: Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
 
-    // sports attributes
+    // Sports attributes
     var activitySelection: String? = ""
 
-    // location attributes
+    // Location attributes
     var locationPlaceId: String = "" // place id for the location
-    var locationname: String = "" // the name of the park, (not the address to the park)
+    var locationname: String = "" // the name of the park, (not the address)
     var address: String = ""
     var lat: Double = 0.0
     var long: Double = 0.0
 
-    //additional information
+    // Additional information
     var addionalInformation = ""
     var eventTitle = ""
     var eventSpace = 0
@@ -65,16 +64,13 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
 
         val api: String = getString(R.string.google_key)
 
-        // Initialize the SDK
+        // Initialize the Places SDK
         Places.initialize(applicationContext, api)
 
-        // Create a new PlacesClient instance
-//        val placesClient = Places.createClient(this)
         val createBtn = findViewById<Button>(R.id.CreateBtn)
 
-
-        //sport type
-        val activityType: Spinner = findViewById<Spinner>(R.id.spinner)
+        // Setup spinner for sport type
+        val activityType: Spinner = findViewById(R.id.spinner)
         ArrayAdapter.createFromResource(
             this,
             R.array.activitylist,
@@ -85,106 +81,82 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         }
         activityType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
+                // No action needed
             }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                pos: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
                 if (parent != null) {
                     activitySelection = parent.getItemAtPosition(pos).toString()
                 }
             }
         }
 
-        //set the start time
+        // Set start time button
         val timeBtn = findViewById<Button>(R.id.TimeBtn)
         timeBtn.setOnClickListener {
             endTimeBool = false
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
         if (hour != 0 || min != 0) {
-            timeBtn.setText("$hour:$min")
+            timeBtn.text = "$hour:$min"
         }
+
+        // Date picker setup
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
         datePicker.setMinDate(System.currentTimeMillis() - 1000)
         val today = Calendar.getInstance()
-        datePicker.init(
-            today.get(Calendar.YEAR), today.get(Calendar.MONTH),
-            today.get(Calendar.DAY_OF_MONTH)
-        ) { _, year, month, day ->
+        datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)) { _, year, month, day ->
             dayPicked = day
             yearPicked = year
             monthPicked = month
-
         }
 
-        //set the end time
+        // Set end time button
         val endTimeBtn = findViewById<Button>(R.id.endTimeBtn)
         endTimeBtn.setOnClickListener {
             endTimeBool = true
             TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
         if (endHour != 0 || endMin != 0) {
-            endTimeBtn.setText("$endHour:$endMin")
+            endTimeBtn.text = "$endHour:$endMin"
         }
 
-        //address
-        val autocompleteFragment =
-            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
-                    as AutocompleteSupportFragment
-        // Specify the types of place data to return.
+        // Place autocomplete fragment setup
+        val autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
-        // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 address = place.name.toString()
-                Log.i("LOG_TAG", "HAHA: address: " + address)
-                var latlong = getLocationFromAddress(this@CreateEventActivity, address)
+                Log.i("LOG_TAG", "Address selected: $address")
+                val latlong = getLocationFromAddress(this@CreateEventActivity, address)
                 if (latlong != null) {
-                    long = latlong.longitude
                     lat = latlong.latitude
+                    long = latlong.longitude
                     locationPlaceId = place.id.toString()
                 }
-                Log.i("LOG_TAG", "HAHA: Location from address: ${lat}, ${place.id}, ${long}")
+                Log.i("LOG_TAG", "Location from address: $lat, $locationPlaceId, $long")
             }
 
             override fun onError(status: Status) {
-                Log.i("LOG_TAG", "An error occurred: $status")
+                Log.i("LOG_TAG", "Place selection error: $status")
             }
         })
 
-
         createBtn.setOnClickListener {
             eventTitle = findViewById<TextView>(R.id.eventTitle).text.toString()
-            if (findViewById<EditText>(R.id.eventSpace).text.toString().equals(""))
-                eventSpace = 1
-            else
-                eventSpace = findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
-            //addionalInformation = findViewById<TextView>(R.id.additionalInformation).text.toString()
-            val date: Date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
-            val endDate: Date =
-                Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
-            var addInfo = findViewById<EditText>(R.id.aboutEventEdit).text.toString()
+            eventSpace = if (findViewById<EditText>(R.id.eventSpace).text.toString().isEmpty()) 1 else findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
+            val date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
+            val endDate = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
+            val addInfo = findViewById<EditText>(R.id.aboutEventEdit).text.toString()
 
             if (endDate <= date) {
                 Toast.makeText(this, "Invalid start and end time", Toast.LENGTH_SHORT).show()
             } else if (addInfo.length > 200) {
                 Toast.makeText(this, "Information too long", Toast.LENGTH_SHORT).show()
-            }
-            // enter required fields
-            else if (!address.equals("") && !activitySelection.equals("") && hour != 0 && !eventTitle.equals(
-                    ""
-                )
-            ) {
+            } else if (address.isNotEmpty() && !activitySelection.isNullOrEmpty() && hour != 0 && eventTitle.isNotEmpty()) {
 
-                //pushing to firestore database required the use of a hashmap,
                 val db = Firebase.firestore
 
-                //hashmap models
                 val eventHashMap = hashMapOf(
                     "title" to eventTitle,
                     "currentlyAttending" to 0,
@@ -195,47 +167,39 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                     "date" to date,
                     "endDate" to endDate,
                     "information" to addInfo
-
                 )
-                val LocationsHashMap = hashMapOf(
+
+                val locationsHashMap = hashMapOf(
                     "Location Name" to address,
                     "Lat" to lat,
                     "Lon" to long,
                 )
 
-
-                // pushing location, doesnt overwrite if the location already exists
                 val locationID = lat.toString() + long.toString()
                 db.collection("Location").document(locationID)
-                    .set(LocationsHashMap, SetOptions.merge())
+                    .set(locationsHashMap, SetOptions.merge())
                     .addOnSuccessListener {
-                        db.collection("Location").document(locationID)
-                            .get().addOnSuccessListener { loc ->
-                                if (loc.get("StreetView") == null) {
-                                    Log.i("Helloooooooo", "making picture")
-                                    FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id) // gets streetview photo if not alreayd there.
-                                }
+                        db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
+                            if (loc.get("StreetView") == null) {
+                                Log.i("CreateEventActivity", "Uploading street view image")
+                                FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id)
                             }
+                        }
 
+                        Log.d("CreateEventActivity", "Created Location document: $locationID")
 
-                        Log.d("CreatingEvent", "Created $locationID document")
+                        val eventID = FirebaseFirestore.getInstance().collection("Location")
+                            .document(locationID)
+                            .collection("Events").document().id
 
-                        // adds event
-                        val eventID =
-                            FirebaseFirestore.getInstance().collection("Location")
-                                .document(locationID)
-                                .collection("Events").document().id
                         db.collection("Location").document(locationID).collection("Events")
                             .document(eventID)
                             .set(eventHashMap, SetOptions.merge())
                             .addOnSuccessListener {
-
                                 val hostingHashMap = hashMapOf(
                                     "locationID" to locationID,
                                     "eventID" to eventID
                                 )
-
-                                // add the hosting data to the user
                                 db.collection("User")
                                     .document(FirebaseAuth.getInstance().uid.toString())
                                     .collection("Hosting").document(eventID)
@@ -246,54 +210,48 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                                     }
                             }
                             .addOnFailureListener { e ->
-                                Log.w("a", "Error creating location document", e)
+                                Log.w("CreateEventActivity", "Error creating event document", e)
                             }
-
-
                     }
                     .addOnFailureListener { e ->
-                        Log.w("a", "Error creating location document", e)
+                        Log.w("CreateEventActivity", "Error creating location document", e)
                     }
-
-
             } else {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // when the time select fragment is li
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
         if (!endTimeBool) {
             val timeBtn = findViewById<Button>(R.id.TimeBtn)
             hour = hourOfDay
             min = minute
-            timeBtn.setText("$hour:$min")
+            timeBtn.text = "$hour:$min"
         } else {
             val timeBtn = findViewById<Button>(R.id.endTimeBtn)
             endHour = hourOfDay
             endMin = minute
-            timeBtn.setText("$endHour:$endMin")
+            timeBtn.text = "$endHour:$endMin"
         }
     }
 
-
     fun getLocationFromAddress(context: Context?, strAddress: String?): LatLng? {
-        val coder = Geocoder(context)
+        val coder = context?.let { Geocoder(it) }
         val address: List<Address>?
         var place: LatLng? = null
         try {
-            // May throw an IOException
-            address = coder.getFromLocationName(strAddress, 5)
-            if (address == null) {
-                return null
+            if (coder != null) {
+                address = strAddress?.let { coder.getFromLocationName(it, 5) }
+                if (address == null || address.isEmpty()) {
+                    return null
+                }
+                val location = address[0]
+                place = LatLng(location.latitude, location.longitude)
             }
-            val location = address[0]
-            place = LatLng(location.latitude, location.longitude)
         } catch (ex: IOException) {
             ex.printStackTrace()
         }
         return place
     }
 }
-
