@@ -113,6 +113,7 @@
                     android:id="@+id/copyButton"
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
+                    android:contentDescription="copy"
                     android:paddingLeft="9dp"
                     app:icon="@drawable/ic_baseline_content_copy_24"
                     app:iconPadding="0dp" />

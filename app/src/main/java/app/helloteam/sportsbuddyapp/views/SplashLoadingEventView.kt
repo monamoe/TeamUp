@@ -10,7 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView
 
 lateinit var eventViewContext: Context
 

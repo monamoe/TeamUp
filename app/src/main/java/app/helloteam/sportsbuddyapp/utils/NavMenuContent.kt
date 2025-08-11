@@ -3,7 +3,7 @@ rileygray & monamoe
 Application NavBar contents and event handlers
  */
 
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 import android.content.Context
 import android.content.Intent
@@ -34,6 +34,10 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Icon
+import androidx.compose.material3.BadgedBox as BadgedBox1
+
 
 /**
  * Navigation Bar
@@ -158,14 +162,23 @@ fun BottomNavigationBar(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (!readChat.value) {
-                        BadgeBox(
-                            badgeContent = {}
+
+                        BadgedBox1(
+                            badge = {
+                                Badge(
+                                    containerColor = Color.Red,
+                                    contentColor = Color.White
+                                ) {
+                                    // Optional: Badge content, e.g., a number or dot
+                                }
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Email,
                                 contentDescription = "Messages"
                             )
                         }
+
                     } else {
                         Icon(
                             imageVector = Icons.Default.Email,
@@ -262,7 +275,7 @@ fun useIntentOnRoute(context: Context, route: String) {
         when (route) {
             "LandingPage2" -> intent = Intent(context, LandingPage2::class.java)
             "LatestMessagesActivity" -> intent = Intent(context, LatestMessagesActivity::class.java)
-            "map" -> intent = Intent(context, map::class.java)
+            "map" -> intent = Intent(context, MapActivity::class.java)
             "TeamsActivity" -> intent = Intent(context, TeamsActivity::class.java)
             "ProfilePage" -> intent = Intent(context, ProfilePage::class.java)
             else -> {

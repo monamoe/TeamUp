@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.views.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider

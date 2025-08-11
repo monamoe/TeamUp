@@ -2,7 +2,7 @@
  * monamoe
  * material theme custom shapes
  */
-package app.helloteam.sportsbuddyapp.views.ui.theme
+package app.helloteam.sportsbuddyapp.views.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

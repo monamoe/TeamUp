@@ -1,28 +1,27 @@
 package app.helloteam.sportsbuddyapp.views
 
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.databinding.ActivityProfilePageBinding
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.ramotion.fluidslider.FluidSlider
-import java.util.*
 import java.text.SimpleDateFormat
-import kotlin.Unit
-
+import java.util.Date
 
 class ProfilePage : AppCompatActivity() {
 
@@ -30,98 +29,103 @@ class ProfilePage : AppCompatActivity() {
     private val db = Firebase.firestore
     private val uid = Firebase.auth.currentUser?.uid.toString()
 
-    private lateinit var binding: ActivityProfilePageBinding
+    // Declare views
+    private lateinit var profilePic: ImageView
+    private lateinit var friendCodeEdit: TextView
+    private lateinit var userNameEdit: TextView
+    private lateinit var dateText: TextView
+    private lateinit var aboutMeText: TextView
+    private lateinit var favSportText: TextView
+    private lateinit var maxDistanceEdit: TextView
+    private lateinit var copyButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityProfilePageBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
+        setContentView(R.layout.activity_profile_page)
+
         supportActionBar?.title = "Your Profile"
+
+        // Initialize views using findViewById
+        profilePic = findViewById(R.id.profilepic)
+        friendCodeEdit = findViewById(R.id.friendCodeEdit)
+        userNameEdit = findViewById(R.id.userNameEdit)
+        dateText = findViewById(R.id.dateText)
+        aboutMeText = findViewById(R.id.aboutMeText)
+        favSportText = findViewById(R.id.favSportText)
+        maxDistanceEdit = findViewById(R.id.maxDistanceEdit)
+        copyButton = findViewById(R.id.copyButton)
 
         db.collection("User").document(uid)
             .get()
             .addOnSuccessListener { User ->
-                var userName = User.get("userName")
-                var bio = User.get("bio")
-                var favouriteSport = User.get("favouriteSport")
-                var maxDistance = User.get("distance")
+                val userName = User.get("userName")
+                val bio = User.get("bio")
+                val favouriteSport = User.get("favouriteSport")
+                val maxDistance = User.get("distance")
                 val sfd = SimpleDateFormat("yyyy-MM-dd")
                 var getTime = User.get("dateCreated")
                 if (getTime != null) {
-                    var time: Timestamp = getTime as Timestamp
+                    val time: Timestamp = getTime as Timestamp
                     getTime = sfd.format(Date(time.seconds * 1000))
                 }
                 val user = Firebase.auth.currentUser
 
                 if (user?.photoUrl != null) {
-
-                    Glide.with(this).load(user.photoUrl).into(binding.profilepic)
-
-
+                    Glide.with(this).load(user.photoUrl).into(profilePic)
                 }
-                db.collection("User/" + User.id + "/FriendCode").whereEqualTo("user", User.id)
+                db.collection("User/${User.id}/FriendCode").whereEqualTo("user", User.id)
                     .get()
                     .addOnSuccessListener { codes ->
                         var friendCode = ""
                         for (code in codes) {
                             friendCode = code.get("code").toString()
-                            if (friendCode != "null") binding.friendCodeEdit.text = friendCode
+                            if (friendCode != "null") friendCodeEdit.text = friendCode
                         }
-
                     }
-                if (userName != null) binding.userNameEdit.text = userName.toString()
-                if (getTime != null) binding.dateText.text = getTime.toString()
-                if (bio != "null" && bio != null && bio != "") binding.aboutMeText.text =
-                    bio.toString()
-                if (favouriteSport != null && favouriteSport != "none") binding.favSportText.text =
+                if (userName != null) userNameEdit.text = userName.toString()
+                if (getTime != null) dateText.text = getTime.toString()
+                if (bio != "null" && bio != null && bio != "") aboutMeText.text = bio.toString()
+                if (favouriteSport != null && favouriteSport != "none") favSportText.text =
                     favouriteSport.toString()
-                if (maxDistance != null) binding.maxDistanceEdit.text =
-                    maxDistance.toString() + "KM"
+                if (maxDistance != null) maxDistanceEdit.text = "$maxDistance KM"
             }
 
-        binding.copyButton.setOnClickListener {
-            var clip = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            var clipData =
-                ClipData.newPlainText("friendCode", binding.friendCodeEdit.text.toString())
+        copyButton.setOnClickListener {
+            val clip = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipData = ClipData.newPlainText("friendCode", friendCodeEdit.text.toString())
             clip.setPrimaryClip(clipData)
             Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.profile_menu, menu)
+        menuInflater.inflate(R.menu.profile_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_profile -> {
-            val intent = Intent(this, EditProfilePage::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, EditProfilePage::class.java))
             true
         }
+
         R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
                 .setCancelable(false)
-                .setPositiveButton("Logout", DialogInterface.OnClickListener { dialog, id ->
+                .setPositiveButton("Logout") { dialog, id ->
                     FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     startActivity(intent)
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.cancel()
-                })
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
             val alert = dialogBuilder.create()
             alert.setTitle("Logout")
             alert.show()
             true
         }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
+
+        else -> super.onOptionsItemSelected(item)
     }
 }

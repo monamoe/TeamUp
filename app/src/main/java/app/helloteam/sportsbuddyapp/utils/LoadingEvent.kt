@@ -2,13 +2,11 @@
 rileygray & monamoe
 collect and load data for the landing page
  */
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 import android.content.Intent
 import android.location.Location
 import android.util.Log
-import androidx.compose.ui.input.key.Key.Companion.Sleep
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.LandingPage2
 import app.helloteam.sportsbuddyapp.views.context
@@ -363,34 +361,34 @@ class LoadingEvent {
                                                 } else {
                                                     a++
                                                     var hostName = "No Host"
-                                                    if(event.exists())
-                                                    hostingAttendingEventList.add(
-                                                        EventCard(
-                                                            event.get("title").toString(),
-                                                            event.id,
-                                                            loc.id,
-                                                            loc.get("StreetView")
-                                                                .toString(),
-                                                            false,
-                                                            hostName,
-                                                            event.get("information")
-                                                                .toString(),
-                                                            event.get("eventSpace")
-                                                                .toString()
-                                                                .toInt(),
-                                                            event.get("currentlyAttending")
-                                                                .toString()
-                                                                .toInt(),
-                                                            event.get("activity")
-                                                                .toString(),
-                                                            event.get("date")
-                                                                .toString(),
-                                                            loc.get("endDate")
-                                                                .toString(),
-                                                            loc.get("Location Name")
-                                                                .toString(),
+                                                    if (event.exists())
+                                                        hostingAttendingEventList.add(
+                                                            EventCard(
+                                                                event.get("title").toString(),
+                                                                event.id,
+                                                                loc.id,
+                                                                loc.get("StreetView")
+                                                                    .toString(),
+                                                                false,
+                                                                hostName,
+                                                                event.get("information")
+                                                                    .toString(),
+                                                                event.get("eventSpace")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("currentlyAttending")
+                                                                    .toString()
+                                                                    .toInt(),
+                                                                event.get("activity")
+                                                                    .toString(),
+                                                                event.get("date")
+                                                                    .toString(),
+                                                                loc.get("endDate")
+                                                                    .toString(),
+                                                                loc.get("Location Name")
+                                                                    .toString(),
+                                                            )
                                                         )
-                                                    )
                                                     Log.i(
                                                         logi,
                                                         "Comparing a: $a - ${attendingList.size()}"

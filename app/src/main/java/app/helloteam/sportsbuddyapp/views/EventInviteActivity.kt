@@ -8,42 +8,40 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling.db
-import com.baoyz.widget.PullRefreshLayout
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.util.*
-
+import java.util.Date
+import java.util.Locale
 
 private lateinit var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
-
 private lateinit var listViewtitle: TextView
-
 
 class EventInviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_invite)
+
         val listview = findViewById<ListView>(R.id.inviteList)
+        listViewtitle = findViewById(R.id.listTitle)
 
-
-        // events array list
         eventList = ArrayList()
         supportActionBar?.title = "Event Invites"
 
-        // populate array list with events that match the location ID of the marker selected
         getInvites(listview)
 
-        listViewtitle = findViewById(R.id.listTitle)
-
-
-        listview.setOnItemClickListener { parent, view, position, id ->
+        listview.setOnItemClickListener { _, _, position, _ ->
             Log.i("LOG_TAG", "LOADING EVENT FROM INVITE")
             val intent = Intent(this, SplashLoadingEventView::class.java)
             intent.putExtra("locationID", eventList[position].locationID)
@@ -51,27 +49,30 @@ class EventInviteActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val layout = findViewById<PullRefreshLayout>(R.id.swipeRefreshLayout)
-        layout.setOnRefreshListener {
+        val swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout)
+        swipeRefreshLayout.setOnRefreshListener {
             getInvites(listview)
-            layout.setRefreshing(false)
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 
     fun getInvites(listview: ListView) {
-        // FIREBASE MIGRATION //
         eventList = ArrayList()
         val db = Firebase.firestore
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .collection("Invites").whereEqualTo("inviteType", "Event")
             .get().addOnSuccessListener { invites ->
+                if (invites.isEmpty) {
+                    updateTitleText()
+                    listview.adapter = EventInviteListAdapter(this)
+                    return@addOnSuccessListener
+                }
+
                 for (invite in invites) {
                     db.collection("User").document(invite.get("sender").toString())
                         .get().addOnSuccessListener { user ->
-                            db.collection(
-                                "Location/" + invite.get("locationID").toString() +
-                                        "/Events"
-                            ).document(invite.get("eventID").toString()).get()
+                            db.collection("Location/${invite.get("locationID")}/Events")
+                                .document(invite.get("eventID").toString()).get()
                                 .addOnSuccessListener { event ->
                                     if (event.exists()) {
                                         db.collection("Location")
@@ -81,8 +82,9 @@ class EventInviteActivity : AppCompatActivity() {
                                                     .document(event.get("hostID").toString())
                                                     .get().addOnSuccessListener { host ->
                                                         var hostUser =
-                                                            host.get("userName").toString()
-                                                        if (hostUser == "null" || hostUser == "") {
+                                                            host.get("userName")?.toString()
+                                                                ?: "No Host"
+                                                        if (hostUser == "null" || hostUser.isEmpty()) {
                                                             hostUser = "No Host"
                                                         }
                                                         val eventObj = EventInviteDisplayer(
@@ -98,8 +100,6 @@ class EventInviteActivity : AppCompatActivity() {
                                                         )
                                                         eventList.add(eventObj)
                                                         updateTitleText()
-
-                                                        // list view adapter
                                                         listview.adapter =
                                                             EventInviteListAdapter(this)
                                                     }
@@ -111,7 +111,7 @@ class EventInviteActivity : AppCompatActivity() {
                                             .addOnSuccessListener {
                                                 Toast.makeText(
                                                     this,
-                                                    "Some invites have been removed since events no longer exsist",
+                                                    "Some invites have been removed since events no longer exist",
                                                     Toast.LENGTH_LONG
                                                 ).show()
                                             }
@@ -122,37 +122,30 @@ class EventInviteActivity : AppCompatActivity() {
             }
     }
 
-
     private fun updateTitleText() {
-        if (eventList.size == 0) {
-            listViewtitle.text = "You have no event invites!"
-        } else if (eventList.size == 1) {
-            listViewtitle.text = "You have ${eventList.size} event invite!"
-        } else {
-            listViewtitle.text = "You have ${eventList.size} event invites!"
-
+        listViewtitle.text = when (eventList.size) {
+            0 -> "You have no event invites!"
+            1 -> "You have 1 event invite!"
+            else -> "You have ${eventList.size} event invites!"
         }
     }
 
-    // Event Array List Adapter
     internal class EventInviteListAdapter(context: Context) : BaseAdapter() {
 
         private val mContext: Context = context
 
-        // overrides
         override fun getCount(): Int {
             return eventList.size
         }
 
         override fun getItem(position: Int): Any {
-            return "return override"
+            return eventList[position]
         }
 
         override fun getItemId(position: Int): Long {
             return position.toLong()
         }
 
-        // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
             val rowMain = lI.inflate(R.layout.event_invite_list_adapter, viewGroup, false)
@@ -164,22 +157,22 @@ class EventInviteActivity : AppCompatActivity() {
             val eventSender = rowMain.findViewById<TextView>(R.id.invitedBy)
             val activity = rowMain.findViewById<TextView>(R.id.memberActivity)
 
-            val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
-            val startTimeStamp: Timestamp = eventList.get(position).time
+            val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault())
+            val startTimeStamp: Timestamp = eventList[position].time
             val eventStartTime = sfd.format(Date(startTimeStamp.seconds * 1000))
 
-            eventTitle.text = (eventList.get(position).name)
-            eventAddress.text = (eventList.get(position).address)
-            eventTime.text = (eventStartTime)
-            eventHost.text = (eventList.get(position).host)
-            eventSender.text = ("Invite From: " + eventList.get(position).sender)
-            activity.text = (eventList.get(position).activity)
+            eventTitle.text = eventList[position].name
+            eventAddress.text = eventList[position].address
+            eventTime.text = eventStartTime
+            eventHost.text = eventList[position].host
+            eventSender.text = "Invite From: ${eventList[position].sender}"
+            activity.text = eventList[position].activity
 
             rowMain.findViewById<Button>(R.id.deleteButton).setOnClickListener {
-                Log.i("Invite ID", eventList.get(position).id)
+                Log.i("Invite ID", eventList[position].id)
                 db.collection("User")
                     .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                    .collection("Invites").document(eventList.get(position).id)
+                    .collection("Invites").document(eventList[position].id)
                     .delete().addOnSuccessListener {
                         (mContext as Activity).finish()
                         val intent = Intent(mContext, EventInviteActivity::class.java)
@@ -190,41 +183,15 @@ class EventInviteActivity : AppCompatActivity() {
         }
     }
 
-    // Event Displayer class ( for array list)
-    class EventInviteDisplayer {
-        var id: String = ""
-        var eventID: String = ""
-        var locationID: String = ""
-        var name: String = ""
-        var address: String = ""
-        var time: Timestamp
-        var host: String = ""
-        var sender: String = ""
-        var activity: String = ""
-
-
-        // main constuctor
-        constructor(
-            id: String,
-            eventID: String,
-            locationID: String,
-            name: String,
-            address: String,
-            time: Timestamp,
-            host: String,
-            sender: String,
-            activity: String
-        ) {
-            this.id = id
-            this.eventID = eventID
-            this.locationID = locationID
-            this.name = name
-            this.address = address
-            this.time = time
-            this.host = host
-            this.sender = sender
-            this.activity = activity
-        }
-    }
+    class EventInviteDisplayer(
+        var id: String,
+        var eventID: String,
+        var locationID: String,
+        var name: String,
+        var address: String,
+        var time: Timestamp,
+        var host: String,
+        var sender: String,
+        var activity: String
+    )
 }
-

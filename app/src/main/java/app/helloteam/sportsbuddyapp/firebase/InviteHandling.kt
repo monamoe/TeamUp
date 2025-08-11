@@ -21,104 +21,91 @@ object InviteHandling {
     fun sendTeamInvite(code: String, context: Context) {
         db.collection("User").get().addOnSuccessListener { users ->
             db.collection(
-                "User/" + FirebaseAuth.getInstance().currentUser?.uid.toString()
-                        + "/FriendCode"
-            ).whereEqualTo("code", code).get()
-                .addOnSuccessListener { codes ->
-                    var yourCode = ""
-                    for (c in codes) {
-                        yourCode = c.get("code").toString()
-                    }
-                    if (code == yourCode) {
-                        Toast.makeText(
-                            context,
-                            "Can not invite yourself",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        for (user in users) {
+                "User/" + FirebaseAuth.getInstance().currentUser?.uid.toString() + "/FriendCode"
+            ).whereEqualTo("code", code).get().addOnSuccessListener { codes ->
+                var yourCode = ""
+                for (c in codes) {
+                    yourCode = c.get("code").toString()
+                }
+                if (code == yourCode) {
+                    Toast.makeText(
+                        context, "Can not invite yourself", Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    for (user in users) {
 
-                            db.collection(
-                                "User/" + user.id
-                                        + "/FriendCode"
-                            ).whereEqualTo("code", code).get()
-                                .addOnSuccessListener { inviting ->
-                                    for (u in inviting) {
-                                        db.collection("User").document(user.id)
-                                            .collection("Invites")
-                                            .whereEqualTo("inviteType", "Team")
-                                            .whereEqualTo(
-                                                "sender",
-                                                FirebaseAuth.getInstance().currentUser?.uid.toString()
+                        db.collection(
+                            "User/" + user.id + "/FriendCode"
+                        ).whereEqualTo("code", code).get().addOnSuccessListener { inviting ->
+                            for (u in inviting) {
+                                db.collection("User").document(user.id).collection("Invites")
+                                    .whereEqualTo("inviteType", "Team").whereEqualTo(
+                                        "sender",
+                                        FirebaseAuth.getInstance().currentUser?.uid.toString()
+                                    ).whereEqualTo("receiver", user.id).get()
+                                    .addOnSuccessListener { duplicate ->
+                                        if (duplicate.isEmpty) {
+                                            val invite = hashMapOf(
+                                                "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
+                                                "receiver" to user.id,
+                                                "inviteType" to "Team"
                                             )
-                                            .whereEqualTo("receiver", user.id).get()
-                                            .addOnSuccessListener { duplicate ->
-                                                if (duplicate.isEmpty) {
-                                                    val invite = hashMapOf(
-                                                        "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
-                                                        "receiver" to user.id,
-                                                        "inviteType" to "Team"
-                                                    )
 
-                                                    db.collection("User")
-                                                        .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                                        .get().addOnSuccessListener { sender ->
-                                                            db.collection("User").document(user.id)
-                                                                .collection("Invites")
-                                                                .add(invite)
-                                                                .addOnSuccessListener {
+                                            db.collection("User")
+                                                .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                                .get().addOnSuccessListener { sender ->
+                                                    db.collection("User").document(user.id)
+                                                        .collection("Invites").add(invite)
+                                                        .addOnSuccessListener {
 
-                                                                    db.collection("Notification")
-                                                                        .document(user.id)
-                                                                        .get() //gets user notif token
-                                                                        .addOnSuccessListener { reciever ->
-                                                                            PushNotification(
-                                                                                NotificationData( //creates invite message
-                                                                                    "Team Invite",
-                                                                                    "You have been invited to ${
-                                                                                        sender.get(
-                                                                                            "userName"
-                                                                                        )
-                                                                                    }'s team"
-                                                                                ),
-                                                                                reciever.get("token")
-                                                                                    .toString() //gets token
-                                                                            ).also {
-                                                                                sendNotification(it) //sends result
-                                                                            }
+                                                            db.collection("Notification")
+                                                                .document(user.id)
+                                                                .get() //gets user notif token
+                                                                .addOnSuccessListener { reciever ->
+                                                                    PushNotification(
+                                                                        NotificationData( //creates invite message
+                                                                            "Team Invite",
+                                                                            "You have been invited to ${
+                                                                                sender.get(
+                                                                                    "userName"
+                                                                                )
+                                                                            }'s team"
+                                                                        ),
+                                                                        reciever.get("token")
+                                                                            .toString() //gets token
+                                                                    ).also {
+                                                                        sendNotification(it) //sends result
+                                                                    }
 
-                                                                        }
-
-                                                                    Toast.makeText(
-                                                                        context,
-                                                                        "Invite Sent",
-                                                                        Toast.LENGTH_SHORT
-                                                                    ).show()
                                                                 }
+
+                                                            Toast.makeText(
+                                                                context,
+                                                                "Invite Sent",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         }
-                                                } else {
-                                                    Toast.makeText(
-                                                        context,
-                                                        "Invite pending",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
                                                 }
+                                        } else {
+                                            Toast.makeText(
+                                                context, "Invite pending", Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
 
-                                            }
                                     }
+                            }
 
-                                }
                         }
                     }
                 }
+            }
         }
     }
 
     //
     fun sendEventInvite(event: String, location: String, receiver: String, context: Context) {
         val senderName = FirebaseAuth.getInstance().currentUser?.displayName
-        db.collection("User").document(receiver)
-            .collection("Invites")
+        db.collection("User").document(receiver).collection("Invites")
             .whereEqualTo("sender", FirebaseAuth.getInstance().currentUser?.uid.toString())
             .whereEqualTo("inviteType", "Event").whereEqualTo("eventID", event).get()
             .addOnSuccessListener { duplicate ->
@@ -131,14 +118,10 @@ object InviteHandling {
                         "locationID" to location
                     )
 
-                    db.collection("User").document(receiver)
-                        .collection("Invites")
-                        .add(invite)
+                    db.collection("User").document(receiver).collection("Invites").add(invite)
                         .addOnSuccessListener {
                             Toast.makeText(
-                                context,
-                                "Invite Sent",
-                                Toast.LENGTH_SHORT
+                                context, "Invite Sent", Toast.LENGTH_SHORT
                             ).show()
 
                             db.collection("Notification").document(receiver)
@@ -148,8 +131,7 @@ object InviteHandling {
                                         NotificationData( //creates invite message
                                             "Event Invite",
                                             "You have been invited to ${senderName}'s game."
-                                        ),
-                                        reciever.get("token").toString() //gets token
+                                        ), reciever.get("token").toString() //gets token
                                     ).also {
                                         sendNotification(it) //sends result
                                     }
@@ -159,9 +141,7 @@ object InviteHandling {
 
                 } else {
                     Toast.makeText(
-                        context,
-                        "Invite already sent",
-                        Toast.LENGTH_SHORT
+                        context, "Invite already sent", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -169,14 +149,10 @@ object InviteHandling {
 
     //
     fun sendTeamInviteFromEvent(user: String, context: Context) {
-        db.collection("User").document(user)
-            .collection("Invites").whereEqualTo("inviteType", "Team")
-            .whereEqualTo(
-                "sender",
-                FirebaseAuth.getInstance().currentUser?.uid.toString()
-            )
-            .whereEqualTo("receiver", user).get()
-            .addOnSuccessListener { duplicate ->
+        db.collection("User").document(user).collection("Invites")
+            .whereEqualTo("inviteType", "Team").whereEqualTo(
+                "sender", FirebaseAuth.getInstance().currentUser?.uid.toString()
+            ).whereEqualTo("receiver", user).get().addOnSuccessListener { duplicate ->
                 if (duplicate.isEmpty) {
                     val invite = hashMapOf(
                         "sender" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
@@ -184,28 +160,19 @@ object InviteHandling {
                         "inviteType" to "Team"
                     )
 
-                    db.collection("User").document(user)
-                        .collection("Invites")
-                        .add(invite)
+                    db.collection("User").document(user).collection("Invites").add(invite)
                         .addOnSuccessListener {
                             Toast.makeText(
-                                context,
-                                "Invite Sent",
-                                Toast.LENGTH_SHORT
+                                context, "Invite Sent", Toast.LENGTH_SHORT
                             ).show()
-                        }
-                        .addOnFailureListener {
+                        }.addOnFailureListener {
                             Toast.makeText(
-                                context,
-                                "Invite Failed",
-                                Toast.LENGTH_SHORT
+                                context, "Invite Failed", Toast.LENGTH_SHORT
                             ).show()
                         }
                 } else {
                     Toast.makeText(
-                        context,
-                        "Invite Pending",
-                        Toast.LENGTH_SHORT
+                        context, "Invite Pending", Toast.LENGTH_SHORT
                     ).show()
                 }
             }

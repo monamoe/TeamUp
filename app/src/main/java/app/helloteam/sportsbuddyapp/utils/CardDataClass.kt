@@ -1,4 +1,4 @@
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 /**
  * Event Object

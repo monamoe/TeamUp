@@ -10,7 +10,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface NotificationAPI {
-    @Headers("Authorization: key=${Constants.server_key}", "Content-Type:application/json") // hide key
+    @Headers("Authorization: key=${Constants.SERVER_KEY}", "Content-Type:application/json") // hide key
     @POST("fcm/send")
     suspend fun postNotification( //creates post request to send notif via firebase server
         @Body notification: PushNotification

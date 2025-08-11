@@ -2,10 +2,7 @@ package app.helloteam.sportsbuddyapp.firebase
 
 import android.content.Context
 import android.util.Log
-import app.helloteam.sportsbuddyapp.data.PushNotification
-import app.helloteam.sportsbuddyapp.data.RetrofitInstance
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -13,10 +10,9 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 
 
-
 class NotificationHandling : FirebaseMessagingService() {
 
-    companion object{
+    companion object {
         fun getCurrentToken(context: Context) { //save user tokens to send notifs
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {

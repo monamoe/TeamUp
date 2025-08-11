@@ -14,7 +14,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.EventHandling
@@ -29,7 +33,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import net.cachapa.expandablelayout.ExpandableLayout
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 
 class ViewEvent : AppCompatActivity() {
@@ -43,7 +47,7 @@ class ViewEvent : AppCompatActivity() {
     lateinit var db: FirebaseFirestore
     lateinit var uid: String
 
-    @SuppressLint("RestrictedApi")
+    @SuppressLint("RestrictedApi", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event)
@@ -75,7 +79,7 @@ class ViewEvent : AppCompatActivity() {
         val hostname = findViewById<TextView>(R.id.hostname)
         val hostbio = findViewById<TextView>(R.id.hostbio)
 
-        attendBtn.text = "Attend"
+        attendBtn.text = getString(R.string.attend)
         findViewById<Button>(R.id.becomeHostButton).visibility = View.GONE
 
         // populate array list with events that match the location ID of the marker selected
@@ -86,8 +90,7 @@ class ViewEvent : AppCompatActivity() {
         uid = FirebaseAuth.getInstance().uid.toString()
 
 
-        db.collection("Location").document(locationID).collection("Events").document(eventID)
-            .get()
+        db.collection("Location").document(locationID).collection("Events").document(eventID).get()
             .addOnSuccessListener { document ->
                 Log.i("LOG_TAG", "VIEW EVENT: $document")
                 if (!document.exists()) {
@@ -108,10 +111,7 @@ class ViewEvent : AppCompatActivity() {
                     startTime.setText("Start Time: \n" + eventStartTime.toString())
                     endtime.setText("End Time: \n" + eventEndTime.toString())
                     EventHandling.getSpacesLeft(
-                        locationID,
-                        eventID,
-                        document.get("eventSpace").toString().toInt(),
-                        space
+                        locationID, eventID, document.get("eventSpace").toString().toInt(), space
                     )
 
                     db.collection("Location").document(locationID).get()
@@ -132,9 +132,9 @@ class ViewEvent : AppCompatActivity() {
                         hosting = false
 
                         // check if the user is already attending
-                        db.collection("Location").document(locationID).collection("Events")
-                            .document(eventID).collection("Attendees")
-                            .get()
+                        db.collection("Location").document(locationID)
+                            .collection("Events")
+                            .document(eventID).collection("Attendees").get()
                             .addOnSuccessListener { users ->
                                 attendBtn.text = "Attend"
                                 attending = false
@@ -156,13 +156,13 @@ class ViewEvent : AppCompatActivity() {
 
                     // get host's information to display on event page
                     if (hostID != "null") {
-                        db.collection("User").document(hostID)
-                            .get()
+                        db.collection("User").document(hostID).get()
                             .addOnSuccessListener { userDoc ->
                                 // host name and host BIO
                                 hostname.setText(userDoc.get("userName").toString())
                                 var bio = userDoc.get("bio")
-                                if (bio != "null" && bio != null && bio != "") hostbio.setText(bio.toString())
+                                if (bio != "null" && bio != null && bio != "")
+                                    hostbio.setText(bio.toString())
                             }
                     } else {
                         hostname.setText("Host: ")
@@ -171,8 +171,7 @@ class ViewEvent : AppCompatActivity() {
                     }
 
                 }
-            }
-            .addOnFailureListener { exception ->
+            }.addOnFailureListener { exception ->
                 Log.d("LOG_TAG", "get failed with ", exception)
             }
 
@@ -183,8 +182,8 @@ class ViewEvent : AppCompatActivity() {
             if (!hosting) {
                 if (attending) {
                     removeAttendance()
-                    Toast.makeText(this, "Successfully left event", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this, "Successfully left event",
+                        Toast.LENGTH_SHORT).show()
                 } else {
                     addAttendance()
                 }
@@ -217,12 +216,12 @@ class ViewEvent : AppCompatActivity() {
 
         findViewById<Button>(R.id.becomeHostButton).setOnClickListener {
             MaterialDialog(this).show {
-                title(text = "Are you sure you want to become the host? You will be responsible for leading the event.")
+                title(text = "Are you sure you want to become the host? You " +
+                        "will be responsible for leading the event.")
                 positiveButton(R.string.yes) {
                     makeHost(FirebaseAuth.getInstance().currentUser?.uid.toString())
                     removeAttendance()
-                    Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(context, "Successfully became host", Toast.LENGTH_SHORT).show()
                 }
                 negativeButton(R.string.cancel)
             }
@@ -232,17 +231,17 @@ class ViewEvent : AppCompatActivity() {
 
 
     private fun hostLeaveEvent() {
-        db.collection("Location").document(locationID).collection("Events").document(eventID)
+        db.collection("Location").document(locationID)
+            .collection("Events").document(eventID)
             .update("hostID", "null")
-        db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-            .collection("Hosting")
-            .whereEqualTo("eventID", eventID).get()
+        db.collection("User").document(FirebaseAuth.getInstance()
+            .currentUser?.uid.toString())
+            .collection("Hosting").whereEqualTo("eventID", eventID).get()
             .addOnSuccessListener { hosting ->
                 for (host in hosting) {
                     db.collection("User")
                         .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                        .collection("Hosting")
-                        .document(host.id).delete()
+                        .collection("Hosting").document(host.id).delete()
                 }
                 val intent = Intent(context, SplashActivity::class.java)
                 startActivity(intent)
@@ -256,15 +255,12 @@ class ViewEvent : AppCompatActivity() {
             .update("hostID", newHostID)
 
         val hostingHashMap = hashMapOf(
-            "locationID" to locationID,
-            "eventID" to eventID
+            "locationID" to locationID, "eventID" to eventID
         )
 
         // add the hosting data to the user
-        db.collection("User")
-            .document(FirebaseAuth.getInstance().uid.toString())
-            .collection("Hosting").document(eventID)
-            .set(hostingHashMap, SetOptions.merge())
+        db.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+            .collection("Hosting").document(eventID).set(hostingHashMap, SetOptions.merge())
             .addOnSuccessListener {
                 val intent = Intent(this, SplashActivity::class.java)
                 startActivity(intent)
@@ -277,8 +273,7 @@ class ViewEvent : AppCompatActivity() {
 // add the eventID to the user's attending list
     private fun addAttendance() {
 
-        db.collection("Location").document(locationID).collection("Events").document(eventID)
-            .get()
+        db.collection("Location").document(locationID).collection("Events").document(eventID).get()
             .addOnSuccessListener { doc ->
                 var numCurrentlyAttending = doc.get("currentlyAttending").toString().toInt()
 
@@ -288,11 +283,9 @@ class ViewEvent : AppCompatActivity() {
                     // increace the number of people attending in event
 
                     numCurrentlyAttending++
-                    val data =
-                        hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
+                    val data = hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
                     db.collection("Location").document(locationID).collection("Events")
-                        .document(eventID)
-                        .set(data, SetOptions.merge())
+                        .document(eventID).set(data, SetOptions.merge())
 
                     // add the user uid to the event's attending list
                     val attendeeHashMap = hashMapOf(
@@ -301,14 +294,12 @@ class ViewEvent : AppCompatActivity() {
 
                     db.collection("Location").document(locationID).collection("Events")
                         .document(eventID).collection("Attendees").document(uid)
-                        .set(attendeeHashMap, SetOptions.merge())
-                        .addOnSuccessListener {
+                        .set(attendeeHashMap, SetOptions.merge()).addOnSuccessListener {
                             Log.d("CreatingEvent", "Created Attendee")
 
                             // add the eventID to the user's attending list
                             val attendingHashMap = hashMapOf(
-                                "locationID" to locationID,
-                                "eventID" to eventID
+                                "locationID" to locationID, "eventID" to eventID
                             )
                             db.collection("User")
                                 .document(FirebaseAuth.getInstance().uid.toString())
@@ -324,17 +315,14 @@ class ViewEvent : AppCompatActivity() {
                                 }
 
 
-                        }
-                        .addOnFailureListener { e ->
+                        }.addOnFailureListener { e ->
                             Log.w("a", "Error creating Attendee document", e)
                         }
 
 
                 } else {
                     Toast.makeText(
-                        this,
-                        "This event is currently full!",
-                        Toast.LENGTH_SHORT
+                        this, "This event is currently full!", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -347,43 +335,31 @@ class ViewEvent : AppCompatActivity() {
     private fun removeAttendance() {
 
         // -1 the event space
-        db.collection("Location").document(locationID).collection("Events").document(eventID)
-            .get()
+        db.collection("Location").document(locationID).collection("Events").document(eventID).get()
             .addOnSuccessListener { doc ->
                 var numCurrentlyAttending = doc.get("currentlyAttending").toString().toInt()
                 numCurrentlyAttending--
-                val data =
-                    hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
+                val data = hashMapOf("currentlyAttending" to (numCurrentlyAttending).toString())
                 db.collection("Location").document(locationID).collection("Events")
-                    .document(eventID)
-                    .set(data, SetOptions.merge())
+                    .document(eventID).set(data, SetOptions.merge())
             }
 
         // delete uid in the events attending list
-        db.collection("Location").document(locationID).collection("Events")
-            .document(eventID).collection("Attendees")
-            .document(FirebaseAuth.getInstance().uid.toString())
-            .delete()
+        db.collection("Location").document(locationID).collection("Events").document(eventID)
+            .collection("Attendees").document(FirebaseAuth.getInstance().uid.toString()).delete()
             .addOnSuccessListener {
 
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.w(
-                    "LOG_TAG",
-                    "Error removing attendence",
-                    e
+                    "LOG_TAG", "Error removing attendence", e
                 )
             }
 
         // removing eventID from the users data
-        db.collection("User").document(uid)
-            .collection("Attending").document(eventID)
-            .delete()
+        db.collection("User").document(uid).collection("Attending").document(eventID).delete()
             .addOnFailureListener { e ->
                 Log.w(
-                    "LOG_TAG",
-                    "Error removing attendence",
-                    e
+                    "LOG_TAG", "Error removing attendence", e
                 )
             }
     }

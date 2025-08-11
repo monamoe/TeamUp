@@ -9,17 +9,29 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,19 +44,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.*
-import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
+import app.helloteam.sportsbuddyapp.views.ui.ContentDivider
+import app.helloteam.sportsbuddyapp.utils.EventCard
+import app.helloteam.sportsbuddyapp.utils.ExtraPadding
+import app.helloteam.sportsbuddyapp.utils.InsetAwareTopAppBar
+import app.helloteam.sportsbuddyapp.utils.LoadingEventList
+import app.helloteam.sportsbuddyapp.views.ui.TeamUpTheme
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 
 private var locationEventList: MutableList<EventCard> = mutableListOf()
 private var locationName = "Location Name"
 private var locationInfo = "Location Info"
-private var locationImage = "IDK"
+private var locationImage = "null"
 
-//context
+// context
 @SuppressLint("StaticFieldLeak")
 private lateinit var currentcontext: Context
 
@@ -52,7 +67,7 @@ class EventListCompose : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // init variables
+        // init variables from your helper object
         locationEventList = LoadingEventList.locationEventList
 
         locationName = LoadingEventList.locationName
@@ -72,9 +87,12 @@ class EventListCompose : ComponentActivity() {
             }
         }
     }
+
     override fun onBackPressed() {
-        val intent = Intent(this, map::class.java)
+        val intent = Intent(this, MapActivity::class.java)
         startActivity(intent)
+        finish()
+        super.onBackPressed()  // call super after your code
     }
 }
 
@@ -94,7 +112,6 @@ fun DefaultPreview() {
 
 @Composable
 private fun EventList() {
-    val navController = rememberNavController()
     Scaffold(
         topBar = {
             InsetAwareTopAppBar(
@@ -110,41 +127,39 @@ private fun EventList() {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            val intent = Intent(context, LandingPage2::class.java)
+                            val intent = Intent(currentcontext, LandingPage2::class.java)
                             intent.flags =
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            context.startActivity(intent)
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            currentcontext.startActivity(intent)
                         }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.baseline_arrow_back_24),
-                            contentDescription = "Activity Icon",
+                            contentDescription = "Back"
                         )
                     }
                 },
                 elevation = 10.dp
             )
         },
-        content = {
+        content = { paddingValues ->
             Box(
                 modifier = Modifier
                     .background(colorResource(id = R.color.landingPageBackground))
                     .fillMaxSize()
+                    .padding(paddingValues) // Apply scaffold padding here
             ) {
                 Column {
-                    // greeting
                     LocationInfo()
                     ContentDivider()
-
-                    // scroll list of events at the location
                     EventListScroll()
-
                     ExtraPadding()
                 }
             }
         }
     )
 }
+
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -157,13 +172,18 @@ private fun LocationInfo() {
             .clip(RoundedCornerShape(10.dp))
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         ) {
-            if (locationImage != "null" && locationImage != "") {
+            if (locationImage != "null" && locationImage.isNotBlank()) {
                 Image(
-                    painter = rememberImagePainter(locationImage),
-                    contentDescription = null, // decorative
+                    painter = rememberImagePainter(
+                        data = locationImage,
+                        builder = {
+                            error(R.drawable.ic_baseline_broken_image_24)
+                            placeholder(R.drawable.ic_baseline_broken_image_24)
+                        }
+                    ),
+                    contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(200.dp)
@@ -172,14 +192,12 @@ private fun LocationInfo() {
             } else {
                 Image(
                     painter = painterResource(R.drawable.ic_baseline_broken_image_24),
-                    contentDescription = null, // decorative
+                    contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .padding(20.dp)
                         .height(100.dp)
                         .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(20.dp)
                 )
             }
 
@@ -190,6 +208,7 @@ private fun LocationInfo() {
                         style = MaterialTheme.typography.h1,
                         color = colorResource(id = R.color.secondaryTextColor)
                     )
+//                    Uncomment if you want to show locationInfo
 //                    Text(
 //                        text = locationInfo,
 //                        style = MaterialTheme.typography.h2,
@@ -204,37 +223,29 @@ private fun LocationInfo() {
 @Composable
 private fun EventListScroll() {
     Column {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "Current Events at this Location",
-                style = MaterialTheme.typography.h2,
-                color = colorResource(id = R.color.secondaryTextColor),
-                modifier = Modifier
-                    .padding(20.dp)
-            )
-        }
+        Text(
+            text = "Current Events at this Location",
+            style = MaterialTheme.typography.h2,
+            color = colorResource(id = R.color.secondaryTextColor),
+            modifier = Modifier.padding(20.dp)
+        )
         LazyColumn {
-            items(locationEventList) { e ->
+            items(locationEventList) { event ->
                 LocationEventCard(
-                    e,
+                    event,
                     Modifier
                         .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                         .clickable {
-                            val intent = Intent(context, SplashLoadingEventView::class.java)
-                            intent.putExtra("eventID", e.eventID)
-                            intent.putExtra("locationID", e.locationID)
-                            context.startActivity(intent)
+                            val intent = Intent(currentcontext, SplashLoadingEventView::class.java)
+                            intent.putExtra("eventID", event.eventID)
+                            intent.putExtra("locationID", event.locationID)
+                            currentcontext.startActivity(intent)
                         }
                 )
             }
         }
     }
 }
-
 
 @Composable
 private fun LocationEventCard(
@@ -248,16 +259,14 @@ private fun LocationEventCard(
             .background(colorResource(id = R.color.secondaryColor))
     ) {
         Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .background(colorResource(id = R.color.secondaryColor))
+            modifier = Modifier.background(colorResource(id = R.color.secondaryColor)),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // title and currently attending
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .padding(10.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = event.title,
@@ -274,12 +283,11 @@ private fun LocationEventCard(
             }
 
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // activity type
                 Text(
                     text = "Activity: ${event.activityType}",
                     style = MaterialTheme.typography.h3,
@@ -290,5 +298,3 @@ private fun LocationEventCard(
         }
     }
 }
-
-

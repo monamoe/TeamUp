@@ -81,12 +81,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Location:"
+                android:text="@string/location"
                 android:textColor="#000000"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <fragment
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/autocomplete_fragment"
                 android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                 android:layout_width="match_parent"
@@ -106,7 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:text="Select Start Time"
+                android:text="@string/select_start_time"
                 tools:layout_editor_absoluteX="122dp"
                 tools:layout_editor_absoluteY="491dp" />
 
@@ -133,7 +133,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="15dp"
@@ -144,8 +144,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:editable="false"
-                android:text="Select Activity:"
+                android:text="@string/select_activity"
                 android:textColor="#000000"
                 android:textSize="20sp"
                 tools:layout_editor_absoluteX="159dp"

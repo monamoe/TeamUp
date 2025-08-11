@@ -5,7 +5,11 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.views.ProfilePage
 import app.helloteam.sportsbuddyapp.views.ViewMemberProfileActivity
@@ -109,21 +113,25 @@ object EventHandling {
         // render each row
         override fun getView(position: Int, convertView: View?, viewGroup: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = lI.inflate(R.layout.team_list_adapter_view, viewGroup, false);
+            val rowMain = lI.inflate(R.layout.team_list_adapter_view, viewGroup, false)
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
             val sport = rowMain.findViewById<TextView>(R.id.memberSport)
             val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)
 
-            name.text = (attendeeList.get(position).name)
-            sport.text = (attendeeList.get(position).favSport)
-            if (attendeeList.get(position).image != null && attendeeList.get(position).image != "null") {
-                if (viewGroup != null) {
-                    Glide.with(viewGroup).load(attendeeList.get(position).image).into(profileImage)
-                };
+            name.text = attendeeList[position].name
+            sport.text = attendeeList[position].favSport
+
+            val imageUrl = attendeeList[position].image
+            if (!imageUrl.isNullOrEmpty() && imageUrl != "null") {
+                Glide.with(mContext)
+                    .load(imageUrl)
+                    .into(profileImage)
             }
-            return rowMain;
+
+            return rowMain
         }
+
     }
 
     // Event Displayer class ( for array list)

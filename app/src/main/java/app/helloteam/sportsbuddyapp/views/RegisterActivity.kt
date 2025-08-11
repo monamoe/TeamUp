@@ -1,23 +1,22 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
+import java.util.Date
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +53,7 @@ class RegisterActivity : AppCompatActivity() {
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = userNameTxt
                                 }
-                                if(!testUser) {
+                                if (!testUser) {
                                     user!!.updateProfile(profileUpdates)
                                     user!!.sendEmailVerification()//sends verification email
                                         .addOnCompleteListener { task ->
@@ -84,9 +83,10 @@ class RegisterActivity : AppCompatActivity() {
                                         val friend = hashMapOf(
                                             "user" to FirebaseAuth.getInstance().currentUser?.uid.toString(),
                                         )
-                                        Firebase.firestore.collection("User").document(FirebaseAuth.getInstance().uid.toString())
+                                        Firebase.firestore.collection("User")
+                                            .document(FirebaseAuth.getInstance().uid.toString())
                                             .collection("FriendCode")
-                                            .add(friend).addOnSuccessListener {friend->
+                                            .add(friend).addOnSuccessListener { friend ->
                                                 friend.update("code", friend.id.takeLast(6))
                                             }
                                         Log.d("CreatingEvent", "Created new user")
