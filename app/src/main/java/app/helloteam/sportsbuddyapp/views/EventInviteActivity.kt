@@ -8,7 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.helloteam.sportsbuddyapp.R
@@ -18,7 +22,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 private lateinit var eventList: ArrayList<EventInviteActivity.EventInviteDisplayer>
 private lateinit var listViewtitle: TextView
@@ -76,7 +81,9 @@ class EventInviteActivity : AppCompatActivity() {
                                                 db.collection("User")
                                                     .document(event.get("hostID").toString())
                                                     .get().addOnSuccessListener { host ->
-                                                        var hostUser = host.get("userName")?.toString() ?: "No Host"
+                                                        var hostUser =
+                                                            host.get("userName")?.toString()
+                                                                ?: "No Host"
                                                         if (hostUser == "null" || hostUser.isEmpty()) {
                                                             hostUser = "No Host"
                                                         }
@@ -93,7 +100,8 @@ class EventInviteActivity : AppCompatActivity() {
                                                         )
                                                         eventList.add(eventObj)
                                                         updateTitleText()
-                                                        listview.adapter = EventInviteListAdapter(this)
+                                                        listview.adapter =
+                                                            EventInviteListAdapter(this)
                                                     }
                                             }
                                     } else {

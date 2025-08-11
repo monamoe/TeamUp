@@ -20,20 +20,27 @@ private const val CHANNEL_ID = "my_channel"
 
 class FirebaseService() : FirebaseMessagingService() {
 
-    override fun onMessageReceived(message: RemoteMessage){// when user get notif
+    override fun onMessageReceived(message: RemoteMessage) {// when user get notif
         super.onMessageReceived(message)
 
 
         lateinit var intent: Intent
-        if(message.data["title"] == "Team Invite") {
-            intent = Intent(this, TeamInvites::class.java)// set intent that notification will take user too
+        if (message.data["title"] == "Team Invite") {
+            intent = Intent(
+                this,
+                TeamInvites::class.java
+            )// set intent that notification will take user too
         }
 
-        if(message.data["title"] == "Event Invite") {
-            intent = Intent(this, EventInviteActivity::class.java)// set intent that notification will take user too
+        if (message.data["title"] == "Event Invite") {
+            intent = Intent(
+                this,
+                EventInviteActivity::class.java
+            )// set intent that notification will take user too
         }
 
-        val notificationManger = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManger =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationID = Random.nextInt()
 
         // if phone is at least oreo we need to make a notif channel
@@ -41,8 +48,10 @@ class FirebaseService() : FirebaseMessagingService() {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)//clear other open intents
 
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent,
-            FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(message.data["title"]) // set notif title
             .setContentText(message.data["message"]) //set notif body
@@ -54,7 +63,7 @@ class FirebaseService() : FirebaseMessagingService() {
         notificationManger.notify(notificationID, notification)
     }
 
-    private fun createNotificationChannel(notificationManager: NotificationManager){
+    private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channelName = "channelName"
         val channel = NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
             description = "My channel description"

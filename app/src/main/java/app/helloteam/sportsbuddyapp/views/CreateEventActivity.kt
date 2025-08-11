@@ -9,9 +9,17 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.DatePicker
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.TimePicker
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import app.helloteam.sportsbuddyapp.*
+import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.data.TimePickerFragment
 import app.helloteam.sportsbuddyapp.firebase.FileHandling
 import com.google.android.gms.common.api.Status
@@ -26,7 +34,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.io.IOException
-import java.util.*
+import java.util.Date
 
 class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
@@ -105,7 +113,11 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         val datePicker = findViewById<DatePicker>(R.id.datePicker)
         datePicker.setMinDate(System.currentTimeMillis() - 1000)
         val today = Calendar.getInstance()
-        datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH)) { _, year, month, day ->
+        datePicker.init(
+            today.get(Calendar.YEAR),
+            today.get(Calendar.MONTH),
+            today.get(Calendar.DAY_OF_MONTH)
+        ) { _, year, month, day ->
             dayPicked = day
             yearPicked = year
             monthPicked = month
@@ -122,7 +134,8 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
         }
 
         // Place autocomplete fragment setup
-        val autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+        val autocompleteFragment =
+            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
@@ -144,7 +157,9 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
 
         createBtn.setOnClickListener {
             eventTitle = findViewById<TextView>(R.id.eventTitle).text.toString()
-            eventSpace = if (findViewById<EditText>(R.id.eventSpace).text.toString().isEmpty()) 1 else findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
+            eventSpace = if (findViewById<EditText>(R.id.eventSpace).text.toString()
+                    .isEmpty()
+            ) 1 else findViewById<EditText>(R.id.eventSpace).text.toString().toInt()
             val date = Date(yearPicked - 1900, monthPicked, dayPicked, hour, min)
             val endDate = Date(yearPicked - 1900, monthPicked, dayPicked, endHour, endMin)
             val addInfo = findViewById<EditText>(R.id.aboutEventEdit).text.toString()
@@ -179,12 +194,18 @@ class CreateEventActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListe
                 db.collection("Location").document(locationID)
                     .set(locationsHashMap, SetOptions.merge())
                     .addOnSuccessListener {
-                        db.collection("Location").document(locationID).get().addOnSuccessListener { loc ->
-                            if (loc.get("StreetView") == null) {
-                                Log.i("CreateEventActivity", "Uploading street view image")
-                                FileHandling.uploadEventImage(this, loc.get("Lat").toString(), loc.get("Lon").toString(), loc.id)
+                        db.collection("Location").document(locationID).get()
+                            .addOnSuccessListener { loc ->
+                                if (loc.get("StreetView") == null) {
+                                    Log.i("CreateEventActivity", "Uploading street view image")
+                                    FileHandling.uploadEventImage(
+                                        this,
+                                        loc.get("Lat").toString(),
+                                        loc.get("Lon").toString(),
+                                        loc.id
+                                    )
+                                }
                             }
-                        }
 
                         Log.d("CreateEventActivity", "Created Location document: $locationID")
 

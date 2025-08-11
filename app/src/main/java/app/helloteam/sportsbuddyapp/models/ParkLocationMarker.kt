@@ -7,7 +7,6 @@
 package app.helloteam.sportsbuddyapp.models
 
 
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 
 
@@ -56,11 +55,6 @@ class ParkLocationMarker {
 
     fun getLatLng(): LatLng {
         return LatLng(this.getLat(), this.getLon())
-    }
-
-    // for testing
-    fun showdata() {
-        Log.i("ParkLocationsManager", "$name : $lat // $lon \n")
     }
 
 }

@@ -24,115 +24,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
+import java.util.Date
 
 
 @SuppressLint("StaticFieldLeak")
 private lateinit var googleSignInClient: GoogleSignInClient
 private lateinit var auth: FirebaseAuth
-
-//
-//class LoginActivity : AppCompatActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            TeamUpTheme {
-//                LoginPage()
-//            }
-//        }
-//    }
-//}
-//
-//
-//@Preview
-//@Composable
-//fun LoginScreenPreview() {
-//    TeamUpTheme {
-//        LoginPage()
-//    }
-//}
-//
-//
-//@Composable
-//fun LoginPage() {
-//    val logo = painterResource(id = R.drawable.logoteamupsmall)
-//    val emailValue = remember { mutableStateOf("") }
-//    val passwordValue = remember { mutableStateOf("") }
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.Black),
-//        contentAlignment = Alignment.TopCenter
-//    ) {
-//        Image(logo, null)
-//    }
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color.Black)
-//    )
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.Center,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .fillMaxHeight()
-//    ) {
-//        Text(
-//            text = "Sign In",
-//            style = MaterialTheme.typography.h2,
-//            color = Color.Black
-//        )
-//        Spacer(modifier = Modifier.padding(20.dp))
-//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//            OutlinedTextField(
-//                value = emailValue.value,
-//                onValueChange = { emailValue.value = it },
-//                label = { Text(text = "Email Address") },
-//                placeholder = { Text(text = "Email Address") },
-//                singleLine = true,
-//                modifier = Modifier.fillMaxWidth(9f)
-//            )
-//
-//            OutlinedTextField(
-//                value = passwordValue.value,
-//                onValueChange = { passwordValue.value = it },
-//                visualTransformation = PasswordVisualTransformation(),
-//                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                label = { Text(text = "Password") },
-//                placeholder = { Text(text = "Password") },
-//                singleLine = true,
-//                modifier = Modifier.fillMaxWidth(9f)
-//            )
-//
-//            Spacer(modifier = Modifier.padding(10.dp))
-//            Button(
-//                onClick = {},
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(50.dp)
-//            ) {
-//                Text(text = "Sign In", style = MaterialTheme.typography.h1)
-//            }
-//
-//            Spacer(modifier = Modifier.padding(20.dp))
-//            Text(text = "Create an Account", modifier = Modifier.clickable { })
-//            Spacer(modifier = Modifier.padding(20.dp))
-//
-//            Button(
-//                onClick = {},
-//                modifier = Modifier
-//                    .padding(10.dp)
-//                    .height(30.dp)
-//            ) {
-//                Text(text = "Sign In With Google", color = Color.Black)
-//            }
-//        }
-//    }
-//}
-
 
 class LoginActivity : AppCompatActivity() {
     @SuppressLint("CheckResult")
@@ -176,14 +73,22 @@ class LoginActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.forgotPasswordButton).setOnClickListener {//go to forgot password activity
             MaterialDialog(this).show {
                 title(R.string.password_title)
-                input(hint = "example@gmail.com"){ dialog, text ->
+                input(hint = "example@gmail.com") { dialog, text ->
                     Firebase.auth.sendPasswordResetEmail(text.toString().trim())
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 Log.i("Log", "Email sent.")
-                                Toast.makeText(context, "Password reset successfully sent", Toast.LENGTH_LONG).show()
-                            }else{
-                                Toast.makeText(context, "Password reset not sent", Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    context,
+                                    "Password reset successfully sent",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Password reset not sent",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                 }
@@ -191,8 +96,6 @@ class LoginActivity : AppCompatActivity() {
                 negativeButton(R.string.cancel)
             }
         }
-
-
 
 
         //Sign Up button is pressed

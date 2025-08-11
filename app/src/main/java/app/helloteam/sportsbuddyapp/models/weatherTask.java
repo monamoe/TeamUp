@@ -11,7 +11,6 @@ import app.helloteam.sportsbuddyapp.views.LandingPageKt;
 public class weatherTask extends AsyncTask<String, Void, String> {
 
     private OkHttpClient client = new OkHttpClient();
-
     public weatherTask() {}
 
     @Override
@@ -60,7 +59,6 @@ public class weatherTask extends AsyncTask<String, Void, String> {
             Log.e("weatherTask", "JSON parsing error", e);
         }
     }
-
     public static boolean weatherDone() {
         return !LandingPageKt.getTemp().isEmpty();
     }

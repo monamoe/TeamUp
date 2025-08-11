@@ -12,9 +12,17 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,18 +42,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import app.helloteam.sportsbuddyapp.R
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent.Companion.getUserName
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent.Companion.recEventsDone
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent.Companion.yourEventsDone
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEvent.Companion.yourHostDone
+import app.helloteam.sportsbuddyapp.utils.LoadingEvent
+import app.helloteam.sportsbuddyapp.utils.LoadingEvent.Companion.getUserName
+import app.helloteam.sportsbuddyapp.utils.LoadingEvent.Companion.recEventsDone
+import app.helloteam.sportsbuddyapp.utils.LoadingEvent.Companion.yourEventsDone
+import app.helloteam.sportsbuddyapp.utils.LoadingEvent.Companion.yourHostDone
 import app.helloteam.sportsbuddyapp.models.weatherTask
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
-
+import java.util.Locale
 
 
 var loggedIn = false
@@ -130,7 +137,8 @@ class SplashActivity : ComponentActivity() {
 
                     try {
                         val geocoder = Geocoder(this, Locale.getDefault())
-                        val addresses: List<Address>? = geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
+                        val addresses: List<Address>? =
+                            geocoder.getFromLocation(userLocationLat, userLocationLon, 1)
                         if (!addresses.isNullOrEmpty()) {
                             cityName = addresses[0].locality ?: ""
                             prov = addresses[0].adminArea ?: ""

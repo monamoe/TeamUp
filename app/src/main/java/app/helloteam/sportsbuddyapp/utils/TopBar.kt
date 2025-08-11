@@ -2,14 +2,14 @@
 monamoe
 Application TopBar contents
  */
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import app.helloteam.sportsbuddyapp.views.ui.theme.Purple200
+import app.helloteam.sportsbuddyapp.views.ui.Purple200
 
 
 // Top Bar

@@ -130,7 +130,7 @@
             android:name=".views.ViewPlayerEvents"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".views.eventslist"
+            android:name=".views.EventsList"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".views.ViewEvent"

@@ -40,7 +40,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
 
         listenForLatestMessages(this, adapter)
-        if(messagesList.size > 0) {
+        if (messagesList.size > 0) {
         }
         findViewById<FloatingActionButton>(R.id.newMessage).setOnClickListener {
             val intent = Intent(this, NewMessageActivity::class.java)
@@ -66,15 +66,21 @@ class LatestMessagesActivity : AppCompatActivity() {
                 Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
                 val position = viewHolder.adapterPosition
                 adapter.notifyDataSetChanged()
-                val ref =  FirebaseDatabase.getInstance()
-                ref.getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}").child(messagesList.get(position).memberId).removeValue()
-                ref.getReference("/user-messages/${FirebaseAuth.getInstance().currentUser?.uid}").child(messagesList.get(position).memberId).removeValue()
-                Firebase.firestore.collection("User_Messages_Archive").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                    .collection("To").document(messagesList.get(position).memberId).collection("archives").get()
+                val ref = FirebaseDatabase.getInstance()
+                ref.getReference("/latest-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
+                    .child(messagesList.get(position).memberId).removeValue()
+                ref.getReference("/user-messages/${FirebaseAuth.getInstance().currentUser?.uid}")
+                    .child(messagesList.get(position).memberId).removeValue()
+                Firebase.firestore.collection("User_Messages_Archive")
+                    .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                    .collection("To").document(messagesList.get(position).memberId)
+                    .collection("archives").get()
                     .addOnSuccessListener { messages ->
-                        for (message in messages){
-                            Firebase.firestore.collection("User_Messages_Archive").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .collection("To").document(messagesList.get(position).memberId).collection("archives")
+                        for (message in messages) {
+                            Firebase.firestore.collection("User_Messages_Archive")
+                                .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .collection("To").document(messagesList.get(position).memberId)
+                                .collection("archives")
                                 .document(message.id).delete()
                         }
 
@@ -86,51 +92,53 @@ class LatestMessagesActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun listenForLatestMessages(context: Context, adapter: LatestAdapter){
+    private fun listenForLatestMessages(context: Context, adapter: LatestAdapter) {
         val currentUser = FirebaseAuth.getInstance().currentUser?.uid
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$currentUser")
 
-        ref.addChildEventListener(object: ChildEventListener{
+        ref.addChildEventListener(object : ChildEventListener {
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
                 var otherUser = chatMessage?.fromId.toString()
-                if(otherUser == currentUser.toString()){
+                if (otherUser == currentUser.toString()) {
                     otherUser = chatMessage?.toId.toString()
                 }
-                    Firebase.firestore.collection("User").document(otherUser)
-                        .get().addOnSuccessListener { user ->
-                            var position = 0
-                            for (i in 0..messagesList.size-1){
-                                if (user.id == messagesList.get(i).memberId){
-                                    position = i
-                                }
-                            }
-                            if (chatMessage != null) {
-                                messagesList.set(position,
-                                    LatestAdapter.MessageDisplayer(
-                                        chatMessage.id,
-                                        otherUser,
-                                        chatMessage.text,
-                                        chatMessage.timestamp.toString(),
-                                        user.get("userName").toString()
-                                    )
-                                )
-                                var sorted = messagesList.sortedByDescending { messagesList -> messagesList.time }
-                                messagesList.clear()
-                                for (sort in sorted){
-                                    messagesList.add(sort)
-                                }
-                                var recyclerView = findViewById<RecyclerView>(R.id.myList)
-                                recyclerView.setAdapter(adapter)
+                Firebase.firestore.collection("User").document(otherUser)
+                    .get().addOnSuccessListener { user ->
+                        var position = 0
+                        for (i in 0..messagesList.size - 1) {
+                            if (user.id == messagesList.get(i).memberId) {
+                                position = i
                             }
                         }
+                        if (chatMessage != null) {
+                            messagesList.set(
+                                position,
+                                LatestAdapter.MessageDisplayer(
+                                    chatMessage.id,
+                                    otherUser,
+                                    chatMessage.text,
+                                    chatMessage.timestamp.toString(),
+                                    user.get("userName").toString()
+                                )
+                            )
+                            var sorted =
+                                messagesList.sortedByDescending { messagesList -> messagesList.time }
+                            messagesList.clear()
+                            for (sort in sorted) {
+                                messagesList.add(sort)
+                            }
+                            var recyclerView = findViewById<RecyclerView>(R.id.myList)
+                            recyclerView.setAdapter(adapter)
+                        }
+                    }
 
             }
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val chatMessage = snapshot.getValue(ChatLogActivity.ChatMessage::class.java)
                 var otherUser = chatMessage?.fromId.toString()
-                if(otherUser == currentUser.toString()){
+                if (otherUser == currentUser.toString()) {
                     otherUser = chatMessage?.toId.toString()
                 }
 
@@ -157,12 +165,16 @@ class LatestMessagesActivity : AppCompatActivity() {
                                 recyclerView.setAdapter(adapter)
                             }
                         } else {
-                            FirebaseDatabase.getInstance().getReference("/user-messages/${currentUser}").child(otherUser).removeValue()
-                            Firebase.firestore.collection("User_Messages_Archive").document(currentUser.toString())
+                            FirebaseDatabase.getInstance()
+                                .getReference("/user-messages/${currentUser}").child(otherUser)
+                                .removeValue()
+                            Firebase.firestore.collection("User_Messages_Archive")
+                                .document(currentUser.toString())
                                 .collection("To").document(otherUser)
                                 .collection("archives").get().addOnSuccessListener { archives ->
-                                    for(archive in archives){
-                                        Firebase.firestore.collection("User_Messages_Archive").document(currentUser.toString())
+                                    for (archive in archives) {
+                                        Firebase.firestore.collection("User_Messages_Archive")
+                                            .document(currentUser.toString())
                                             .collection("To").document(otherUser)
                                             .collection("archives").document(archive.id).delete()
                                     }
@@ -187,7 +199,7 @@ class LatestMessagesActivity : AppCompatActivity() {
     }
 }
 
-class LatestAdapter(private var dataSet: ArrayList< MessageDisplayer>, context: Context) :
+class LatestAdapter(private var dataSet: ArrayList<MessageDisplayer>, context: Context) :
     RecyclerView.Adapter<LatestAdapter.ViewHolder>() {
     private var context: Context
 
@@ -227,10 +239,10 @@ class LatestAdapter(private var dataSet: ArrayList< MessageDisplayer>, context: 
         viewHolder.message.text = dataSet.get(position).text
         Firebase.firestore.collection("User").document(dataSet.get(position).memberId)
             .get().addOnSuccessListener { photo ->
-                if(photo.get("photoUrl") != null) {
+                if (photo.get("photoUrl") != null) {
                     Glide.with(context).load(photo.get("photoUrl")).into(viewHolder.profile)
                 }
-                }
+            }
 
         viewHolder.itemView.setOnClickListener {
             val intent = Intent(context, ChatLogActivity::class.java)
@@ -267,7 +279,8 @@ class LatestAdapter(private var dataSet: ArrayList< MessageDisplayer>, context: 
             this.name = name
         }
     }
+
     init { // you can pass other parameters in constructor
         this.context = context
     }
-    }
+}

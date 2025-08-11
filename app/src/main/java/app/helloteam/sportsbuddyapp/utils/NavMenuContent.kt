@@ -3,7 +3,7 @@ rileygray & monamoe
 Application NavBar contents and event handlers
  */
 
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 import android.content.Context
 import android.content.Intent

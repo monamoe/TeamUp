@@ -2,7 +2,7 @@
  * monamoe
  * material theme font and custom typography
  */
-package app.helloteam.sportsbuddyapp.views.ui.theme
+package app.helloteam.sportsbuddyapp.views.ui
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
@@ -48,7 +48,7 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp
     ),
-    h4= TextStyle(
+    h4 = TextStyle(
         color = Color.Black,
         fontFamily = gothicA1,
         fontSize = 14.sp

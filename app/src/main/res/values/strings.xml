@@ -13,4 +13,5 @@
     <string name="location">Location:</string>
     <string name="select_start_time">Select Start Time</string>
     <string name="select_activity">Select Activity:</string>
+    <string name="attend">Attend</string>
 </resources>

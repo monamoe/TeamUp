@@ -6,12 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.models.MessageModel
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -167,14 +171,18 @@ class ChatLogActivity : AppCompatActivity() {
                                                 )
                                                 .collection("archives").document(remove.id).delete()
                                                 .addOnSuccessListener {
-                                                    Log.i("ChatLogActivity", "Deleted archive message")
+                                                    Log.i(
+                                                        "ChatLogActivity",
+                                                        "Deleted archive message"
+                                                    )
                                                 }
                                         }
                                     }
                             }
                         }
                 }
-                val adapter = CustomAdapter(context, messagesList, intent.getStringExtra("member").toString())
+                val adapter =
+                    CustomAdapter(context, messagesList, intent.getStringExtra("member").toString())
                 val recyclerView = findViewById<RecyclerView>(R.id.recycleChat)
                 recyclerView.adapter = adapter
                 recyclerView.smoothScrollToPosition(messagesList.size)
@@ -204,7 +212,8 @@ class ChatLogActivity : AppCompatActivity() {
         val text = findViewById<EditText>(R.id.messageText).text.toString()
         val fromId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val toId = intent.getStringExtra("member").toString()
-        val dbFrom = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val dbFrom =
+            FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
         val chatMessage = ChatMessage(
             dbFrom.key.toString(),
@@ -224,8 +233,10 @@ class ChatLogActivity : AppCompatActivity() {
             Log.d("ChatLogActivity", "Sent message to recipient id: ${dbFrom.key}")
         }
 
-        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
-        val latestMessageRefTo = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+        val latestMessageRef =
+            FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        val latestMessageRefTo =
+            FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
 
         val chatMessageTo = ChatMessage(
             dbFrom.key.toString(),
@@ -280,9 +291,13 @@ class CustomAdapter(context: Context, list: ArrayList<MessageModel>, reciver: St
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == MESSAGE_TYPE_IN) {
-            MessageInViewHolder(LayoutInflater.from(context).inflate(R.layout.chat_from_row, parent, false))
+            MessageInViewHolder(
+                LayoutInflater.from(context).inflate(R.layout.chat_from_row, parent, false)
+            )
         } else {
-            MessageOutViewHolder(LayoutInflater.from(context).inflate(R.layout.chat_to_row, parent, false))
+            MessageOutViewHolder(
+                LayoutInflater.from(context).inflate(R.layout.chat_to_row, parent, false)
+            )
         }
     }
 

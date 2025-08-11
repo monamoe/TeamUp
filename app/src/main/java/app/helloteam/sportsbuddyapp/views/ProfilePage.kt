@@ -1,15 +1,16 @@
 package app.helloteam.sportsbuddyapp.views
 
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
@@ -19,8 +20,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import java.util.*
 import java.text.SimpleDateFormat
+import java.util.Date
 
 class ProfilePage : AppCompatActivity() {
 
@@ -84,7 +85,8 @@ class ProfilePage : AppCompatActivity() {
                 if (userName != null) userNameEdit.text = userName.toString()
                 if (getTime != null) dateText.text = getTime.toString()
                 if (bio != "null" && bio != null && bio != "") aboutMeText.text = bio.toString()
-                if (favouriteSport != null && favouriteSport != "none") favSportText.text = favouriteSport.toString()
+                if (favouriteSport != null && favouriteSport != "none") favSportText.text =
+                    favouriteSport.toString()
                 if (maxDistance != null) maxDistanceEdit.text = "$maxDistance KM"
             }
 
@@ -106,6 +108,7 @@ class ProfilePage : AppCompatActivity() {
             startActivity(Intent(this, EditProfilePage::class.java))
             true
         }
+
         R.id.action_logout -> {
             val dialogBuilder = AlertDialog.Builder(this)
             dialogBuilder.setMessage("Do you want to log out?")
@@ -122,6 +125,7 @@ class ProfilePage : AppCompatActivity() {
             alert.show()
             true
         }
+
         else -> super.onOptionsItemSelected(item)
     }
 }

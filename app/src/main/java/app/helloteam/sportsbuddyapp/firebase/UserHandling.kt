@@ -24,8 +24,7 @@ object UserHandling {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.i(
-                        "LOG_TAG",
-                        "HAHA LOGIN SUCCESSFUL: " + it.result.user?.uid
+                        "LOG_TAG", "HAHA LOGIN SUCCESSFUL: " + it.result.user?.uid
                     )
                     success = true
 
@@ -58,21 +57,21 @@ object UserHandling {
             "Blocked Users" to userNameBlockID
         )
 
-        db.collection("User").document(currentUser?.uid.toString()).collection("BlockList").document()
-                    .set(blockHashMap, SetOptions.merge())
-                        .addOnSuccessListener{
-                            val blockedUser = db.collection("User").document(userNameBlockID).get()
-                                .addOnSuccessListener{blockedUser->
-                                    Toast.makeText(context, "You have blocked ${blockedUser.get("userName")}" , Toast.LENGTH_LONG).show()
-                                }
+        db.collection("User").document(currentUser?.uid.toString()).collection("BlockList")
+            .document().set(blockHashMap, SetOptions.merge()).addOnSuccessListener {
+                val blockedUser = db.collection("User").document(userNameBlockID).get()
+                    .addOnSuccessListener { blockedUser ->
+                        Toast.makeText(
+                            context,
+                            "You have blocked ${blockedUser.get("userName")}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
 
-                        }
-
+            }
 
 
     }
-
-
 
 
     fun userDelete(currentUser: FirebaseUser?, context: Context) {
@@ -85,42 +84,36 @@ object UserHandling {
         db.collection("User_Messages_Archive").document(currentUser?.uid.toString())
             .delete()//delete message archives
         FileHandling.deleteProfilePhoto(currentUser?.uid.toString())//delete user profile image
-        db.collection("User").document(currentUser?.uid.toString()).collection("Hosting")
-            .get().addOnSuccessListener { hosts ->
+        db.collection("User").document(currentUser?.uid.toString()).collection("Hosting").get()
+            .addOnSuccessListener { hosts ->
                 for (host in hosts) {
                     db.collection("Location").document(host.get("locationID").toString())
                         .collection("Events").document(host.get("eventID").toString())
                         .update("hostID", "null")
 
                     db.collection("User").document(currentUser?.uid.toString())
-                        .collection("Hosting").document(host.id)
-                        .delete()
+                        .collection("Hosting").document(host.id).delete()
                 }
 
                 db.collection("User").document(currentUser?.uid.toString()).collection("FriendCode")
                     .get().addOnSuccessListener { friends ->
                         for (friend in friends) {
                             db.collection("User").document(currentUser?.uid.toString())
-                                .collection("FriendCode")
-                                .document(friend.id).delete()
+                                .collection("FriendCode").document(friend.id).delete()
                         }
 
                         db.collection("User").document(currentUser?.uid.toString())
-                            .collection("Attendees")
-                            .get().addOnSuccessListener { attends ->
+                            .collection("Attendees").get().addOnSuccessListener { attends ->
                                 for (attend in attends) {
                                     db.collection("User").document(currentUser?.uid.toString())
-                                        .collection("Attendees")
-                                        .document(attend.id).delete()
+                                        .collection("Attendees").document(attend.id).delete()
                                 }
                                 db.collection("User").document(currentUser?.uid.toString())
-                                    .collection("Team")
-                                    .get().addOnSuccessListener { teams ->
+                                    .collection("Team").get().addOnSuccessListener { teams ->
                                         for (team in teams) {
                                             db.collection("User")
                                                 .document(currentUser?.uid.toString())
-                                                .collection("Team")
-                                                .document(team.id).delete()
+                                                .collection("Team").document(team.id).delete()
                                         }
                                     }
                                 db.collection("User").document(currentUser?.uid.toString())

@@ -16,8 +16,8 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventList
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.eventIDa
+import app.helloteam.sportsbuddyapp.utils.LoadingEventList
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.eventIDa
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

@@ -14,18 +14,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -36,18 +51,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.InviteHandling.sendEventInvite
-import app.helloteam.sportsbuddyapp.helperUI.*
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attendeeList
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.attending
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.eventInfo
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hosting
-import app.helloteam.sportsbuddyapp.views.ui.theme.TeamUpTheme
-import coil.compose.AsyncImage
+import app.helloteam.sportsbuddyapp.utils.AttendeesCard
+import app.helloteam.sportsbuddyapp.views.ui.ContentDivider
+import app.helloteam.sportsbuddyapp.utils.ExtraPadding
+import app.helloteam.sportsbuddyapp.utils.InsetAwareTopAppBar
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.attendeeList
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.attending
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.eventInfo
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.hasHost
+import app.helloteam.sportsbuddyapp.utils.LoadingEventView.Companion.hosting
+import app.helloteam.sportsbuddyapp.views.ui.TeamUpTheme
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
-
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import com.afollestad.materialdialogs.MaterialDialog
 
 
@@ -78,7 +94,6 @@ class EventCompose : ComponentActivity() {
         val intent = Intent(this, SplashActivity::class.java)
         startActivity(intent)
     }
-
 
 
     // Composable Preview

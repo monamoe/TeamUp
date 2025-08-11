@@ -1,13 +1,13 @@
 package app.helloteam.sportsbuddyapp.views
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import app.helloteam.sportsbuddyapp.firebase.InviteHandling
 import app.helloteam.sportsbuddyapp.firebase.UserHandling.BlockUser
@@ -18,7 +18,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class ViewMemberProfileActivity : AppCompatActivity() {
 
@@ -74,7 +74,8 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                 if (userName != null) userNameEdit.text = userName.toString()
                 if (dateCreated != null) dateText.text = dateCreated.toString()
                 if (bio != "null" && bio != null && bio != "") aboutMeText.text = bio.toString()
-                if (favouriteSport != null && favouriteSport != "none") favSportText.text = favouriteSport.toString()
+                if (favouriteSport != null && favouriteSport != "none") favSportText.text =
+                    favouriteSport.toString()
             }
         db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
             .collection("Team").whereEqualTo("member", user)
@@ -89,13 +90,16 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                             sendButton.visibility = View.GONE
                             removeButton.visibility = View.VISIBLE
                             for (m in member) {
-                                db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                db.collection("User")
+                                    .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                     .collection("Team").document(m.id).get()
                                     .addOnSuccessListener { team ->
                                         inviteId = team.id
                                     }
                             }
-                        } else if (intent.getStringExtra("event").toString() == "event" && invite.isEmpty) {
+                        } else if (intent.getStringExtra("event")
+                                .toString() == "event" && invite.isEmpty
+                        ) {
                             inviteButtons.visibility = View.GONE
                             removeButton.visibility = View.GONE
                             sendButton.visibility = View.VISIBLE
@@ -129,10 +133,12 @@ class ViewMemberProfileActivity : AppCompatActivity() {
                         .collection("Team").document(team.id) // create team for user 2 with same id
                         .set(member)
                         .addOnSuccessListener {
-                            db.collection("User").document(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                            db.collection("User")
+                                .document(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                 .collection("Invites").document(inviteId)
                                 .delete().addOnSuccessListener {
-                                    Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "Invite Accepted", Toast.LENGTH_SHORT)
+                                        .show()
                                     val intent = Intent(this, TeamsActivity::class.java)
                                     startActivity(intent)
                                     finish()

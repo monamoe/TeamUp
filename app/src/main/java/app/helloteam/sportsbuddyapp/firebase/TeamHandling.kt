@@ -22,11 +22,7 @@ object TeamHandling {
     private lateinit var memberList: ArrayList<TeamDisplayer>
 
     fun getTeam(
-        listview: ListView,
-        context: Context,
-        from: String,
-        event: String,
-        location: String
+        listview: ListView, context: Context, from: String, event: String, location: String
     ) {
         memberList = ArrayList()
         // FIREBASE MIGRATION //
@@ -35,8 +31,8 @@ object TeamHandling {
             .collection("Team") //creates team inside user
             .get().addOnSuccessListener { members ->
                 for (member in members) {
-                    db.collection("User").document(member.get("member").toString())
-                        .get().addOnSuccessListener { u ->
+                    db.collection("User").document(member.get("member").toString()).get()
+                        .addOnSuccessListener { u ->
                             if (u.exists()) {
                                 val eventObj = TeamDisplayer(
                                     member.id,
@@ -63,8 +59,7 @@ object TeamHandling {
                     title(text = "Invite " + memberList.get(position).name + "?")
                     positiveButton(R.string.yes) { dialog ->
                         InviteHandling.sendEventInvite(
-                            event, location, memberList.get(position).getMemberID(),
-                            context
+                            event, location, memberList.get(position).getMemberID(), context
                         )
                     }
                     negativeButton(R.string.cancel)

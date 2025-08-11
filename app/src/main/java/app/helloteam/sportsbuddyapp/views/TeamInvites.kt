@@ -2,18 +2,22 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import app.helloteam.sportsbuddyapp.R
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import app.helloteam.sportsbuddyapp.R
 
 
 private lateinit var inviteList: ArrayList<TeamInvites.InviteDisplayer>
@@ -114,7 +118,8 @@ class TeamInvites : AppCompatActivity() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val lI = LayoutInflater.from(mContext)
-            val rowMain = convertView ?: lI.inflate(R.layout.invite_list_adapter_view, parent, false)
+            val rowMain =
+                convertView ?: lI.inflate(R.layout.invite_list_adapter_view, parent, false)
 
             val name = rowMain.findViewById<TextView>(R.id.eventTitle)
             val profileImage = rowMain.findViewById<ImageView>(R.id.profilepic)

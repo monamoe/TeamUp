@@ -11,7 +11,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -51,13 +55,22 @@ object FileHandling {
                                     db.collection("User").document(user.uid).update(
                                         mapOf("photoUrl" to downloadUri.toString())
                                     )
-                                    Toast.makeText(context, "Profile image updated", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Profile image updated",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
-                                    Toast.makeText(context, "Failed to update profile", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Failed to update profile",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                     } else {
-                        Toast.makeText(context, "Failed to get download URL", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to get download URL", Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
@@ -70,7 +83,11 @@ object FileHandling {
     fun uploadEventImage(context: Context, lat: String, long: String, locationID: String) {
         val fileRef = storageRef.child("locations/$locationID/StreetView.jpg")
         val imageUrl =
-            "https://maps.googleapis.com/maps/api/streetview?size=500x400&location=$lat,$long&fov=80&heading=70&pitch=0&key=${context.getString(R.string.google_key)}"
+            "https://maps.googleapis.com/maps/api/streetview?size=500x400&location=$lat,$long&fov=80&heading=70&pitch=0&key=${
+                context.getString(
+                    R.string.google_key
+                )
+            }"
         Log.i("ImageDownload", imageUrl)
 
         val directory: File = context.getDir("imageDir", Context.MODE_PRIVATE)

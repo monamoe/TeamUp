@@ -2,13 +2,11 @@
 rileygray & monamoe
 collect and load data for the landing page
  */
-package app.helloteam.sportsbuddyapp.helperUI
+package app.helloteam.sportsbuddyapp.utils
 
 import android.content.Intent
 import android.location.Location
 import android.util.Log
-import androidx.compose.ui.input.key.Key.Companion.Sleep
-import app.helloteam.sportsbuddyapp.helperUI.LoadingEventView.Companion.hasHost
 import app.helloteam.sportsbuddyapp.models.weatherTask
 import app.helloteam.sportsbuddyapp.views.LandingPage2
 import app.helloteam.sportsbuddyapp.views.context

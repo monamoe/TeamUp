@@ -8,7 +8,6 @@ package app.helloteam.sportsbuddyapp.views
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,19 +15,19 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import app.helloteam.sportsbuddyapp.R
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Date
 
 
-private lateinit var eventList: ArrayList<eventslist.EventDisplayer>
+private lateinit var eventList: ArrayList<EventsList.EventDisplayer>
 
 
-class eventslist : AppCompatActivity() {
+class EventsList : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,36 +48,36 @@ class eventslist : AppCompatActivity() {
         val location = db.collection("Location").document(locationID)
         location.get().addOnSuccessListener { x ->
             val address = x.get("Location Name").toString()
-        //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
-        db.collection("User").get()
-            .addOnSuccessListener { users ->
-                location.collection("Events")
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        for (event in documents) {
-                            var userName = ""
-                            for (user in users){
-                                if (user.id == event.get("hostID"))
-                                    userName = user.get("userName").toString()
-                            }
-                            val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
-                            var time: Timestamp = event.get("date") as Timestamp
-                            var eventTime = sfd.format(Date(time.seconds * 1000))
-                            val eventObj = EventDisplayer(
-                                event.id,
-                                event.get("activity").toString(),
-                                address,
-                                eventTime,
-                                if (userName == "null") "No Host" else userName
-                            )
-                            eventList.add(eventObj)
+            //this should include .whereGreaterThan("numberOfEvents", 0) once we add that to the database
+            db.collection("User").get()
+                .addOnSuccessListener { users ->
+                    location.collection("Events")
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            for (event in documents) {
+                                var userName = ""
+                                for (user in users) {
+                                    if (user.id == event.get("hostID"))
+                                        userName = user.get("userName").toString()
+                                }
+                                val sfd = SimpleDateFormat("yyyy-MM-dd hh:mm")
+                                var time: Timestamp = event.get("date") as Timestamp
+                                var eventTime = sfd.format(Date(time.seconds * 1000))
+                                val eventObj = EventDisplayer(
+                                    event.id,
+                                    event.get("activity").toString(),
+                                    address,
+                                    eventTime,
+                                    if (userName == "null") "No Host" else userName
+                                )
+                                eventList.add(eventObj)
 
+                            }
+                            // list view adapter
+                            listview.adapter = EventListAdapter(this)
                         }
-                        // list view adapter
-                        listview.adapter = EventListAdapter(this)
-                    }
-            }
-    }
+                }
+        }
 
 
         listview.setOnItemClickListener { parent, view, position, id ->
